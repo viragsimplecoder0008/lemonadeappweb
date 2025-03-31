@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductQuantity from "../products/ProductQuantity";
 import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 
 interface CartItemProps {
   item: CartItemType;
@@ -14,16 +15,21 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
   const { product, quantity } = item;
 
-  // Fallback image function
+  // Fallback image function with dynamic placeholder
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = "https://via.placeholder.com/100x100?text=Lemonade";
+    e.currentTarget.src = `https://source.unsplash.com/100x100/?lemonade,${product.name.toLowerCase()}`;
+  };
+
+  const handleRemove = () => {
+    removeFromCart(product.id);
+    toast.success(`Removed ${product.name} from your cart`);
   };
 
   return (
     <div className="flex items-center py-4 border-b">
       <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
         <img
-          src={product.imageUrl || "https://via.placeholder.com/100x100?text=Lemonade"}
+          src={product.imageUrl || `https://source.unsplash.com/100x100/?lemonade,${product.name.toLowerCase()}`}
           alt={product.name}
           className="h-full w-full object-cover"
           onError={handleImageError}
@@ -44,7 +50,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => removeFromCart(product.id)}
+          onClick={handleRemove}
           className="text-red-500 mt-1 h-6 w-6"
         >
           <Trash2 className="h-4 w-4" />

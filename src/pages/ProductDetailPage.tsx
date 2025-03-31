@@ -8,6 +8,7 @@ import { getProductById, products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
 import ProductQuantity from "@/components/products/ProductQuantity";
 import ProductCard from "@/components/products/ProductCard";
+import { toast } from "sonner";
 
 const ProductDetailPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -23,9 +24,11 @@ const ProductDetailPage: React.FC = () => {
         .slice(0, 4)
     : [];
   
-  // Fallback image function
+  // Fallback image function with dynamic placeholder based on product name
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = "https://via.placeholder.com/500x500?text=Lemonade";
+    if (product) {
+      e.currentTarget.src = `https://source.unsplash.com/600x600/?lemonade,${product.name.toLowerCase()}`;
+    }
   };
   
   const handleAddToCart = () => {
@@ -34,6 +37,7 @@ const ProductDetailPage: React.FC = () => {
       for (let i = 0; i < quantity; i++) {
         addToCart(product);
       }
+      toast.success(`Added ${quantity} ${product.name} to your cart`);
       setQuantity(1);
     }
   };
@@ -66,7 +70,7 @@ const ProductDetailPage: React.FC = () => {
           {/* Product Image */}
           <div className="bg-white rounded-lg overflow-hidden border">
             <img
-              src={product.imageUrl || "https://via.placeholder.com/500x500?text=Lemonade"}
+              src={product.imageUrl || `https://source.unsplash.com/600x600/?lemonade,${product.name.toLowerCase()}`}
               alt={product.name}
               className="w-full h-auto object-cover"
               onError={handleImageError}
