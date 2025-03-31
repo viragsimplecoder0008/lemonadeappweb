@@ -83,7 +83,7 @@ const ProductDetailPage: React.FC = () => {
               <h1 className="text-3xl font-bold">{product.name}</h1>
               <div className="flex items-center">
                 <span className="font-bold text-2xl text-lemonade-dark">
-                  ${product.price.toFixed(2)}
+                  ₹{product.price.toFixed(2)}
                 </span>
               </div>
             </div>

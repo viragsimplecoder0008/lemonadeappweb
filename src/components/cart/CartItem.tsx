@@ -37,7 +37,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </div>
       <div className="ml-4 flex-1">
         <h3 className="font-medium text-base">{product.name}</h3>
-        <p className="mt-1 text-sm text-gray-500">${product.price.toFixed(2)}</p>
+        <p className="mt-1 text-sm text-gray-500">₹{product.price.toFixed(2)}</p>
       </div>
       <div className="flex items-center ml-4">
         <ProductQuantity
@@ -46,7 +46,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         />
       </div>
       <div className="text-right ml-4 flex-shrink-0">
-        <p className="font-medium">${(product.price * quantity).toFixed(2)}</p>
+        <p className="font-medium">₹{(product.price * quantity).toFixed(2)}</p>
         <Button
           variant="ghost"
           size="icon"

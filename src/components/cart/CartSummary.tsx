@@ -23,21 +23,21 @@ const CartSummary: React.FC<CartSummaryProps> = ({ showCheckoutButton = true }) 
       <div className="space-y-2">
         <div className="flex justify-between">
           <span>Subtotal ({totalItems} items)</span>
-          <span>${subtotal.toFixed(2)}</span>
+          <span>₹{subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between">
           <span>Tax (10%)</span>
-          <span>${tax.toFixed(2)}</span>
+          <span>₹{tax.toFixed(2)}</span>
         </div>
         <div className="flex justify-between">
           <span>Shipping</span>
-          <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+          <span>{shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}</span>
         </div>
         
         <div className="border-t pt-2 mt-2">
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₹{total.toFixed(2)}</span>
           </div>
         </div>
       </div>

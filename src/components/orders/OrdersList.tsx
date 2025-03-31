@@ -54,7 +54,7 @@ const OrdersList: React.FC<OrdersListProps> = ({ orders }) => {
                 {format(new Date(order.createdAt), "MMMM d, yyyy")}
               </p>
               <p className="text-sm mt-2">
-                {order.items.length} {order.items.length === 1 ? "item" : "items"} - ${order.totalPrice.toFixed(2)}
+                {order.items.length} {order.items.length === 1 ? "item" : "items"} - ₹{order.totalPrice.toFixed(2)}
               </p>
             </div>
             <ChevronRight className="h-5 w-5 text-gray-400" />

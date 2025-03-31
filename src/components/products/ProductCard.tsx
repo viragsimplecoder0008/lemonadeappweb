@@ -43,7 +43,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <p className="mt-1 text-sm text-gray-500 line-clamp-2">{product.description}</p>
         </Link>
         <div className="mt-2">
-          <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
+          <span className="font-bold text-lg">₹{product.price.toFixed(2)}</span>
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
