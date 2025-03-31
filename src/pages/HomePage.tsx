@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -19,7 +18,7 @@ const HomePage: React.FC = () => {
           <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-lemonade-dark leading-tight">
-                Premium Lemonade <br />
+                Lemonade <br />
                 <span className="text-lemonade-yellow">For Every Taste</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-700 max-w-md">
