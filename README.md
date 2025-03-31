@@ -1,7 +1,6 @@
 # Welcome to lemonade!
 
-my website link: https://preview--lemonade-luxury-store.lovable.app/#
-
+my website link: https://lemonade-luxury-store.lovable.app
 
 
 
