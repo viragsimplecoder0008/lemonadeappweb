@@ -52,7 +52,7 @@ const CheckoutPage: React.FC = () => {
             <div className="mt-6 p-4 bg-gray-50 rounded-lg border text-sm">
               <p className="font-medium mb-2">Note:</p>
               <p className="text-gray-600">
-                Your credit card information is securely processed. We never store your full credit card details.
+                You'll pay with cash when your order is delivered. Have the exact amount ready to ensure a smooth delivery.
               </p>
             </div>
           </div>

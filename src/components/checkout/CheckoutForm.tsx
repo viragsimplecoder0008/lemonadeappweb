@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
@@ -21,10 +22,8 @@ const CheckoutForm: React.FC = () => {
     state: "",
     postalCode: "",
     country: "USA",
-    cardName: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: ""
+    phoneNumber: "",
+    deliveryNote: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,6 +76,18 @@ const CheckoutForm: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+              placeholder="Required for delivery coordination"
             />
           </div>
         </div>
@@ -139,57 +150,31 @@ const CheckoutForm: React.FC = () => {
               />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="deliveryNote">Delivery Instructions (Optional)</Label>
+            <Input
+              id="deliveryNote"
+              name="deliveryNote"
+              value={formData.deliveryNote}
+              onChange={handleChange}
+              placeholder="Additional instructions for delivery"
+            />
+          </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Payment Information</h3>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="cardName">Name on Card</Label>
-            <Input
-              id="cardName"
-              name="cardName"
-              value={formData.cardName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="cardNumber">Card Number</Label>
-            <Input
-              id="cardNumber"
-              name="cardNumber"
-              placeholder="1234 5678 9012 3456"
-              value={formData.cardNumber}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="expiryDate">Expiry Date</Label>
-              <Input
-                id="expiryDate"
-                name="expiryDate"
-                placeholder="MM/YY"
-                value={formData.expiryDate}
-                onChange={handleChange}
-                required
-              />
+        <h3 className="text-lg font-medium">Payment Method</h3>
+        <div className="bg-gray-50 p-4 rounded-md">
+          <RadioGroup defaultValue="cod" className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="cod" id="cod" checked />
+              <Label htmlFor="cod" className="font-medium">Cash on Delivery</Label>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="cvv">CVV</Label>
-              <Input
-                id="cvv"
-                name="cvv"
-                placeholder="123"
-                value={formData.cvv}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+          </RadioGroup>
+          <p className="text-sm text-gray-500 mt-2">
+            You will pay in cash when the order is delivered to your address.
+          </p>
         </div>
       </div>
 
@@ -204,7 +189,7 @@ const CheckoutForm: React.FC = () => {
             Processing...
           </>
         ) : (
-          "Complete Purchase"
+          "Complete Order"
         )}
       </Button>
     </form>
