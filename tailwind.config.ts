@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -24,6 +25,14 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				lemonade: {
+					yellow: '#F9D923',
+					green: '#36AE7C',
+					pink: '#EB5353',
+					blue: '#187498',
+					light: '#FFF8E1',
+					dark: '#2A2B2E'
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
