@@ -24,19 +24,26 @@ const AuthPage: React.FC = () => {
       }
 
       if (data.user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
+        try {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
 
-        if (profileError) {
+          if (profileError) {
+            toast.error('Error retrieving user profile');
+            return;
+          }
+
+          if (profileData) {
+            toast.success(`Welcome ${profileData.role === 'admin' ? 'Admin' : 'User'}!`);
+            navigate('/');
+          }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
           toast.error('Error retrieving user profile');
-          return;
         }
-
-        toast.success(`Welcome ${profileData.role === 'admin' ? 'Admin' : 'User'}!`);
-        navigate('/');
       }
     } catch (err) {
       toast.error('Login failed');
