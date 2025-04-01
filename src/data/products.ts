@@ -7,7 +7,7 @@ export const products: Product[] = [
     name: "Classic Lemonade",
     description: "Our original recipe with the perfect balance of sweet and tart flavors.",
     price: 3.99,
-    imageUrl: "/classic-lemonade.jpg",
+    imageUrl: "/lovable-uploads/728fd164-7561-40f4-bcb1-156caafb7496.png",
     category: "classic"
   },
   {

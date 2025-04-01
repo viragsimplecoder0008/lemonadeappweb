@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -41,9 +42,13 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             <div className="hidden md:flex items-center justify-center">
-              {/* Placeholder for hero image */}
-              <div className="w-full h-80 bg-lemonade-yellow/30 rounded-lg flex items-center justify-center">
-                <span className="text-xl font-semibold text-lemonade-dark">Lemonade Image</span>
+              {/* Replace placeholder with the real image */}
+              <div className="w-full h-80 rounded-lg flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/34afd845-7e6b-498a-bb33-2e14782750c6.png" 
+                  alt="Lemonade with yellow umbrella" 
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
