@@ -1,7 +1,9 @@
+
 import React from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, Menu } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Menu, LogOut, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sheet,
   SheetContent,
@@ -16,9 +18,36 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { useCart } from "@/context/CartContext";
+import { useState, useEffect } from 'react';
 
 const Navbar: React.FC = () => {
   const { totalItems } = useCart();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (data && data.role === 'admin') {
+          setIsAdmin(true);
+        }
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,6 +101,16 @@ const Navbar: React.FC = () => {
                   Track Order
                 </Link>
               </NavigationMenuItem>
+              {isAdmin && (
+                <NavigationMenuItem>
+                  <Link 
+                    to="/add-product" 
+                    className="font-medium hover:text-lemonade-yellow transition-colors flex items-center"
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Product
+                  </Link>
+                </NavigationMenuItem>
+              )}
             </NavigationMenuList>
           </NavigationMenu>
         </div>
@@ -85,6 +124,15 @@ const Navbar: React.FC = () => {
               </span>
             )}
           </Link>
+
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <LogOut className="h-6 w-6" />
+          </Button>
 
           {/* Mobile menu */}
           <Sheet>
@@ -101,21 +149,24 @@ const Navbar: React.FC = () => {
                 <Link to="/products" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   All Products
                 </Link>
-                <Link to="/products?category=classic" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Classic
-                </Link>
-                <Link to="/products?category=specialty" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Specialty
-                </Link>
-                <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Premium
-                </Link>
                 <Link to="/orders" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Track Order
                 </Link>
-                <Link to="/cart" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Cart ({totalItems})
-                </Link>
+                {isAdmin && (
+                  <Link 
+                    to="/add-product" 
+                    className="font-medium text-lg hover:text-lemonade-yellow transition-colors"
+                  >
+                    Add Product
+                  </Link>
+                )}
+                <Button 
+                  onClick={handleLogout} 
+                  variant="ghost" 
+                  className="justify-start text-lg font-medium hover:text-lemonade-yellow transition-colors"
+                >
+                  <LogOut className="mr-2 h-5 w-5" /> Logout
+                </Button>
               </nav>
             </SheetContent>
           </Sheet>
