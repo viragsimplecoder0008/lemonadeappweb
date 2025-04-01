@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu } from "lucide-react";
@@ -26,7 +25,6 @@ const Navbar: React.FC = () => {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
-          <span className="text-xl font-bold">Luxury</span>
         </Link>
 
         {/* Desktop Navigation */}
