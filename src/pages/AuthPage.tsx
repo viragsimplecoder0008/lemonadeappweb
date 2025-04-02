@@ -21,11 +21,11 @@ const AuthPage: React.FC = () => {
     setIsLoading(true);
     try {
       // Handle special case for admin
-      if (email === 'admin@lemonade.com' && password === 'admin') {
-        // Admin login
+      if (email === 'admin@lemonade.com' && password === 'admin123') {
+        // Admin login with hardcoded credentials
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
-          password
+          password: 'admin123' // Use the correct admin password
         });
 
         if (error) {
@@ -51,36 +51,8 @@ const AuthPage: React.FC = () => {
         return;
       }
 
-      if (data.user) {
-        try {
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.user.id)
-            .single();
-
-          if (profileError) {
-            console.error("Profile error:", profileError);
-            // Still allow login even if profile fetch fails
-            toast.success('Welcome!');
-            navigate('/');
-            return;
-          }
-
-          if (profileData) {
-            toast.success(`Welcome ${profileData.role === 'admin' ? 'Admin' : 'User'}!`);
-            navigate('/');
-          } else {
-            toast.success('Welcome!');
-            navigate('/');
-          }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-          // Still allow login even if profile fetch fails
-          toast.success('Welcome!');
-          navigate('/');
-        }
-      }
+      toast.success('Login successful!');
+      navigate('/');
     } catch (err) {
       console.error("Login error:", err);
       toast.error('Login failed');
@@ -92,6 +64,11 @@ const AuthPage: React.FC = () => {
   const handleSignUp = async () => {
     if (!email || !password) {
       toast.error('Please enter both email and password');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       return;
     }
 
@@ -109,12 +86,11 @@ const AuthPage: React.FC = () => {
       }
 
       toast.success('Sign up successful! Please check your email to verify.');
-      // Automatically sign in the user after signup
-      await handleSignIn();
+      // Don't automatically sign in after signup as it might fail due to DB issues
+      setIsLoading(false);
     } catch (err) {
       console.error("Signup error:", err);
       toast.error('Sign up failed. Please try again later.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -165,7 +141,7 @@ const AuthPage: React.FC = () => {
             </Button>
           </div>
           <div className="text-xs text-center text-gray-500 mt-4">
-            Admin login: admin@lemonade.com / admin
+            Admin login: admin@lemonade.com / admin123
           </div>
         </div>
       </div>

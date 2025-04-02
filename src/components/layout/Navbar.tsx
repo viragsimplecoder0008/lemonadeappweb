@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from 'react';
+import { toast } from "sonner";
 
 const Navbar: React.FC = () => {
   const { totalItems } = useCart();
@@ -30,13 +31,12 @@ const Navbar: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         try {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-
-          if (data && data.role === 'admin') {
+          // Use the built-in function to check admin status
+          const { data, error } = await supabase.rpc('is_admin', {
+            user_id: user.id
+          });
+          
+          if (data) {
             setIsAdmin(true);
           }
         } catch (error) {
@@ -49,8 +49,14 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/auth');
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      navigate('/auth');
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Error logging out");
+    }
   };
 
   return (
