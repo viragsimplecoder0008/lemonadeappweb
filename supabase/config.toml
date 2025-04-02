@@ -1,1 +1,5 @@
+
 project_id = "uuainsdbkdpunvqqlzfy"
+
+[functions.send-order-email]
+verify_jwt = false

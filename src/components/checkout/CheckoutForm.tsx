@@ -8,10 +8,11 @@ import { useCart } from "@/context/CartContext";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { supabase } from "@/integrations/supabase/client";
 
 const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
-  const { clearCart } = useCart();
+  const { cartItems, clearCart, getTotalPrice } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -31,17 +32,38 @@ const CheckoutForm: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call with a timeout
-    setTimeout(() => {
+    try {
+      // Generate order ID
       const orderId = `order-${Math.floor(Math.random() * 10000)}`;
+      
+      // Send email notification
+      const { error: emailError } = await supabase.functions.invoke('send-order-email', {
+        body: {
+          orderId,
+          items: cartItems,
+          totalPrice: getTotalPrice(),
+          customerInfo: {
+            fullName: formData.fullName,
+            email: formData.email,
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            postalCode: formData.postalCode
+          }
+        }
+      });
+
+      if (emailError) {
+        console.error("Error sending order email:", emailError);
+        // Continue with order processing even if email fails
+      }
       
       // In a real app, we would save the order to a database here
       clearCart();
-      setIsSubmitting(false);
       
       toast("Order placed successfully!", {
         description: "You will receive a confirmation email shortly."
@@ -49,7 +71,12 @@ const CheckoutForm: React.FC = () => {
       
       // Redirect to order success page
       navigate(`/order-success/${orderId}`);
-    }, 1500);
+    } catch (error) {
+      console.error("Error processing order:", error);
+      toast.error("There was a problem processing your order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
