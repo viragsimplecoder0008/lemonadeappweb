@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { CartItem, Product } from "../types";
 import { toast } from "@/components/ui/sonner";
@@ -11,6 +10,7 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
+  getTotalPrice: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -20,7 +20,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [totalItems, setTotalItems] = useState<number>(0);
   const [subtotal, setSubtotal] = useState<number>(0);
 
-  // Load cart from localStorage on initial render
   useEffect(() => {
     const savedCart = localStorage.getItem("lemonade-cart");
     if (savedCart) {
@@ -33,11 +32,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  // Update localStorage when cart changes
   useEffect(() => {
     localStorage.setItem("lemonade-cart", JSON.stringify(cartItems));
     
-    // Calculate totals
     const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
     setTotalItems(itemCount);
     
@@ -53,7 +50,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const existingItem = prevItems.find(item => item.product.id === product.id);
       
       if (existingItem) {
-        // Don't exceed 5 items
         if (existingItem.quantity >= 5) {
           toast("Maximum quantity reached", {
             description: "You can only add up to 5 of each product to your cart."
@@ -61,14 +57,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return prevItems;
         }
         
-        // Update quantity
         return prevItems.map(item => 
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        // Add new item
         toast("Item added to cart", {
           description: `${product.name} has been added to your cart.`
         });
@@ -112,6 +106,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     toast("Cart cleared");
   };
 
+  const getTotalPrice = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.product.price * item.quantity, 
+      0
+    );
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -121,7 +122,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateQuantity,
         clearCart,
         totalItems,
-        subtotal
+        subtotal,
+        getTotalPrice
       }}
     >
       {children}
