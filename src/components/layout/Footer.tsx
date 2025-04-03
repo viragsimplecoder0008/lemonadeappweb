@@ -1,6 +1,6 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
+import { Youtube } from "lucide-react";
 
 const Footer: React.FC = () => {
   return (
@@ -67,14 +67,14 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-md font-semibold mb-4">Connect With Us</h4>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-lemonade-yellow transition-colors">
-                Facebook
-              </a>
-              <a href="#" className="text-gray-300 hover:text-lemonade-yellow transition-colors">
-                Instagram
-              </a>
-              <a href="#" className="text-gray-300 hover:text-lemonade-yellow transition-colors">
-                Twitter
+              <a 
+                href="https://www.youtube.com/channel/UCX13lUjUN2Lz9ScObp2XHxg" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-gray-300 hover:text-lemonade-yellow transition-colors flex items-center"
+              >
+                <Youtube className="mr-2" />
+                YouTube
               </a>
             </div>
           </div>
