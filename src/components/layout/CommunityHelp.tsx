@@ -30,7 +30,7 @@ const CommunityHelp: React.FC = () => {
               Connect with other lemonade lovers and share your favorite recipes and experiences.
             </p>
             <Link 
-              to="#" 
+              to="/community" 
               className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
             >
               Join Now →
