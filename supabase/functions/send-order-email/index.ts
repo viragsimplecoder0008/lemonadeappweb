@@ -41,6 +41,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
+    console.log("Received order email request:", { orderId, totalPrice });
 
     // Generate the items HTML
     const itemsHtml = items.map(item => `
@@ -52,7 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
     `).join('');
 
     const emailResponse = await resend.emails.send({
-      from: "Lemonade Luxury <orders@lemonadeluxury.com>",
+      from: "Lemonade Luxury <onboarding@resend.dev>",
       to: ["lemonaderich.82@gmail.com"],
       subject: `New Order #${orderId}`,
       html: `
@@ -106,6 +107,8 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `,
     });
+
+    console.log("Email sent successfully:", emailResponse);
 
     return new Response(JSON.stringify(emailResponse), {
       status: 200,

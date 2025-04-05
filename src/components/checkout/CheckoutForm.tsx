@@ -41,7 +41,7 @@ const CheckoutForm: React.FC = () => {
       const orderId = `order-${Math.floor(Math.random() * 10000)}`;
       
       // Send email notification
-      const { error: emailError } = await supabase.functions.invoke('send-order-email', {
+      const { data, error: emailError } = await supabase.functions.invoke('send-order-email', {
         body: {
           orderId,
           items: cartItems,
@@ -61,13 +61,17 @@ const CheckoutForm: React.FC = () => {
 
       if (emailError) {
         console.error("Error sending order email:", emailError);
-        // Continue with order processing even if email fails
+        toast.error("Failed to send order confirmation. Please try again.");
+        setIsSubmitting(false);
+        return;
       }
+      
+      console.log("Email function response:", data);
       
       // In a real app, we would save the order to a database here
       clearCart();
       
-      toast("Order placed successfully!", {
+      toast.success("Order placed successfully!", {
         description: "You will receive a confirmation email shortly."
       });
       
@@ -76,7 +80,6 @@ const CheckoutForm: React.FC = () => {
     } catch (error) {
       console.error("Error processing order:", error);
       toast.error("There was a problem processing your order. Please try again.");
-    } finally {
       setIsSubmitting(false);
     }
   };
