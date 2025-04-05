@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
-  const { cartItems, clearCart, getTotalPrice } = useCart(); // Ensure getTotalPrice is destructured
+  const { cartItems, clearCart, getTotalPrice } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -44,14 +45,16 @@ const CheckoutForm: React.FC = () => {
         body: {
           orderId,
           items: cartItems,
-          totalPrice: getTotalPrice(), // Use the method from CartContext
+          totalPrice: getTotalPrice(),
           customerInfo: {
             fullName: formData.fullName,
             email: formData.email,
             address: formData.address,
             city: formData.city,
             state: formData.state,
-            postalCode: formData.postalCode
+            postalCode: formData.postalCode,
+            phoneNumber: formData.phoneNumber,
+            deliveryNote: formData.deliveryNote
           }
         }
       });

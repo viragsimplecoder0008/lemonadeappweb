@@ -28,6 +28,8 @@ interface OrderEmailRequest {
     city: string;
     state: string;
     postalCode: string;
+    phoneNumber: string;
+    deliveryNote?: string;
   };
 }
 
@@ -66,7 +68,9 @@ const handler = async (req: Request): Promise<Response> => {
               <h3>Customer Information</h3>
               <p><strong>Name:</strong> ${customerInfo.fullName}</p>
               <p><strong>Email:</strong> ${customerInfo.email}</p>
+              <p><strong>Phone:</strong> ${customerInfo.phoneNumber || 'Not provided'}</p>
               <p><strong>Shipping Address:</strong> ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.state} ${customerInfo.postalCode}</p>
+              ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${customerInfo.deliveryNote}</p>` : ''}
             </div>
             
             <div style="margin-bottom: 20px;">
