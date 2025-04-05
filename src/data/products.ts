@@ -1,7 +1,8 @@
 
 import { Product } from "../types";
 
-export const products: Product[] = [
+// Initial product data
+const initialProducts: Product[] = [
   {
     id: "lemonade-classic",
     name: "Classic Lemonade",
@@ -75,6 +76,24 @@ export const products: Product[] = [
     category: "premium"
   }
 ];
+
+// Try to load products from localStorage or use initial data
+let loadedProducts: Product[];
+try {
+  const storedProducts = localStorage.getItem("products");
+  if (storedProducts) {
+    loadedProducts = JSON.parse(storedProducts);
+  } else {
+    loadedProducts = initialProducts;
+    // Initialize localStorage with default products
+    localStorage.setItem("products", JSON.stringify(initialProducts));
+  }
+} catch (error) {
+  console.error("Error loading products from localStorage:", error);
+  loadedProducts = initialProducts;
+}
+
+export const products: Product[] = loadedProducts;
 
 export const getProductById = (id: string): Product | undefined => {
   return products.find(product => product.id === id);
