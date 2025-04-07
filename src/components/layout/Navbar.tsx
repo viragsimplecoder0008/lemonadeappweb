@@ -1,7 +1,6 @@
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, MoreVertical } from "lucide-react";
+import { ShoppingCart, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -16,41 +15,16 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/CartContext";
 
 const Navbar: React.FC = () => {
   const { totalItems } = useCart();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  // Load admin status from localStorage on component mount
-  useEffect(() => {
-    const adminStatus = localStorage.getItem("adminMode") === "true";
-    setIsAdmin(adminStatus);
-  }, []);
-
-  const toggleAdminMode = () => {
-    const newAdminStatus = !isAdmin;
-    setIsAdmin(newAdminStatus);
-    localStorage.setItem("adminMode", newAdminStatus.toString());
-  };
 
   return (
-    <header className={`sticky top-0 z-40 w-full border-b ${isAdmin ? 'bg-amber-50/95' : 'bg-background/95'} backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
-          {isAdmin && (
-            <Badge variant="outline" className="ml-2 bg-amber-200 text-amber-800 border-amber-300">
-              Admin Mode
-            </Badge>
-          )}
         </Link>
 
         {/* Desktop Navigation */}
@@ -112,20 +86,6 @@ const Navbar: React.FC = () => {
             )}
           </Link>
 
-          {/* Admin Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className={isAdmin ? "text-amber-700" : ""}>
-                <MoreVertical className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={toggleAdminMode}>
-                {isAdmin ? "Exit Admin Mode" : "Admin Mode"}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* Mobile menu */}
           <Sheet>
             <SheetTrigger asChild className="md:hidden">
@@ -156,13 +116,6 @@ const Navbar: React.FC = () => {
                 <Link to="/cart" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Cart ({totalItems})
                 </Link>
-                <Button 
-                  variant={isAdmin ? "outline" : "ghost"}
-                  className={`mt-4 justify-start ${isAdmin ? "bg-amber-100 text-amber-800 border-amber-300" : ""}`}
-                  onClick={toggleAdminMode}
-                >
-                  {isAdmin ? "Exit Admin Mode" : "Admin Mode"}
-                </Button>
               </nav>
             </SheetContent>
           </Sheet>
