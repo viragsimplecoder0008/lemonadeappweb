@@ -14,7 +14,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) => {
   return (
     <div 
-      className="flex flex-col min-h-screen"
+      className="flex flex-col min-h-screen bg-repeat"
       style={{
         backgroundImage: "url('/lovable-uploads/e90c5a89-271b-4ebb-82f2-12bbc2e388fa.png')",
         backgroundRepeat: "repeat",

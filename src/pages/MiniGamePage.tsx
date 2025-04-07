@@ -250,18 +250,10 @@ const MiniGamePage: React.FC = () => {
       ctx.fillStyle = "black";
       ctx.fillText(`Score: ${score}`, 10, 30);
       
-      // Check game over condition (too many missed lemons)
-      if (score >= 20) {
-        setGameOver(true);
-        if (score > highScore) {
-          setHighScore(score);
-          localStorage.setItem("lemonCatcherHighScore", score.toString());
-          toast({
-            title: "New High Score!",
-            description: `You've set a new high score of ${score}!`
-          });
-        }
-        return;
+      // Update high score if the current score is higher
+      if (score > highScore) {
+        setHighScore(score);
+        localStorage.setItem("lemonCatcherHighScore", score.toString());
       }
       
       animationRef.current = requestAnimationFrame(gameLoop);
