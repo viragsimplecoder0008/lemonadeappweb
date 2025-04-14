@@ -52,9 +52,9 @@ const handler = async (req: Request): Promise<Response> => {
       </tr>
     `).join('');
 
-    // Send notification to store owner
+    // Send notification to store owner (IMPORTANT: update with your verified email)
     const ownerEmailResponse = await resend.emails.send({
-      from: "Lemonade Luxury <onboarding@resend.dev>",
+      from: "Lemonade Luxury Orders <orders@yourdomain.com>", // Replace with your verified email
       to: ["lemonaderich.82@gmail.com"],
       subject: `New Order #${orderId}`,
       html: `
