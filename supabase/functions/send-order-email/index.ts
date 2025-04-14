@@ -41,7 +41,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
-    console.log("Received order email request:", { orderId, totalPrice });
+    console.log("Received order email request:", { orderId, totalPrice, customerEmail: customerInfo.email });
 
     // Generate the items HTML
     const itemsHtml = items.map(item => `
@@ -52,7 +52,8 @@ const handler = async (req: Request): Promise<Response> => {
       </tr>
     `).join('');
 
-    const emailResponse = await resend.emails.send({
+    // Send notification to store owner
+    const ownerEmailResponse = await resend.emails.send({
       from: "Lemonade Luxury <onboarding@resend.dev>",
       to: ["lemonaderich.82@gmail.com"],
       subject: `New Order #${orderId}`,
@@ -108,9 +109,77 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Owner email sent successfully:", ownerEmailResponse);
 
-    return new Response(JSON.stringify(emailResponse), {
+    // Send confirmation to customer
+    let customerEmailResponse = null;
+    if (customerInfo.email) {
+      try {
+        customerEmailResponse = await resend.emails.send({
+          from: "Lemonade Luxury <onboarding@resend.dev>",
+          to: [customerInfo.email],
+          subject: `Your Order #${orderId} Confirmation`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h1 style="background-color: #F9D923; color: #2A2B2E; padding: 20px; text-align: center;">
+                Thank You for Your Order!
+              </h1>
+              
+              <div style="padding: 20px;">
+                <h2>Order #${orderId}</h2>
+                <p>Dear ${customerInfo.fullName},</p>
+                <p>Thank you for shopping with Lemonade Luxury! We're preparing your order right away.</p>
+                
+                <div style="margin-bottom: 20px;">
+                  <h3>Order Summary</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                      <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Product</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Quantity</th>
+                        <th style="padding: 8px; text-align: left; border-bottom: 1px solid #ddd;">Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${itemsHtml}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold;">Total:</td>
+                        <td style="padding: 8px; font-weight: bold;">$${totalPrice.toFixed(2)}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                  <h3>Shipping Information</h3>
+                  <p><strong>Address:</strong> ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.state} ${customerInfo.postalCode}</p>
+                  ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${customerInfo.deliveryNote}</p>` : ''}
+                </div>
+                
+                <div style="background-color: #f7f7f7; padding: 15px; border-radius: 5px;">
+                  <p style="margin: 0;">If you have any questions about your order, please contact our customer service team.</p>
+                </div>
+              </div>
+              
+              <div style="background-color: #2A2B2E; color: white; padding: 15px; text-align: center;">
+                <p>&copy; ${new Date().getFullYear()} Lemonade Luxury. All rights reserved.</p>
+              </div>
+            </div>
+          `,
+        });
+        console.log("Customer email sent successfully:", customerEmailResponse);
+      } catch (emailError) {
+        console.error("Error sending customer email:", emailError);
+        // Continue with the process even if customer email fails
+      }
+    }
+
+    return new Response(JSON.stringify({ 
+      ownerEmail: ownerEmailResponse,
+      customerEmail: customerEmailResponse
+    }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
