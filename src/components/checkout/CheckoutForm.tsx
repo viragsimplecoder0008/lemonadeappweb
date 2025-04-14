@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
@@ -61,19 +60,16 @@ const CheckoutForm: React.FC = () => {
 
       if (emailError) {
         console.error("Error sending order email:", emailError);
-        toast.error("Failed to send order confirmation. Please try again.");
-        setIsSubmitting(false);
-        return;
+        toast.error("Order placed, but confirmation email couldn't be sent.");
+      } else {
+        console.log("Email function response:", data);
+        toast.success("Order placed successfully!", {
+          description: "Order details have been sent to the shop owner."
+        });
       }
-      
-      console.log("Email function response:", data);
       
       // In a real app, we would save the order to a database here
       clearCart();
-      
-      toast.success("Order placed successfully!", {
-        description: "You will receive a confirmation email shortly."
-      });
       
       // Redirect to order success page
       navigate(`/order-success/${orderId}`);

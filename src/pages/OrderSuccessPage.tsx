@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ShoppingBag, Truck } from "lucide-react";
+import { AlertCircle, CheckCircle, ShoppingBag, Truck } from "lucide-react";
 
 const OrderSuccessPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -23,6 +23,13 @@ const OrderSuccessPage: React.FC = () => {
           <p className="text-lg text-gray-600 mb-8">
             Your order #{orderId} has been placed and is being processed.
           </p>
+          
+          <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-md flex items-start mb-8">
+            <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5 mr-3 flex-shrink-0" />
+            <p className="text-left text-yellow-700">
+              Please note: This is a demonstration store. No real order has been placed and no payment has been processed.
+            </p>
+          </div>
           
           <div className="bg-white p-8 border rounded-lg mb-8 text-left">
             <h2 className="text-xl font-semibold mb-4">What happens next?</h2>
