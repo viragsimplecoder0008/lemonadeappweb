@@ -212,7 +212,9 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
                      
         if (inGlassX && inGlassY) {
           // Caught a lemon!
-          setScore(prevScore => prevScore + 1);
+          // This is the part that's causing the error. 
+          // We need to update the score directly, not with a callback function
+          setScore(score + 1);
           return false;
         }
         
