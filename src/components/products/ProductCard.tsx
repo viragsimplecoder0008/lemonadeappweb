@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { ShoppingCart, Edit, Trash2, Plus } from "lucide-react";
+import { ShoppingCart, Edit, Trash2, Plus, CheckCircle2, XCircle } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
@@ -35,7 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [password, setPassword] = useState("");
-  const [action, setAction] = useState<"edit" | "delete" | "add">("edit");
+  const [action, setAction] = useState<"edit" | "delete" | "add" | "stock">("edit");
   const [editProduct, setEditProduct] = useState<Product>({ ...product });
   const [newProduct, setNewProduct] = useState<Partial<Product>>({
     id: "",
@@ -43,10 +42,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     description: "",
     price: 0,
     imageUrl: "",
-    category: "classic"
+    category: "classic",
+    inStock: true
   });
 
-  // Fallback image function with a more attractive placeholder
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = `https://source.unsplash.com/300x300/?lemonade,${product.name.toLowerCase()}`;
   };
@@ -56,7 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     toast.success(`Added ${product.name} to your cart`);
   };
 
-  const handleAdminAction = (actionType: "edit" | "delete" | "add") => {
+  const handleAdminAction = (actionType: "edit" | "delete" | "add" | "stock") => {
     setAction(actionType);
     setIsPasswordDialogOpen(true);
     if (actionType === "edit") {
@@ -68,7 +67,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         description: "",
         price: 0,
         imageUrl: "",
-        category: "classic"
+        category: "classic",
+        inStock: true
       });
     }
   };
@@ -87,36 +87,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     let updatedProducts = [...allProducts];
     
     if (action === "edit") {
-      // Replace the product in the array with the edited one
       const index = updatedProducts.findIndex(p => p.id === product.id);
       if (index !== -1) {
         updatedProducts[index] = editProduct;
-        // Save to localStorage
         localStorage.setItem("products", JSON.stringify(updatedProducts));
         toast.success(`${editProduct.name} has been updated`);
       }
     } else if (action === "delete") {
-      // Filter out the product to delete
       updatedProducts = updatedProducts.filter(p => p.id !== product.id);
-      // Save to localStorage
       localStorage.setItem("products", JSON.stringify(updatedProducts));
       toast.success(`${product.name} has been deleted`);
     } else if (action === "add") {
-      // Generate an ID if not provided
       if (!newProduct.id) {
         newProduct.id = `lemonade-${new Date().getTime()}`;
       }
-      // Add the new product to the array
       updatedProducts.push(newProduct as Product);
-      // Save to localStorage
       localStorage.setItem("products", JSON.stringify(updatedProducts));
       toast.success(`${newProduct.name} has been added`);
+    } else if (action === "stock") {
+      const index = updatedProducts.findIndex(p => p.id === product.id);
+      if (index !== -1) {
+        updatedProducts[index] = {
+          ...updatedProducts[index],
+          inStock: !updatedProducts[index].inStock
+        };
+        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        toast.success(`${product.name} is now ${updatedProducts[index].inStock ? 'in stock' : 'out of stock'}`);
+      }
     }
     
     setIsProductDialogOpen(false);
     
-    // Force a reload to see the changes
-    // Note: In a real app, you'd use state management instead
     setTimeout(() => {
       window.location.reload();
     }, 1000);
@@ -127,7 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <ContextMenu>
         <ContextMenuTrigger>
           <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
-            <Link to={`/products/${product.id}`} className="block overflow-hidden">
+            <Link to={`/products/${product.id}`} className="block overflow-hidden relative">
               <div className="aspect-square overflow-hidden bg-gray-100">
                 <img
                   src={product.imageUrl || `https://source.unsplash.com/300x300/?lemonade,${product.name.toLowerCase()}`}
@@ -136,6 +137,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   onError={handleImageError}
                 />
               </div>
+              {product.inStock === false && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">Out of Stock</span>
+                </div>
+              )}
             </Link>
             <CardContent className="p-4">
               <Link to={`/products/${product.id}`} className="block">
@@ -150,9 +156,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               <Button 
                 className="w-full bg-lemonade-yellow hover:bg-lemonade-green text-black"
                 onClick={handleAddToCart}
+                disabled={product.inStock === false}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                Add to Cart
+                {product.inStock === false ? 'Out of Stock' : 'Add to Cart'}
               </Button>
             </CardFooter>
           </Card>
@@ -164,6 +171,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           >
             <Edit className="h-4 w-4 mr-2" />
             Edit Product
+          </ContextMenuItem>
+          <ContextMenuItem 
+            onClick={() => handleAdminAction("stock")}
+            className="flex items-center cursor-pointer"
+          >
+            {product.inStock ? (
+              <XCircle className="h-4 w-4 mr-2 text-red-600" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
+            )}
+            Mark as {product.inStock ? 'Out of Stock' : 'In Stock'}
           </ContextMenuItem>
           <ContextMenuItem 
             onClick={() => handleAdminAction("delete")}
@@ -182,7 +200,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </ContextMenuContent>
       </ContextMenu>
 
-      {/* Password Dialog */}
       <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -220,7 +237,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </DialogContent>
       </Dialog>
 
-      {/* Product Edit/Delete/Add Dialog */}
       <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

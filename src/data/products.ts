@@ -1,4 +1,3 @@
-
 import { Product } from "../types";
 
 // Initial product data
@@ -9,7 +8,8 @@ const initialProducts: Product[] = [
     description: "Our original recipe with the perfect balance of sweet and tart flavors.",
     price: 3.99,
     imageUrl: "/lovable-uploads/728fd164-7561-40f4-bcb1-156caafb7496.png",
-    category: "classic"
+    category: "classic",
+    inStock: true
   },
   {
     id: "lemonade-mint",
@@ -17,7 +17,8 @@ const initialProducts: Product[] = [
     description: "A refreshing twist on our classic lemonade with fresh mint leaves.",
     price: 4.49,
     imageUrl: "/mint-lemonade.jpg",
-    category: "specialty"
+    category: "specialty",
+    inStock: true
   },
   {
     id: "lemonade-strawberry",
@@ -25,7 +26,8 @@ const initialProducts: Product[] = [
     description: "Sweet strawberries blended with our classic lemonade for a fruity treat.",
     price: 4.99,
     imageUrl: "/strawberry-lemonade.jpg",
-    category: "specialty"
+    category: "specialty",
+    inStock: true
   },
   {
     id: "lemonade-blueberry",
@@ -33,7 +35,8 @@ const initialProducts: Product[] = [
     description: "Tangy blueberries add a vibrant twist to our refreshing lemonade.",
     price: 4.99,
     imageUrl: "/blueberry-lemonade.jpg",
-    category: "specialty"
+    category: "specialty",
+    inStock: true
   },
   {
     id: "lemonade-lavender",
@@ -41,7 +44,8 @@ const initialProducts: Product[] = [
     description: "A floral and delicate blend of lavender essence and our classic lemonade.",
     price: 5.49,
     imageUrl: "/lavender-lemonade.jpg",
-    category: "premium"
+    category: "premium",
+    inStock: true
   },
   {
     id: "lemonade-ginger",
@@ -49,7 +53,8 @@ const initialProducts: Product[] = [
     description: "A spicy kick of ginger combined with our tangy lemonade for a warming sensation.",
     price: 4.79,
     imageUrl: "/ginger-lemonade.jpg",
-    category: "specialty"
+    category: "specialty",
+    inStock: true
   },
   {
     id: "lemonade-jaljeera",
@@ -57,7 +62,8 @@ const initialProducts: Product[] = [
     description: "Indian-inspired with cumin, mint, and a blend of spices for a unique taste experience.",
     price: 5.29,
     imageUrl: "/jaljeera-lemonade.jpg",
-    category: "premium"
+    category: "premium",
+    inStock: true
   },
   {
     id: "lemonade-cola",
@@ -65,7 +71,8 @@ const initialProducts: Product[] = [
     description: "The perfect fusion of cola flavors with our classic lemonade for a refreshing twist.",
     price: 4.79,
     imageUrl: "/cola-lemonade.jpg",
-    category: "specialty"
+    category: "specialty",
+    inStock: true
   },
   {
     id: "lemonade-rose",
@@ -73,7 +80,8 @@ const initialProducts: Product[] = [
     description: "Delicately perfumed with rose water for a fragrant and exotic lemonade experience.",
     price: 5.49,
     imageUrl: "/rose-lemonade.jpg",
-    category: "premium"
+    category: "premium",
+    inStock: true
   }
 ];
 
