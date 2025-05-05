@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Youtube } from "lucide-react";
@@ -78,9 +79,6 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-        </div>
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Lemonade Luxury. All rights reserved.</p>
         </div>
       </div>
     </footer>

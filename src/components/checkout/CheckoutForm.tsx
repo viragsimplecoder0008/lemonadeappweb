@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
@@ -26,7 +27,7 @@ const CheckoutForm: React.FC = () => {
     deliveryNote: ""
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -39,27 +40,32 @@ const CheckoutForm: React.FC = () => {
       // Generate order ID
       const orderId = `order-${Math.floor(Math.random() * 10000)}`;
       
-      // Send email notification
-      const { data, error: emailError } = await supabase.functions.invoke('send-order-email', {
-        body: {
-          orderId,
-          items: cartItems,
-          totalPrice: getTotalPrice(),
-          customerInfo: {
-            fullName: formData.fullName,
-            email: formData.email,
-            address: formData.address,
-            city: formData.city,
-            state: formData.state,
-            postalCode: formData.postalCode,
-            phoneNumber: formData.phoneNumber,
-            deliveryNote: formData.deliveryNote
-          }
+      // Prepare the data to be sent
+      const orderData = {
+        orderId,
+        items: cartItems,
+        totalPrice: getTotalPrice(),
+        customerInfo: {
+          fullName: formData.fullName,
+          email: formData.email,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          phoneNumber: formData.phoneNumber,
+          deliveryNote: formData.deliveryNote
         }
+      };
+      
+      console.log("Sending order data:", orderData);
+      
+      // Send email notification using the edge function
+      const { data, error } = await supabase.functions.invoke('send-order-email', {
+        body: orderData
       });
 
-      if (emailError) {
-        console.error("Error sending order email:", emailError);
+      if (error) {
+        console.error("Error sending order email:", error);
         toast.error("Order placed, but confirmation email couldn't be sent.");
       } else {
         console.log("Email function response:", data);
@@ -68,10 +74,8 @@ const CheckoutForm: React.FC = () => {
         });
       }
       
-      // In a real app, we would save the order to a database here
+      // Clear the cart and redirect to success page
       clearCart();
-      
-      // Redirect to order success page
       navigate(`/order-success/${orderId}`);
     } catch (error) {
       console.error("Error processing order:", error);
