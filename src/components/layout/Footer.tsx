@@ -38,6 +38,11 @@ const Footer: React.FC = () => {
                   Order Tracking
                 </Link>
               </li>
+              <li>
+                <Link to="/docs" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
+                  Docs
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

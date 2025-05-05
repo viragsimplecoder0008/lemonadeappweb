@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -76,11 +76,19 @@ const Navbar: React.FC = () => {
                     Track Order
                   </Link>
                 </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/docs" className="font-medium hover:text-lemonade-yellow transition-colors">
+                    Docs
+                  </Link>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>
 
           <div className="flex items-center gap-4">
+            <Link to="/search" className="relative" aria-label="Search">
+              <Search className="h-6 w-6" />
+            </Link>
             <Link to="/cart" className="relative">
               <ShoppingCart className="h-6 w-6" />
               {totalItems > 0 && (
@@ -120,6 +128,12 @@ const Navbar: React.FC = () => {
                   <Link to="/cart" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Cart ({totalItems})
                   </Link>
+                  <Link to="/docs" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                    Docs
+                  </Link>
+                  <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                    Search
+                  </Link>
                 </nav>
               </SheetContent>
             </Sheet>
@@ -137,6 +151,10 @@ const Navbar: React.FC = () => {
           <Link to="/products" className="flex flex-col items-center p-2">
             <Package className="h-5 w-5" />
             <span className="text-xs mt-1">Products</span>
+          </Link>
+          <Link to="/search" className="flex flex-col items-center p-2">
+            <Search className="h-5 w-5" />
+            <span className="text-xs mt-1">Search</span>
           </Link>
           <Link to="/orders" className="flex flex-col items-center p-2">
             <Truck className="h-5 w-5" />
@@ -180,6 +198,12 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link to="/cart" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Cart ({totalItems})
+                </Link>
+                <Link to="/docs" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Docs
+                </Link>
+                <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Search
                 </Link>
               </nav>
             </SheetContent>

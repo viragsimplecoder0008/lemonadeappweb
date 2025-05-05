@@ -17,6 +17,8 @@ import OrdersPage from "./pages/OrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import ChatPage from "./pages/ChatPage";
 import MiniGamePage from "./pages/MiniGamePage";
+import DocsPage from "./pages/DocsPage";
+import SearchPage from "./pages/SearchPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/orders/:orderId" element={<OrderDetailPage />} />
             <Route path="/community" element={<ChatPage />} />
             <Route path="/mini-game" element={<MiniGamePage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/search" element={<SearchPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
