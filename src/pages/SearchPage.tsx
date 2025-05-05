@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { products } from "@/data/products";
 import ProductCard from "@/components/products/ProductCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SearchPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState(products);
+  const isMobile = useIsMobile();
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,11 +54,33 @@ const SearchPage: React.FC = () => {
         </form>
         
         {searchResults.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {searchResults.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          isMobile ? (
+            <div className="space-y-4">
+              {searchResults.map(product => (
+                <div key={product.id} className="border rounded-lg p-4">
+                  <div className="flex flex-col">
+                    <h3 className="text-lg font-semibold">{product.name}</h3>
+                    <p className="text-gray-500 text-sm mb-2">{product.category}</p>
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="font-bold">${product.price.toFixed(2)}</span>
+                      <Button 
+                        variant="outline"
+                        onClick={() => window.location.href = `/products/${product.id}`}
+                      >
+                        View Details
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {searchResults.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )
         ) : (
           <div className="text-center py-16">
             <h2 className="text-xl font-medium mb-2">No products found</h2>

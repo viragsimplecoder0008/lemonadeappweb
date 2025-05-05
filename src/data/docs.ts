@@ -93,3 +93,10 @@ export const updateDoc = (id: string, updates: Partial<Doc>): void => {
     console.log("Document updated:", docs[docIndex]);
   }
 };
+
+// Create a new doc
+export const createDoc = (doc: Doc): void => {
+  docs.push(doc);
+  // In a real app, this would save to a database
+  console.log("Document created:", doc);
+};

@@ -3,21 +3,31 @@ import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Edit, Save } from "lucide-react";
+import { FileText, Edit, Save, Plus } from "lucide-react";
 import DocContent from "@/components/docs/DocContent";
 import DocEditor from "@/components/docs/DocEditor";
 import { getAllDocs } from "@/data/docs";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const DocsPage: React.FC = () => {
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [newDocId, setNewDocId] = useState("");
+  const [newDocTitle, setNewDocTitle] = useState("");
+  const [showAddDocDialog, setShowAddDocDialog] = useState(false);
   
   const docs = getAllDocs();
+  const isMobile = useIsMobile();
+
+  const CORRECT_PASSWORD = "admin123";
   
   const handleEditClick = () => {
-    if (adminPassword === "admin") {
+    if (adminPassword === CORRECT_PASSWORD) {
       setIsEditing(true);
       setShowPasswordInput(false);
     } else {
@@ -27,17 +37,35 @@ const DocsPage: React.FC = () => {
   
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminPassword === "admin") {
+    if (adminPassword === CORRECT_PASSWORD) {
       setIsEditing(true);
       setShowPasswordInput(false);
     } else {
-      alert("Incorrect password");
+      toast.error("Incorrect password");
     }
   };
   
   const handleSaveClick = () => {
     setIsEditing(false);
-    // In a real app, this would save the doc content to a database
+  };
+
+  const handleAddDoc = () => {
+    if (newDocId.trim() && newDocTitle.trim()) {
+      import("@/data/docs").then(({ createDoc }) => {
+        createDoc({
+          id: newDocId.trim().toLowerCase().replace(/\s+/g, '-'),
+          title: newDocTitle,
+          content: `<p>New document content</p>`,
+          updatedAt: new Date().toISOString()
+        });
+        toast.success("New document created!");
+        setNewDocId("");
+        setNewDocTitle("");
+        setShowAddDocDialog(false);
+      });
+    } else {
+      toast.error("ID and title are required!");
+    }
   };
   
   return (
@@ -75,19 +103,58 @@ const DocsPage: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1 space-y-2">
-            <h2 className="text-lg font-semibold mb-4">Topics</h2>
-            {docs.map(doc => (
-              <Button 
-                key={doc.id}
-                variant={activeDocId === doc.id ? "default" : "ghost"}
-                className="w-full justify-start"
-                onClick={() => setActiveDocId(doc.id)}
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                {doc.title}
-              </Button>
-            ))}
+          <div className="lg:col-span-1">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">Topics</h2>
+              <Dialog open={showAddDocDialog} onOpenChange={setShowAddDocDialog}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-full w-8 h-8 p-0">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create New Document</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label htmlFor="docId" className="text-sm font-medium">Document ID</label>
+                      <Input 
+                        id="docId" 
+                        value={newDocId}
+                        onChange={(e) => setNewDocId(e.target.value)}
+                        placeholder="my-new-document"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="docTitle" className="text-sm font-medium">Document Title</label>
+                      <Input 
+                        id="docTitle" 
+                        value={newDocTitle}
+                        onChange={(e) => setNewDocTitle(e.target.value)}
+                        placeholder="My New Document"
+                      />
+                    </div>
+                    <Button onClick={handleAddDoc} className="w-full mt-2">
+                      Create Document
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div className="space-y-2">
+              {docs.map(doc => (
+                <Button 
+                  key={doc.id}
+                  variant={activeDocId === doc.id ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => setActiveDocId(doc.id)}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  {doc.title}
+                </Button>
+              ))}
+            </div>
           </div>
           
           <div className="lg:col-span-3">
