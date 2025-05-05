@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,9 +78,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (password === "admin123") {
       setIsPasswordDialogOpen(false);
       setPassword("");
-      setIsProductDialogOpen(true);
+      
+      // For stock toggle, handle it immediately without showing product dialog
+      if (action === "stock") {
+        handleStockToggle();
+      } else {
+        // For other actions, show the product dialog
+        setIsProductDialogOpen(true);
+      }
     } else {
       toast.error("Incorrect password");
+    }
+  };
+
+  const handleStockToggle = () => {
+    let updatedProducts = [...allProducts];
+    const index = updatedProducts.findIndex(p => p.id === product.id);
+    
+    if (index !== -1) {
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        inStock: !updatedProducts[index].inStock
+      };
+      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      toast.success(`${product.name} is now ${updatedProducts[index].inStock ? 'in stock' : 'out of stock'}`);
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
@@ -104,16 +130,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       updatedProducts.push(newProduct as Product);
       localStorage.setItem("products", JSON.stringify(updatedProducts));
       toast.success(`${newProduct.name} has been added`);
-    } else if (action === "stock") {
-      const index = updatedProducts.findIndex(p => p.id === product.id);
-      if (index !== -1) {
-        updatedProducts[index] = {
-          ...updatedProducts[index],
-          inStock: !updatedProducts[index].inStock
-        };
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
-        toast.success(`${product.name} is now ${updatedProducts[index].inStock ? 'in stock' : 'out of stock'}`);
-      }
     }
     
     setIsProductDialogOpen(false);
@@ -205,7 +221,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <DialogHeader>
             <DialogTitle>Admin Authentication</DialogTitle>
             <DialogDescription>
-              Please enter the admin password to {action} this product.
+              Please enter the admin password to {action === "stock" 
+                ? `mark this product as ${product.inStock ? "out of stock" : "in stock"}` 
+                : action} this product.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
