@@ -49,7 +49,7 @@ const CheckoutForm: React.FC = () => {
           quantity: item.quantity
         })),
         totalPrice: getTotalPrice(),
-        status: "pending",
+        status: "pending" as "pending" | "processing" | "shipped" | "delivered",
         createdAt: new Date().toISOString(),
         shippingAddress: {
           fullName: formData.fullName,
