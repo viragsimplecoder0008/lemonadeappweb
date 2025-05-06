@@ -2,25 +2,42 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { FileText, Edit, Save, Plus } from "lucide-react";
+import { FileText, Edit, Save, Plus, Trash } from "lucide-react";
 import DocContent from "@/components/docs/DocContent";
 import DocEditor from "@/components/docs/DocEditor";
-import { getAllDocs } from "@/data/docs";
+import { getAllDocs, getDocById, updateDoc, deleteDoc } from "@/data/docs";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const DocsPage: React.FC = () => {
   const [activeDocId, setActiveDocId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [newDocId, setNewDocId] = useState("");
   const [newDocTitle, setNewDocTitle] = useState("");
   const [showAddDocDialog, setShowAddDocDialog] = useState(false);
   const [showAdminLoginDialog, setShowAdminLoginDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [docToDelete, setDocToDelete] = useState<string | null>(null);
   
   const docs = getAllDocs();
   const isMobile = useIsMobile();
@@ -31,7 +48,7 @@ const DocsPage: React.FC = () => {
     if (isAdmin) {
       setIsEditing(true);
     } else {
-      setShowPasswordInput(true);
+      setShowAdminLoginDialog(true);
     }
   };
   
@@ -40,11 +57,11 @@ const DocsPage: React.FC = () => {
     if (adminPassword === CORRECT_PASSWORD) {
       setIsAdmin(true);
       setIsEditing(true);
-      setShowPasswordInput(false);
       setShowAdminLoginDialog(false);
       toast.success("Admin login successful");
     } else {
       toast.error("Incorrect password");
+      setAdminPassword("");
     }
   };
   
@@ -83,6 +100,23 @@ const DocsPage: React.FC = () => {
       setShowAdminLoginDialog(true);
     }
   };
+
+  const handleDeleteDoc = () => {
+    if (docToDelete && isAdmin) {
+      import("@/data/docs").then(({ deleteDoc }) => {
+        deleteDoc(docToDelete);
+        if (activeDocId === docToDelete) {
+          setActiveDocId(null);
+          setIsEditing(false);
+        }
+        setDocToDelete(null);
+        setShowDeleteDialog(false);
+        toast.success("Document deleted successfully");
+      });
+    } else {
+      setShowAdminLoginDialog(true);
+    }
+  };
   
   return (
     <Layout>
@@ -90,39 +124,21 @@ const DocsPage: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Documentation</h1>
           
-          {activeDocId && !isEditing && !isAdmin && (
-            <Button onClick={handleEditClick} variant="outline" className="flex items-center gap-2">
-              <Edit className="h-4 w-4" />
-              Edit
-            </Button>
-          )}
-          
-          {activeDocId && !isEditing && isAdmin && (
-            <Button onClick={() => setIsEditing(true)} variant="outline" className="flex items-center gap-2">
-              <Edit className="h-4 w-4" />
-              Edit
-            </Button>
-          )}
-          
-          {isEditing && (
-            <Button onClick={handleSaveClick} className="bg-lemonade-yellow text-black hover:bg-lemonade-green flex items-center gap-2">
-              <Save className="h-4 w-4" />
-              Save
-            </Button>
-          )}
-          
-          {showPasswordInput && (
-            <form onSubmit={handlePasswordSubmit} className="flex gap-2">
-              <input
-                type="password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="Admin password"
-                className="border rounded px-3 py-2"
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          )}
+          <div className="flex items-center gap-2">
+            {activeDocId && !isEditing && (
+              <Button onClick={handleEditClick} variant="outline" className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                Edit
+              </Button>
+            )}
+            
+            {isEditing && (
+              <Button onClick={handleSaveClick} className="bg-lemonade-yellow text-black hover:bg-lemonade-green flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                Save
+              </Button>
+            )}
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -140,15 +156,42 @@ const DocsPage: React.FC = () => {
             </div>
             <div className="space-y-2">
               {docs.map(doc => (
-                <Button 
-                  key={doc.id}
-                  variant={activeDocId === doc.id ? "default" : "ghost"}
-                  className="w-full justify-start"
-                  onClick={() => setActiveDocId(doc.id)}
-                >
-                  <FileText className="h-4 w-4 mr-2" />
-                  {doc.title}
-                </Button>
+                <ContextMenu key={doc.id}>
+                  <ContextMenuTrigger asChild>
+                    <Button 
+                      variant={activeDocId === doc.id ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => setActiveDocId(doc.id)}
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      {doc.title}
+                    </Button>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem onClick={() => {
+                      if (isAdmin) {
+                        setActiveDocId(doc.id);
+                        setIsEditing(true);
+                      } else {
+                        setShowAdminLoginDialog(true);
+                      }
+                    }}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Document
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => {
+                      if (isAdmin) {
+                        setDocToDelete(doc.id);
+                        setShowDeleteDialog(true);
+                      } else {
+                        setShowAdminLoginDialog(true);
+                      }
+                    }} className="text-red-600">
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete Document
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
               ))}
             </div>
           </div>
@@ -226,6 +269,24 @@ const DocsPage: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Document Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the document.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteDoc} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };

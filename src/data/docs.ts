@@ -100,3 +100,13 @@ export const createDoc = (doc: Doc): void => {
   // In a real app, this would save to a database
   console.log("Document created:", doc);
 };
+
+// Delete a doc
+export const deleteDoc = (id: string): void => {
+  const docIndex = docs.findIndex(doc => doc.id === id);
+  if (docIndex !== -1) {
+    const deletedDoc = docs.splice(docIndex, 1)[0];
+    // In a real app, this would delete from a database
+    console.log("Document deleted:", deletedDoc);
+  }
+};

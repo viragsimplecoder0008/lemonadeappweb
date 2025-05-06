@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
+import { addNewOrder } from "@/data/orders";
 
 const CheckoutForm: React.FC = () => {
   const navigate = useNavigate();
@@ -39,6 +40,29 @@ const CheckoutForm: React.FC = () => {
     try {
       // Generate order ID
       const orderId = `order-${Math.floor(Math.random() * 10000)}`;
+      
+      // Create order object for tracking
+      const newOrder = {
+        id: orderId,
+        items: cartItems.map(item => ({
+          product: item.product,
+          quantity: item.quantity
+        })),
+        totalPrice: getTotalPrice(),
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        shippingAddress: {
+          fullName: formData.fullName,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          country: formData.country
+        }
+      };
+      
+      // Add order to orders list for tracking
+      addNewOrder(newOrder);
       
       // Prepare the data to be sent
       const orderData = {
