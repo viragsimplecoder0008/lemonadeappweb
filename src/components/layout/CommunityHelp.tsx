@@ -77,12 +77,12 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Have a specific question? Send us an email and we'll get back to you as soon as possible.
             </p>
-            <Link 
-              to="#" 
+            <a 
+              href="mailto:lemonaderich.82@gmail.com" 
               className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
             >
               Email Us →
-            </Link>
+            </a>
           </div>
         </div>
       </div>

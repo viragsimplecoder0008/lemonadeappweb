@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
@@ -22,26 +23,26 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-sm font-medium hover:text-primary">
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link to="/" className="text-sm font-medium hover:text-primary px-2">
               Home
             </Link>
-            <Link to="/products" className="text-sm font-medium hover:text-primary">
+            <Link to="/products" className="text-sm font-medium hover:text-primary px-2">
               Products
             </Link>
-            <Link to="/mini-game" className="text-sm font-medium hover:text-primary">
+            <Link to="/mini-game" className="text-sm font-medium hover:text-primary px-2">
               Mini Game
             </Link>
-            <Link to="/vip" className="text-sm font-medium hover:text-primary">
+            <Link to="/vip" className="text-sm font-medium hover:text-primary px-2">
               VIP
             </Link>
             {isAdmin && (
-              <Link to="/admin" className="text-sm font-medium text-[#9b87f5] hover:text-[#8975e8]">
+              <Link to="/admin" className="text-sm font-medium text-[#9b87f5] hover:text-[#8975e8] px-2">
                 Admin Dashboard
               </Link>
             )}
             {isEmployee && (
-              <Link to="/employee" className="text-sm font-medium text-emerald-600 hover:text-emerald-700">
+              <Link to="/employee" className="text-sm font-medium text-emerald-600 hover:text-emerald-700 px-2">
                 Employee
               </Link>
             )}
@@ -90,7 +91,7 @@ const Navbar = () => {
                   <Link to="/products" className="text-sm font-medium hover:text-primary block">
                     Products
                   </Link>
-                   <Link to="/mini-game" className="text-sm font-medium hover:text-primary block">
+                  <Link to="/mini-game" className="text-sm font-medium hover:text-primary block">
                     Mini Game
                   </Link>
                   <Link to="/vip" className="text-sm font-medium hover:text-primary block">
@@ -112,8 +113,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
     </header>
   );
 };
