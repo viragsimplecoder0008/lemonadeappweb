@@ -165,6 +165,7 @@ const Footer: React.FC = () => {
       <AdminMessages 
         isOpen={showAdminMessages && isAdmin} 
         onClose={() => setShowAdminMessages(false)}
+        messages={[]} // This would be populated from a database in a real app
       />
       
       <AdminVerification 

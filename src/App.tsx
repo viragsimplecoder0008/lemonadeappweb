@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { AdminProvider } from "@/context/AdminContext";
-import { ThemeProvider } from "next-themes";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -23,7 +22,6 @@ import DocsPage from "./pages/DocsPage";
 import SearchPage from "./pages/SearchPage";
 import EmployeePage from "./pages/EmployeePage";
 import VipPage from "./pages/VipPage";
-import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -36,37 +34,34 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <TooltipProvider>
-        <AdminProvider>
-          <CartProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/products" element={<ProductsPage />} />
-                <Route path="/products/:productId" element={<ProductDetailPage />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
-                <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
-                <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/orders/:orderId" element={<OrderDetailPage />} />
-                <Route path="/community" element={<ChatPage />} />
-                <Route path="/mini-game" element={<MiniGamePage />} />
-                <Route path="/docs" element={<DocsPage />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/employee" element={<EmployeePage />} />
-                <Route path="/vip" element={<VipPage />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </CartProvider>
-        </AdminProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+    <TooltipProvider>
+      <AdminProvider>
+        <CartProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/products/:productId" element={<ProductDetailPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/orders/:orderId" element={<OrderDetailPage />} />
+              <Route path="/community" element={<ChatPage />} />
+              <Route path="/mini-game" element={<MiniGamePage />} />
+              <Route path="/docs" element={<DocsPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/employee" element={<EmployeePage />} />
+              <Route path="/vip" element={<VipPage />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </AdminProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

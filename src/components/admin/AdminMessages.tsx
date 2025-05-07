@@ -1,15 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 
 interface Message {
   id: string;
@@ -21,57 +15,54 @@ interface Message {
 interface AdminMessagesProps {
   isOpen: boolean;
   onClose: () => void;
+  messages: Message[];
 }
 
-export const AdminMessages: React.FC<AdminMessagesProps> = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  
-  useEffect(() => {
-    // Get messages from localStorage
-    const getEmployeeMessages = (): Message[] => {
-      const stored = localStorage.getItem('employeeMessages');
-      return stored ? JSON.parse(stored) : [];
-    };
-    
-    setMessages(getEmployeeMessages());
-  }, [isOpen]); // Refresh messages when dialog opens
+// Get messages from localStorage
+const getEmployeeMessages = (): Message[] => {
+  const stored = localStorage.getItem('employeeMessages');
+  return stored ? JSON.parse(stored) : [];
+};
+
+export const AdminMessages: React.FC<AdminMessagesProps> = ({ 
+  isOpen, 
+  onClose
+}) => {
+  const messages = getEmployeeMessages();
   
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent className="sm:max-w-md">
-        <SheetHeader>
-          <SheetTitle>Employee Messages</SheetTitle>
-          <SheetDescription>
-            Messages sent by employees
-          </SheetDescription>
-        </SheetHeader>
-        <div className="mt-6">
-          <ScrollArea className="h-[400px] pr-4">
-            {messages.length > 0 ? (
-              <div className="space-y-4">
-                {messages.map(msg => (
-                  <div key={msg.id} className="p-4 border rounded-md">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold">{msg.name}</h4>
-                      <span className="text-xs text-gray-500">
-                        {format(new Date(msg.timestamp), "MMM d, yyyy h:mm a")}
-                      </span>
-                    </div>
-                    <p className="text-gray-700">{msg.message}</p>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Employee Messages</DialogTitle>
+        </DialogHeader>
+        
+        <ScrollArea className="h-[400px] pr-4">
+          {messages.length > 0 ? (
+            <div className="space-y-4">
+              {messages.map(msg => (
+                <div key={msg.id} className="p-4 border rounded-md">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-semibold">{msg.name}</h4>
+                    <span className="text-xs text-gray-500">
+                      {format(new Date(msg.timestamp), "MMM d, yyyy h:mm a")}
+                    </span>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                No messages from employees yet.
-              </div>
-            )}
-          </ScrollArea>
-          <div className="mt-4 flex justify-end">
-            <Button variant="outline" onClick={onClose}>Close</Button>
-          </div>
+                  <p className="text-gray-700">{msg.message}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              No messages from employees yet.
+            </div>
+          )}
+        </ScrollArea>
+        
+        <div className="flex justify-end">
+          <Button onClick={onClose}>Close</Button>
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 };
