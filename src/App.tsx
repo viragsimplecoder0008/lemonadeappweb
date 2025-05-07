@@ -22,6 +22,7 @@ import DocsPage from "./pages/DocsPage";
 import SearchPage from "./pages/SearchPage";
 import EmployeePage from "./pages/EmployeePage";
 import VipPage from "./pages/VipPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -55,6 +56,7 @@ const App = () => (
               <Route path="/search" element={<SearchPage />} />
               <Route path="/employee" element={<EmployeePage />} />
               <Route path="/vip" element={<VipPage />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

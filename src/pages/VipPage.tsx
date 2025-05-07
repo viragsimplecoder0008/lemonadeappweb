@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Award, Gift, Star, BadgeCheck, MapPin } from "lucide-react";
@@ -14,13 +14,79 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const VipPage: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
+  const [showUnenrollDialog, setShowUnenrollDialog] = useState(false);
   const [fullName, setFullName] = useState("");
   const [nameError, setNameError] = useState(false);
+  const [isVipMember, setIsVipMember] = useState(false);
   const { toast } = useToast();
+  const [selectedPerks, setSelectedPerks] = useState<string[]>([]);
+
+  // Perks data
+  const perks = [
+    {
+      id: "free-straw",
+      title: "Free Straw",
+      description: "Enjoy a complimentary straw with every purchase because every sip should be perfect!",
+      icon: Gift,
+      bgColor: "bg-[#F2FCE2]/90",
+    },
+    {
+      id: "summer-free-lemonade",
+      title: "Summer Free Lemonade",
+      description: "Free Lemonade from July 1st to July 22nd – refresh yourself all summer long!",
+      icon: Star,
+      bgColor: "bg-[#FEF7CD]/90",
+    },
+    {
+      id: "exclusive-flavors",
+      title: "Exclusive Flavors",
+      description: "Taste unique lemonade blends available only to VIP members!",
+      icon: Award,
+      bgColor: "bg-[#D6BCFA]/90",
+    },
+    {
+      id: "free-hoodie",
+      title: "Free Hoodie",
+      description: "Get a free hoodie when you sign up between December 2nd and January 2nd – stay cozy in style!",
+      icon: Gift,
+      bgColor: "bg-[#F2FCE2]/90",
+    },
+    {
+      id: "vip-gift-card",
+      title: "VIP Gift Card",
+      description: "Use it ANYWHERE for whatever you love!",
+      icon: BadgeCheck,
+      bgColor: "bg-[#FEF7CD]/90",
+    }
+  ];
+
+  // Check if user is VIP on component mount
+  useEffect(() => {
+    const vipUsers = localStorage.getItem('vipUsers');
+    if (vipUsers) {
+      const parsedVipUsers = JSON.parse(vipUsers);
+      const storedName = localStorage.getItem('vipUserName');
+      
+      if (storedName && parsedVipUsers.includes(storedName)) {
+        setIsVipMember(true);
+        setFullName(storedName);
+        
+        // Load saved perks preferences
+        const savedPerks = localStorage.getItem(`vipPerks_${storedName}`);
+        if (savedPerks) {
+          setSelectedPerks(JSON.parse(savedPerks));
+        } else {
+          // If no preferences saved, select all perks by default
+          setSelectedPerks(perks.map(perk => perk.id));
+        }
+      }
+    }
+  }, []);
 
   const handleSignUp = () => {
     setShowDialog(true);
@@ -38,10 +104,75 @@ const VipPage: React.FC = () => {
 
   const handleLocationConfirm = () => {
     setShowLocationDialog(false);
+    
+    // Save VIP user data
+    const vipUsers = localStorage.getItem('vipUsers');
+    let updatedVipUsers = vipUsers ? JSON.parse(vipUsers) : [];
+    if (!updatedVipUsers.includes(fullName)) {
+      updatedVipUsers.push(fullName);
+    }
+    localStorage.setItem('vipUsers', JSON.stringify(updatedVipUsers));
+    localStorage.setItem('vipUserName', fullName);
+    
+    // Select all perks by default for new VIP members
+    const allPerkIds = perks.map(perk => perk.id);
+    setSelectedPerks(allPerkIds);
+    localStorage.setItem(`vipPerks_${fullName}`, JSON.stringify(allPerkIds));
+    
+    setIsVipMember(true);
+    
     toast({
       title: "VIP Registration Successful!",
-      description: `Thank you ${fullName}! Visit our location to complete your VIP registration.`,
+      description: `Thank you ${fullName}! You're now a VIP member with all perks enabled.`,
       duration: 5000,
+    });
+  };
+  
+  const handleUnenroll = () => {
+    setShowUnenrollDialog(true);
+  };
+  
+  const confirmUnenroll = () => {
+    // Remove user from VIP list
+    const vipUsers = localStorage.getItem('vipUsers');
+    if (vipUsers) {
+      let updatedVipUsers = JSON.parse(vipUsers);
+      updatedVipUsers = updatedVipUsers.filter((name: string) => name !== fullName);
+      localStorage.setItem('vipUsers', JSON.stringify(updatedVipUsers));
+    }
+    
+    // Clean up perks preferences
+    localStorage.removeItem(`vipPerks_${fullName}`);
+    localStorage.removeItem('vipUserName');
+    
+    setIsVipMember(false);
+    setSelectedPerks([]);
+    setShowUnenrollDialog(false);
+    
+    toast({
+      title: "VIP Membership Cancelled",
+      description: "You've been unenrolled from the VIP program. We hope to see you again soon!",
+      duration: 5000,
+    });
+  };
+
+  const togglePerk = (perkId: string) => {
+    if (!isVipMember) return;
+    
+    let newSelectedPerks;
+    if (selectedPerks.includes(perkId)) {
+      newSelectedPerks = selectedPerks.filter(id => id !== perkId);
+    } else {
+      newSelectedPerks = [...selectedPerks, perkId];
+    }
+    
+    setSelectedPerks(newSelectedPerks);
+    localStorage.setItem(`vipPerks_${fullName}`, JSON.stringify(newSelectedPerks));
+    
+    toast({
+      title: selectedPerks.includes(perkId) ? "Perk Disabled" : "Perk Enabled",
+      description: `You've ${selectedPerks.includes(perkId) ? "disabled" : "enabled"} the ${perks.find(p => p.id === perkId)?.title} perk`,
+      duration: 3000,
     });
   };
 
@@ -61,69 +192,46 @@ const VipPage: React.FC = () => {
             <div className="text-center">
               <Button 
                 className="bg-[#9b87f5] hover:bg-[#8975e8] text-white font-bold text-lg px-8 py-6 rounded-xl"
-                onClick={handleSignUp}
+                onClick={isVipMember ? handleUnenroll : handleSignUp}
               >
-                Become a VIP Today
+                {isVipMember ? "Unenroll from VIP" : "Become a VIP Today"}
               </Button>
             </div>
+            {isVipMember && (
+              <p className="text-center mt-4 text-lg">Welcome back, VIP member {fullName}!</p>
+            )}
           </div>
 
           {/* Benefits Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {/* Benefit 1 */}
-            <div className="bg-[#F2FCE2]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Gift className="h-8 w-8 text-white" />
+            {/* Map through perks */}
+            {perks.map((perk, index) => (
+              <div 
+                key={perk.id}
+                className={`${perk.bgColor} backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-all cursor-pointer ${isVipMember && !selectedPerks.includes(perk.id) ? 'opacity-50 grayscale' : ''}`}
+                onClick={() => isVipMember && togglePerk(perk.id)}
+              >
+                <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <perk.icon className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">{perk.title}</h3>
+                <p className="text-center text-[#1A1F2C]/80">
+                  {perk.description}
+                </p>
+                {isVipMember && (
+                  <div className="flex items-center justify-center mt-4">
+                    <Checkbox
+                      checked={selectedPerks.includes(perk.id)}
+                      onCheckedChange={() => togglePerk(perk.id)}
+                      className="h-5 w-5"
+                    />
+                    <span className="ml-2 text-sm font-medium">
+                      {selectedPerks.includes(perk.id) ? 'Enabled' : 'Disabled'}
+                    </span>
+                  </div>
+                )}
               </div>
-              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">Free Straw</h3>
-              <p className="text-center text-[#1A1F2C]/80">
-                Enjoy a complimentary straw with every purchase because every sip should be perfect!
-              </p>
-            </div>
-
-            {/* Benefit 2 */}
-            <div className="bg-[#FEF7CD]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">Summer Free Lemonade</h3>
-              <p className="text-center text-[#1A1F2C]/80">
-                Free Lemonade from July 1st to July 22nd – refresh yourself all summer long!
-              </p>
-            </div>
-
-            {/* Benefit 3 */}
-            <div className="bg-[#D6BCFA]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Award className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">Exclusive Flavors</h3>
-              <p className="text-center text-[#1A1F2C]/80">
-                Taste unique lemonade blends available only to VIP members!
-              </p>
-            </div>
-
-            {/* Benefit 4 */}
-            <div className="bg-[#F2FCE2]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Gift className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">Free Hoodie</h3>
-              <p className="text-center text-[#1A1F2C]/80">
-                Get a free hoodie when you sign up between December 2nd and January 2nd – stay cozy in style!
-              </p>
-            </div>
-
-            {/* Benefit 5 */}
-            <div className="bg-[#FEF7CD]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
-              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <BadgeCheck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">VIP Gift Card</h3>
-              <p className="text-center text-[#1A1F2C]/80">
-                Use it ANYWHERE for whatever you love!
-              </p>
-            </div>
+            ))}
           </div>
 
           {/* Call To Action */}
@@ -132,9 +240,9 @@ const VipPage: React.FC = () => {
             <p className="mb-8">Cancel any time!</p>
             <Button 
               className="bg-[#9b87f5] hover:bg-[#8975e8] text-white font-bold text-lg px-8 py-6 rounded-xl"
-              onClick={handleSignUp}
+              onClick={isVipMember ? handleUnenroll : handleSignUp}
             >
-              Become a VIP Member
+              {isVipMember ? "Unenroll from VIP" : "Become a VIP Member"}
             </Button>
             <p className="text-sm mt-4 text-gray-400">*Terms & Conditions Apply</p>
           </div>
@@ -214,6 +322,23 @@ const VipPage: React.FC = () => {
           
           <DialogFooter>
             <Button onClick={handleLocationConfirm}>Got it</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Unenroll Dialog */}
+      <Dialog open={showUnenrollDialog} onOpenChange={setShowUnenrollDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm VIP Cancellation</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to cancel your VIP membership? You'll lose access to all the exclusive perks.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowUnenrollDialog(false)}>Keep My VIP</Button>
+            <Button variant="destructive" onClick={confirmUnenroll}>Confirm Cancellation</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
