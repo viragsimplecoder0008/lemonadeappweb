@@ -34,13 +34,13 @@ const Navbar: React.FC = () => {
 
           <div className="hidden md:flex md:gap-10">
             <NavigationMenu>
-              <NavigationMenuList>
+              <NavigationMenuList className="space-x-4">
                 <NavigationMenuItem>
-                  <Link to="/" className="font-medium hover:text-lemonade-yellow transition-colors">
+                  <Link to="/" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     Home
                   </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+                <NavigationMenuItem className="mx-2">
                   <NavigationMenuTrigger>Products</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 w-[400px] md:w-[500px] grid-cols-2">
@@ -71,18 +71,18 @@ const Navbar: React.FC = () => {
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/orders" className="font-medium hover:text-lemonade-yellow transition-colors">
+                <NavigationMenuItem className="mx-2">
+                  <Link to="/orders" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     Track Order
                   </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/docs" className="font-medium hover:text-lemonade-yellow transition-colors">
+                <NavigationMenuItem className="mx-2">
+                  <Link to="/docs" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     Docs
                   </Link>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors flex items-center">
+                <NavigationMenuItem className="mx-2">
+                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors flex items-center px-2">
                     <Star className="mr-1 h-4 w-4 text-lemonade-yellow" />
                     VIP
                   </Link>
