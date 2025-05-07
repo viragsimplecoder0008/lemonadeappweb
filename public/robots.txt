@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-// WHO CARES ABOUT BING??
+//  really! WHO CARES ABOUT BING??
