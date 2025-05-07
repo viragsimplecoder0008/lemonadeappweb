@@ -2,7 +2,7 @@ User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
-Allow: /
+Disallow: /  # This line instructs Bingbot not to crawl any part of your site
 
 User-agent: Twitterbot
 Allow: /
