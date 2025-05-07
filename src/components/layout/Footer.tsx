@@ -85,6 +85,11 @@ const Footer: React.FC = () => {
                   Docs
                 </Link>
               </li>
+              <li>
+                <Link to="/vip" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
+                  VIP Management
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -134,7 +139,7 @@ const Footer: React.FC = () => {
                 onClick={handleEmployeeAction}
               >
                 <UserPlus className="mr-2 h-4 w-4" />
-                {isEmployee ? (isAdmin ? "Message Admin" : "Employee Mode Active") : "Employee Mode"}
+                {isEmployee ? "Send Message to Admin" : "Employee Mode"}
               </Button>
               
               <Button 
@@ -144,7 +149,7 @@ const Footer: React.FC = () => {
                 onClick={handleAdminAction}
               >
                 <User className="mr-2 h-4 w-4" />
-                {isAdmin ? "Admin Mode Active" : "Admin Mode"}
+                {isAdmin ? "View Employee Messages" : "Admin Mode"}
               </Button>
             </div>
           </div>

@@ -20,7 +20,15 @@ interface EmployeeMessageProps {
 }
 
 // In a real app, these would be stored in a database
-const employeeMessages: Message[] = [];
+// Using localStorage for persistent storage in this demo
+const getEmployeeMessages = (): Message[] => {
+  const stored = localStorage.getItem('employeeMessages');
+  return stored ? JSON.parse(stored) : [];
+};
+
+const saveEmployeeMessages = (messages: Message[]) => {
+  localStorage.setItem('employeeMessages', JSON.stringify(messages));
+};
 
 export const EmployeeMessage: React.FC<EmployeeMessageProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
@@ -40,8 +48,10 @@ export const EmployeeMessage: React.FC<EmployeeMessageProps> = ({ isOpen, onClos
       timestamp: new Date().toISOString()
     };
 
-    // Add to messages (would be a database call in a real app)
-    employeeMessages.push(newMessage);
+    // Add to messages
+    const currentMessages = getEmployeeMessages();
+    const updatedMessages = [newMessage, ...currentMessages];
+    saveEmployeeMessages(updatedMessages);
     
     toast.success("Message sent to admin");
     setName("");

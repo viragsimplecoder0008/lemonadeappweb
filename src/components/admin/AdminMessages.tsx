@@ -18,27 +18,18 @@ interface AdminMessagesProps {
   messages: Message[];
 }
 
-// This would come from a database in a real app
-const mockMessages: Message[] = [
-  {
-    id: "1",
-    name: "Sarah",
-    message: "The delivery for order #1234 is complete.",
-    timestamp: "2023-05-15T14:30:00Z"
-  },
-  {
-    id: "2",
-    name: "Mike",
-    message: "I think we should give Mrs. Johnson a free lemonade next month, she's been a loyal customer.",
-    timestamp: "2023-05-16T09:15:00Z"
-  }
-];
+// Get messages from localStorage
+const getEmployeeMessages = (): Message[] => {
+  const stored = localStorage.getItem('employeeMessages');
+  return stored ? JSON.parse(stored) : [];
+};
 
 export const AdminMessages: React.FC<AdminMessagesProps> = ({ 
   isOpen, 
-  onClose,
-  messages = mockMessages // In a real app, this would come from props
+  onClose
 }) => {
+  const messages = getEmployeeMessages();
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">

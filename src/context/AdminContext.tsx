@@ -41,6 +41,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setAdminMode = (value: boolean) => {
     setIsAdmin(value);
+    // If enabling admin mode, disable employee mode
+    if (value === true) {
+      setIsEmployee(false);
+    }
     if (value === false) {
       localStorage.removeItem('isAdmin');
     }
@@ -48,6 +52,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setEmployeeMode = (value: boolean) => {
     setIsEmployee(value);
+    // If enabling employee mode, disable admin mode
+    if (value === true) {
+      setIsAdmin(false);
+    }
     if (value === false) {
       localStorage.removeItem('isEmployee');
     }

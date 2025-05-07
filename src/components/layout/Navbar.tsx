@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -81,6 +81,12 @@ const Navbar: React.FC = () => {
                     Docs
                   </Link>
                 </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors flex items-center">
+                    <Star className="mr-1 h-4 w-4 text-lemonade-yellow" />
+                    VIP
+                  </Link>
+                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
           </div>
@@ -133,6 +139,10 @@ const Navbar: React.FC = () => {
                   </Link>
                   <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Search
+                  </Link>
+                  <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors flex items-center">
+                    <Star className="mr-2 h-5 w-5 text-lemonade-yellow" />
+                    VIP Management
                   </Link>
                 </nav>
               </SheetContent>
@@ -204,6 +214,10 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Search
+                </Link>
+                <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors flex items-center">
+                  <Star className="mr-2 h-5 w-5 text-lemonade-yellow" />
+                  VIP Management
                 </Link>
               </nav>
             </SheetContent>
