@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ShoppingCart, Edit, Trash2, Plus, CheckCircle2, XCircle } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { useAdmin } from "@/context/AdminContext";
 import { toast } from "sonner";
 import {
   ContextMenu,
@@ -32,6 +33,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const { isAdmin } = useAdmin();
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [password, setPassword] = useState("");
@@ -58,19 +60,44 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAdminAction = (actionType: "edit" | "delete" | "add" | "stock") => {
     setAction(actionType);
-    setIsPasswordDialogOpen(true);
-    if (actionType === "edit") {
-      setEditProduct({ ...product });
-    } else if (actionType === "add") {
-      setNewProduct({
-        id: "",
-        name: "",
-        description: "",
-        price: 0,
-        imageUrl: "",
-        category: "classic",
-        inStock: true
-      });
+    
+    // If admin mode is active, skip password verification
+    if (isAdmin) {
+      // For stock toggle, handle it immediately
+      if (actionType === "stock") {
+        handleStockToggle();
+      } else {
+        // For other actions, show the product dialog directly
+        setEditProduct({ ...product });
+        if (actionType === "add") {
+          setNewProduct({
+            id: "",
+            name: "",
+            description: "",
+            price: 0,
+            imageUrl: "",
+            category: "classic",
+            inStock: true
+          });
+        }
+        setIsProductDialogOpen(true);
+      }
+    } else {
+      // Not in admin mode, show password dialog
+      setIsPasswordDialogOpen(true);
+      if (actionType === "edit") {
+        setEditProduct({ ...product });
+      } else if (actionType === "add") {
+        setNewProduct({
+          id: "",
+          name: "",
+          description: "",
+          price: 0,
+          imageUrl: "",
+          category: "classic",
+          inStock: true
+        });
+      }
     }
   };
 
@@ -216,6 +243,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </ContextMenuContent>
       </ContextMenu>
 
+      {/* Only show password dialog if not in admin mode */}
       <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

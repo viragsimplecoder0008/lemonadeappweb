@@ -1,14 +1,28 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { getUserOrders } from "@/data/orders";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Map } from "lucide-react";
+import { Map, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export const EmployeeOrderView: React.FC = () => {
-  const orders = getUserOrders();
+  const [orders, setOrders] = useState(getUserOrders());
+  
+  // Refresh orders every 30 seconds or when manually refreshed
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      refreshOrders();
+    }, 30000); // 30 seconds
+    
+    return () => clearInterval(intervalId);
+  }, []);
+  
+  const refreshOrders = () => {
+    const freshOrders = getUserOrders();
+    setOrders(freshOrders);
+  };
   
   const openInMaps = (address: string, city: string, state: string, zipCode: string) => {
     const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
@@ -25,13 +39,24 @@ export const EmployeeOrderView: React.FC = () => {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500">No orders have been placed yet.</p>
+        <Button onClick={refreshOrders} className="mt-4">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Check for New Orders
+        </Button>
       </div>
     );
   }
   
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Customer Orders</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Customer Orders</h2>
+        <Button onClick={refreshOrders} size="sm" variant="outline">
+          <RefreshCw className="h-4 w-4 mr-1" />
+          Refresh Orders
+        </Button>
+      </div>
+      
       <Table>
         <TableHeader>
           <TableRow>

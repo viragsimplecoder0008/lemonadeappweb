@@ -90,6 +90,13 @@ const Footer: React.FC = () => {
                   VIP Management
                 </Link>
               </li>
+              {isAdmin && (
+                <li>
+                  <Link to="/admin" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
+                    Admin Dashboard
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
           <div>
@@ -151,6 +158,17 @@ const Footer: React.FC = () => {
                 <User className="mr-2 h-4 w-4" />
                 {isAdmin ? "View Employee Messages" : "Admin Mode"}
               </Button>
+              
+              {isAdmin && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full bg-lemonade-yellow text-black"
+                  onClick={() => window.location.href = "/admin"}
+                >
+                  Admin Dashboard
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -163,9 +181,8 @@ const Footer: React.FC = () => {
       />
       
       <AdminMessages 
-        isOpen={showAdminMessages && isAdmin} 
+        isOpen={showAdminMessages} 
         onClose={() => setShowAdminMessages(false)}
-        messages={[]} // This would be populated from a database in a real app
       />
       
       <AdminVerification 

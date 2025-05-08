@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -15,20 +15,27 @@ interface Message {
 interface AdminMessagesProps {
   isOpen: boolean;
   onClose: () => void;
-  messages: Message[];
 }
-
-// Get messages from localStorage
-const getEmployeeMessages = (): Message[] => {
-  const stored = localStorage.getItem('employeeMessages');
-  return stored ? JSON.parse(stored) : [];
-};
 
 export const AdminMessages: React.FC<AdminMessagesProps> = ({ 
   isOpen, 
   onClose
 }) => {
-  const messages = getEmployeeMessages();
+  const [messages, setMessages] = useState<Message[]>([]);
+  
+  // Fetch messages from localStorage whenever the dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchMessages();
+    }
+  }, [isOpen]);
+  
+  // Function to get messages from localStorage
+  const fetchMessages = () => {
+    const stored = localStorage.getItem('employeeMessages');
+    const loadedMessages = stored ? JSON.parse(stored) : [];
+    setMessages(loadedMessages);
+  };
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
