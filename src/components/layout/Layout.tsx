@@ -6,6 +6,7 @@ import CommunityHelp from "./CommunityHelp";
 import { Link } from "react-router-dom";
 import { Gamepad2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,6 +15,8 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) => {
   const isMobile = useIsMobile();
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts();
   
   return (
     <div 

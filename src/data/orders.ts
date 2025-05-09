@@ -21,13 +21,6 @@ const notifyOrderChanges = () => {
   orderChangeListeners.forEach(callback => callback());
 };
 
-// Add storage event listener to detect changes from other tabs/devices
-window.addEventListener('storage', (event) => {
-  if (event.key === 'orders') {
-    notifyOrderChanges();
-  }
-});
-
 // Load orders from localStorage if available
 const loadOrdersFromStorage = (): Order[] => {
   const storedOrders = localStorage.getItem('orders');
@@ -36,6 +29,19 @@ const loadOrdersFromStorage = (): Order[] => {
 
 // Initialize with stored orders or empty array
 export const orders: Order[] = loadOrdersFromStorage();
+
+// Add storage event listener to detect changes from other tabs/devices
+window.addEventListener('storage', (event) => {
+  if (event.key === 'orders') {
+    // Refresh the in-memory orders array to match localStorage
+    orders.length = 0;
+    const freshOrders = loadOrdersFromStorage();
+    orders.push(...freshOrders);
+    
+    // Notify listeners of the change
+    notifyOrderChanges();
+  }
+});
 
 export const getOrderById = (id: string): Order | undefined => {
   // Always get the latest orders from storage

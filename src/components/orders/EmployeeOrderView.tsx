@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { getUserOrders } from "@/data/orders";
+import { getUserOrders, subscribeToOrderChanges } from "@/data/orders";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -10,13 +10,25 @@ import { toast } from "sonner";
 export const EmployeeOrderView: React.FC = () => {
   const [orders, setOrders] = useState(getUserOrders());
   
-  // Refresh orders every 30 seconds or when manually refreshed
+  // Subscribe to order changes
   useEffect(() => {
+    // Initial load
+    refreshOrders();
+    
+    // Subscribe to changes
+    const unsubscribe = subscribeToOrderChanges(() => {
+      refreshOrders();
+    });
+    
+    // Set up interval for polling as a fallback
     const intervalId = setInterval(() => {
       refreshOrders();
     }, 30000); // 30 seconds
     
-    return () => clearInterval(intervalId);
+    return () => {
+      unsubscribe(); // Unsubscribe from order changes
+      clearInterval(intervalId); // Clear interval
+    };
   }, []);
   
   const refreshOrders = () => {

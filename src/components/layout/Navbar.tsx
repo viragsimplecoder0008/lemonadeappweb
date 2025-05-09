@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Star } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Star, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
 
 const Navbar: React.FC = () => {
   const { totalItems } = useCart();
@@ -92,6 +93,7 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <KeyboardShortcutsHelp />
             <Link to="/search" className="relative" aria-label="Search">
               <Search className="h-6 w-6" />
             </Link>
@@ -219,6 +221,9 @@ const Navbar: React.FC = () => {
                   <Star className="mr-2 h-5 w-5 text-lemonade-yellow" />
                   VIP Management
                 </Link>
+                <div className="mt-4">
+                  <KeyboardShortcutsHelp />
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
