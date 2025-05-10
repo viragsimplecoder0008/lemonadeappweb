@@ -10,7 +10,7 @@ const FeaturedProducts: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold">Lemonade we think you would LOVE!</h2>
-          <p className="mt-2 text-gray-600">Our most popular lemonade varieties</p>
+          <p className="mt-2 text-gray-600">We hope you do lve these</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {featuredProducts.map(product => <ProductCard key={product.id} product={product} />)}
