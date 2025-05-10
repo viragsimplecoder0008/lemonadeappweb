@@ -1,31 +1,18 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Star, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
-
 const Navbar: React.FC = () => {
-  const { totalItems } = useCart();
+  const {
+    totalItems
+  } = useCart();
   const isMobile = useIsMobile();
-
-  return (
-    <>
+  return <>
       {/* Desktop Navigation */}
       <header className={`${isMobile ? 'hidden' : 'sticky top-0'} z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
         <div className="container flex h-16 items-center justify-between">
@@ -99,11 +86,9 @@ const Navbar: React.FC = () => {
             </Link>
             <Link to="/cart" className="relative">
               <ShoppingCart className="h-6 w-6" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {totalItems}
-                </span>
-              )}
+                </span>}
             </Link>
 
             {/* Desktop menu */}
@@ -154,8 +139,7 @@ const Navbar: React.FC = () => {
       </header>
       
       {/* Mobile Navigation (Bottom bar) */}
-      {isMobile && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-around py-2">
+      {isMobile && <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-around py-2">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Home</span>
@@ -174,11 +158,9 @@ const Navbar: React.FC = () => {
           </Link>
           <Link to="/cart" className="flex flex-col items-center p-2 relative">
             <ShoppingCart className="h-5 w-5" />
-            {totalItems > 0 && (
-              <span className="absolute top-0 right-0 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+            {totalItems > 0 && <span className="absolute top-0 right-0 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
                 {totalItems}
-              </span>
-            )}
+              </span>}
             <span className="text-xs mt-1">Cart</span>
           </Link>
           <Sheet>
@@ -227,10 +209,7 @@ const Navbar: React.FC = () => {
               </nav>
             </SheetContent>
           </Sheet>
-        </nav>
-      )}
-    </>
-  );
+        </nav>}
+    </>;
 };
-
 export default Navbar;
