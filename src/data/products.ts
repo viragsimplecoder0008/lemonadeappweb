@@ -16,7 +16,7 @@ const initialProducts: Product[] = [
     name: "Mint Lemonade",
     description: "A refreshing twist on our classic lemonade with fresh mint leaves.",
     price: 4.49,
-    imageUrl: "/mint-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/green-cocktail-with-mint-ice-cubes-lemon-slice_114579-3402.jpg?t=st=1747285781~exp=1747289381~hmac=24de1a3ac989fd6f9a9eabce55798899575c04936041abc333b0090582f67dfd&w=826",
     category: "specialty",
     inStock: true
   },
@@ -25,7 +25,7 @@ const initialProducts: Product[] = [
     name: "Strawberry Lemonade",
     description: "Sweet strawberries blended with our classic lemonade for a fruity treat.",
     price: 4.99,
-    imageUrl: "/strawberry-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/strawberry-lemonade-table_140725-5482.jpg?t=st=1747286154~exp=1747289754~hmac=60d581f55087e96a9861ff7a1515088203a2d3e1bb153354cd4aab958e35501b&w=826",
     category: "specialty",
     inStock: true
   },
@@ -34,7 +34,7 @@ const initialProducts: Product[] = [
     name: "Blueberry Lemonade",
     description: "Tangy blueberries add a vibrant twist to our refreshing lemonade.",
     price: 4.99,
-    imageUrl: "/blueberry-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/front-view-blue-cool-lemonade-with-ice-blue-background-fruit-cold-cocktail-drink-color-bar-juice_140725-156766.jpg?t=st=1747286212~exp=1747289812~hmac=e1cfe71d7a31e2823b435c7d091d27531bfda7886621abd0fc0ef791efb26aab&w=826",
     category: "specialty",
     inStock: true
   },
@@ -43,7 +43,7 @@ const initialProducts: Product[] = [
     name: "Lavender Lemonade",
     description: "A floral and delicate blend of lavender essence and our classic lemonade.",
     price: 5.49,
-    imageUrl: "/lavender-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/butterfly-pea-juice-with-coconut-wooden-surface_1150-44420.jpg?t=st=1747286314~exp=1747289914~hmac=f5458a947f5c5f0ab0cf7c00cc0155a01eecdb5e60284a64b6d0d80a48c344e9&w=826",
     category: "premium",
     inStock: true
   },
@@ -52,7 +52,7 @@ const initialProducts: Product[] = [
     name: "Ginger Lemonade",
     description: "A spicy kick of ginger combined with our tangy lemonade for a warming sensation.",
     price: 4.79,
-    imageUrl: "/ginger-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/delicious-healthy-lemon-tea-concept_23-2148799194.jpg?t=st=1747286414~exp=1747290014~hmac=4993d992d7ddd3b85cc0ba976394289aeac2a309cef5b05e93068dbefed404e9&w=826",
     category: "specialty",
     inStock: true
   },
