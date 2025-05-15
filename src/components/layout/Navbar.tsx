@@ -1,17 +1,20 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Star, Keyboard } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
+
 const Navbar: React.FC = () => {
   const {
     totalItems
   } = useCart();
   const isMobile = useIsMobile();
+  
   return <>
       {/* Desktop Navigation */}
       <header className={`${isMobile ? 'hidden' : 'sticky top-0'} z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
@@ -70,8 +73,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors flex items-center px-2">
-                    <Star className="mr-1 h-4 w-4 text-lemonade-yellow" />
+                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     VIP
                   </Link>
                 </NavigationMenuItem>
@@ -127,8 +129,7 @@ const Navbar: React.FC = () => {
                   <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Search
                   </Link>
-                  <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors flex items-center">
-                    <Star className="mr-2 h-5 w-5 text-lemonade-yellow" />
+                  <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     VIP Management
                   </Link>
                 </nav>
@@ -199,8 +200,7 @@ const Navbar: React.FC = () => {
                 <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Search
                 </Link>
-                <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors flex items-center">
-                  <Star className="mr-2 h-5 w-5 text-lemonade-yellow" />
+                <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   VIP Management
                 </Link>
                 <div className="mt-4">
@@ -212,4 +212,5 @@ const Navbar: React.FC = () => {
         </nav>}
     </>;
 };
+
 export default Navbar;
