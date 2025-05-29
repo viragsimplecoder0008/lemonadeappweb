@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { getUserOrders, subscribeToOrderChanges } from "@/data/orders";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Map, RefreshCw } from "lucide-react";
+import { Map, RefreshCw, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 export const EmployeeOrderView: React.FC = () => {
   const [orders, setOrders] = useState(getUserOrders());
+  const navigate = useNavigate();
   
   // Subscribe to order changes
   useEffect(() => {
@@ -45,6 +47,10 @@ export const EmployeeOrderView: React.FC = () => {
   const markFreeGift = (orderId: string, customer: string) => {
     // In a real app, this would update a database record
     toast.success(`${customer} marked for free lemonade next month!`);
+  };
+
+  const viewOrderDetails = (orderId: string) => {
+    navigate(`/orders/${orderId}`);
   };
   
   if (orders.length === 0) {
@@ -83,15 +89,27 @@ export const EmployeeOrderView: React.FC = () => {
           {orders.map((order) => {
             const customer = order.shippingAddress.fullName;
             return (
-              <TableRow key={order.id}>
-                <TableCell>{order.id}</TableCell>
+              <TableRow 
+                key={order.id}
+                className="cursor-pointer hover:bg-gray-50"
+                onClick={() => viewOrderDetails(order.id)}
+              >
+                <TableCell className="font-medium">{order.id}</TableCell>
                 <TableCell>{customer}</TableCell>
                 <TableCell>{format(new Date(order.createdAt), "MMM d, yyyy")}</TableCell>
                 <TableCell>
                   <span className="capitalize">{order.status}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => viewOrderDetails(order.id)}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
