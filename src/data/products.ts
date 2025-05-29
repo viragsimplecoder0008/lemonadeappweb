@@ -70,7 +70,7 @@ const initialProducts: Product[] = [
     name: "Cola Lemonade",
     description: "The perfect fusion of cola flavors with our classic lemonade for a refreshing twist.",
     price: 4.79,
-    imageUrl: "/cola-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/glass-coca-cola-with-ice-cubes-lemon-slice-grey-background_140725-10691.jpg?t=st=1748513195~exp=1748516795~hmac=63715fd63a376aa53d991ef4e8944ab1e40d9e12fd12fff0c5806bcd12d12bea&w=1380",
     category: "specialty",
     inStock: true
   },
@@ -79,7 +79,7 @@ const initialProducts: Product[] = [
     name: "Rose Lemonade",
     description: "Delicately perfumed with rose water for a fragrant and exotic lemonade experience.",
     price: 5.49,
-    imageUrl: "/rose-lemonade.jpg",
+    imageUrl: "https://img.freepik.com/free-photo/cold-brew-hibiscus-tea-with-ice-basil-leaves_114579-29762.jpg?t=st=1748513496~exp=1748517096~hmac=c77e536f9e305c0df6d74a723298553c4b66b98dc5a8976184aea522bf65053b&w=1380",
     category: "premium",
     inStock: true
   }
