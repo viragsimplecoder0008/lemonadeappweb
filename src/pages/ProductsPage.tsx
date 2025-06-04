@@ -7,11 +7,13 @@ import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 
 const ProductsPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
+  const quickModeParam = searchParams.get("quick");
   
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [activeCategory, setActiveCategory] = useState(categoryParam || "all");
+  const [isQuickMode, setIsQuickMode] = useState(quickModeParam === "true");
   
   useEffect(() => {
     if (categoryParam) {
@@ -23,7 +25,9 @@ const ProductsPage: React.FC = () => {
       setActiveCategory("all");
       setFilteredProducts(products);
     }
-  }, [categoryParam]);
+    
+    setIsQuickMode(quickModeParam === "true");
+  }, [categoryParam, quickModeParam]);
   
   const handleFilterChange = (category: string) => {
     setActiveCategory(category);
@@ -37,25 +41,53 @@ const ProductsPage: React.FC = () => {
     }
   };
   
+  const handleRevertToNormalMode = () => {
+    setIsQuickMode(false);
+    setSearchParams(prev => {
+      prev.delete("quick");
+      return prev;
+    });
+  };
+  
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Our Lemonade Collection</h1>
+          <h1 className="text-3xl font-bold">
+            {isQuickMode ? "Quick Mode - Limited Selection" : "Our Lemonade Collection"}
+          </h1>
           <p className="text-gray-600 mt-2">
-            Discover our handcrafted lemonade varieties for every taste
+            {isQuickMode 
+              ? "Quick access to our most popular varieties" 
+              : "Discover our handcrafted lemonade varieties for every taste"
+            }
           </p>
         </div>
         
+        {/* Quick mode revert button */}
+        {isQuickMode && (
+          <div className="mb-6">
+            <Button 
+              onClick={handleRevertToNormalMode}
+              variant="outline"
+              className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+            >
+              Revert Back to Normal Mode
+            </Button>
+          </div>
+        )}
+        
         {/* Category filter buttons */}
         <div className="flex flex-wrap gap-2 mb-8">
-          <Button
-            variant={activeCategory === "all" ? "default" : "outline"}
-            onClick={() => handleFilterChange("all")}
-            className={activeCategory === "all" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
-          >
-            All
-          </Button>
+          {!isQuickMode && (
+            <Button
+              variant={activeCategory === "all" ? "default" : "outline"}
+              onClick={() => handleFilterChange("all")}
+              className={activeCategory === "all" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
+            >
+              All
+            </Button>
+          )}
           <Button
             variant={activeCategory === "classic" ? "default" : "outline"}
             onClick={() => handleFilterChange("classic")}
@@ -70,13 +102,15 @@ const ProductsPage: React.FC = () => {
           >
             Specialty
           </Button>
-          <Button
-            variant={activeCategory === "premium" ? "default" : "outline"}
-            onClick={() => handleFilterChange("premium")}
-            className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
-          >
-            Premium
-          </Button>
+          {!isQuickMode && (
+            <Button
+              variant={activeCategory === "premium" ? "default" : "outline"}
+              onClick={() => handleFilterChange("premium")}
+              className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
+            >
+              Premium
+            </Button>
+          )}
         </div>
         
         {/* Products grid */}

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users } from "lucide-react";
@@ -63,6 +62,25 @@ const Navbar: React.FC = () => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
+                  <NavigationMenuTrigger>Quick</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 w-[300px]">
+                      <li>
+                        <Link to="/products?category=specialty&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                          <div className="font-medium">Specialty Quick</div>
+                          <div className="text-sm text-muted-foreground">Quick access to specialty flavors</div>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/products?category=classic&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                          <div className="font-medium">Classic Quick</div>
+                          <div className="text-sm text-muted-foreground">Quick access to classic recipes</div>
+                        </Link>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem className="mx-2">
                   <Link to="/orders" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     Track Order
                   </Link>
@@ -121,6 +139,12 @@ const Navbar: React.FC = () => {
                   </Link>
                   <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Premium
+                  </Link>
+                  <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                    Quick - Specialty
+                  </Link>
+                  <Link to="/products?category=classic&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                    Quick - Classic
                   </Link>
                   <Link to="/orders" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Track Order
@@ -199,6 +223,12 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Premium
+                </Link>
+                <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Quick - Specialty
+                </Link>
+                <Link to="/products?category=classic&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Quick - Classic
                 </Link>
                 <Link to="/orders" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Track Order
