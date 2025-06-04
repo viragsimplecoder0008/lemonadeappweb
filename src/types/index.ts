@@ -32,6 +32,7 @@ export interface Order {
   shippingAddress: ShippingAddress;
   status: "pending" | "processing" | "shipped" | "delivered";
   createdAt: string;
+  isQuickMode?: boolean;
 }
 
 export interface GameState {

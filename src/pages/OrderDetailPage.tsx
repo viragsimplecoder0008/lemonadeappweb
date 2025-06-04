@@ -3,7 +3,7 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, ShoppingBag, Mail, Phone } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, ShoppingBag, Mail, Phone, Zap } from "lucide-react";
 import { format } from "date-fns";
 import { getOrderById } from "@/data/orders";
 import OrderStatus from "@/components/orders/OrderStatus";
@@ -48,7 +48,15 @@ const OrderDetailPage: React.FC = () => {
         </div>
         
         <div className="flex flex-wrap items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Order #{order.id}</h1>
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold">Order #{order.id}</h1>
+            {order.isQuickMode && (
+              <div className="flex items-center bg-orange-100 text-orange-600 px-3 py-1 rounded-full">
+                <Zap className="h-4 w-4 mr-1" />
+                <span className="text-sm font-medium">Quick Mode</span>
+              </div>
+            )}
+          </div>
           <div className="flex items-center">
             <Calendar className="h-4 w-4 mr-2 text-gray-500" />
             <span className="text-gray-600">{formattedDate}</span>

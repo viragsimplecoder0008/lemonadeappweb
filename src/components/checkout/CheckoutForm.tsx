@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
@@ -8,11 +7,17 @@ import { Label } from "@/components/ui/label";
 import { addNewOrder } from "@/data/orders";
 import { ShippingAddress, Order } from "@/types";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 const CheckoutForm: React.FC = () => {
-  const { cartItems, getTotalPrice, clearCart } = useCart();
+  const { cartItems, clearCart, getTotalPrice } = useCart();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   
+  // Check if user is in quick mode
+  const [searchParams] = useSearchParams();
+  const isQuickMode = searchParams.get("quick") === "true";
+
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: "",
     address: "",
@@ -43,25 +48,35 @@ const CheckoutForm: React.FC = () => {
       return;
     }
 
-    // Create order
-    const orderId = `ORD-${Date.now()}`;
-    const totalPrice = getTotalPrice();
-    const order: Order = {
-      id: orderId,
-      items: cartItems,
-      totalPrice,
-      shippingAddress,
-      status: "pending",
-      createdAt: new Date().toISOString()
-    };
-
-    // Add order to storage
-    addNewOrder(order);
+    setIsLoading(true);
     
-    // Clear cart and redirect
-    clearCart();
-    toast.success("Order placed successfully!");
-    navigate(`/order-success/${orderId}`);
+    try {
+      // Create order
+      const orderId = `ORD-${Date.now()}`;
+      const totalPrice = getTotalPrice();
+      const order: Order = {
+        id: orderId,
+        items: cartItems,
+        totalPrice,
+        shippingAddress,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        isQuickMode: isQuickMode
+      };
+
+      // Add order to storage
+      addNewOrder(order);
+      
+      // Clear cart and redirect
+      clearCart();
+      toast.success("Order placed successfully!");
+      navigate(`/order-success/${orderId}`);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast.error("Failed to place order. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const totalPrice = getTotalPrice();
@@ -157,7 +172,7 @@ const CheckoutForm: React.FC = () => {
       <Button 
         type="submit"
         className="w-full bg-lemonade-yellow hover:bg-lemonade-green text-black"
-        disabled={cartItems.length === 0}
+        disabled={cartItems.length === 0 || isLoading}
       >
         Place Order - ${totalPrice.toFixed(2)}
       </Button>

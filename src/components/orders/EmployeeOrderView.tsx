@@ -5,7 +5,7 @@ import { getUserOrders, subscribeToOrderChanges } from "@/data/orders";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Map, RefreshCw, Eye } from "lucide-react";
+import { Map, RefreshCw, Eye, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 export const EmployeeOrderView: React.FC = () => {
@@ -82,6 +82,7 @@ export const EmployeeOrderView: React.FC = () => {
             <TableHead>Customer</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Mode</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -99,6 +100,16 @@ export const EmployeeOrderView: React.FC = () => {
                 <TableCell>{format(new Date(order.createdAt), "MMM d, yyyy")}</TableCell>
                 <TableCell>
                   <span className="capitalize">{order.status}</span>
+                </TableCell>
+                <TableCell>
+                  {order.isQuickMode ? (
+                    <div className="flex items-center text-orange-600">
+                      <Zap className="h-4 w-4 mr-1" />
+                      <span className="text-sm font-medium">Quick</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-gray-500">Normal</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>

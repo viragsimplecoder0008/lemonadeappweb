@@ -1,6 +1,7 @@
+
 import React from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
@@ -9,11 +10,54 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
 
 const Navbar: React.FC = () => {
-  const {
-    totalItems
-  } = useCart();
+  const { totalItems } = useCart();
   const isMobile = useIsMobile();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const isQuickMode = searchParams.get("quick") === "true";
   
+  const handleRevertToNormalMode = () => {
+    setSearchParams(prev => {
+      prev.delete("quick");
+      return prev;
+    });
+    // Navigate to products page without quick mode
+    window.location.href = "/products";
+  };
+  
+  // Quick mode navbar (minimal)
+  if (isQuickMode) {
+    return (
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
+          </Link>
+
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={handleRevertToNormalMode}
+              variant="outline"
+              className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Exit Quick Mode
+              <span className="ml-2 text-xs">(Progress will be lost)</span>
+            </Button>
+            <Link to="/cart" className="relative">
+              <ShoppingCart className="h-6 w-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+      </header>
+    );
+  }
+  
+  // Normal mode navbar (full navigation)
   return <>
       {/* Desktop Navigation */}
       <header className={`${isMobile ? 'hidden' : 'sticky top-0'} z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`}>
