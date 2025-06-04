@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
@@ -73,6 +73,11 @@ const Navbar: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
+                  <Link to="/social" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
+                    Social
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem className="mx-2">
                   <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
                     VIP
                   </Link>
@@ -126,6 +131,9 @@ const Navbar: React.FC = () => {
                   <Link to="/docs" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Docs
                   </Link>
+                  <Link to="/social" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                    Social
+                  </Link>
                   <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Search
                   </Link>
@@ -148,6 +156,10 @@ const Navbar: React.FC = () => {
           <Link to="/products" className="flex flex-col items-center p-2">
             <Package className="h-5 w-5" />
             <span className="text-xs mt-1">Products</span>
+          </Link>
+          <Link to="/social" className="flex flex-col items-center p-2">
+            <Users className="h-5 w-5" />
+            <span className="text-xs mt-1">Social</span>
           </Link>
           <Link to="/search" className="flex flex-col items-center p-2">
             <Search className="h-5 w-5" />
@@ -196,6 +208,9 @@ const Navbar: React.FC = () => {
                 </Link>
                 <Link to="/docs" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Docs
+                </Link>
+                <Link to="/social" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Social
                 </Link>
                 <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Search
