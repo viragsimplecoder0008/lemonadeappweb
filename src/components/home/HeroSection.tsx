@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -43,13 +42,6 @@ const HeroSection: React.FC = () => {
                 className="bg-lemonade-yellow hover:bg-lemonade-green text-black px-8 py-6"
               >
                 <Link to="/products">Shop Now</Link>
-              </Button>
-              <Button 
-                asChild
-                variant="outline" 
-                className="border-lemonade-yellow text-lemonade-dark hover:bg-lemonade-light px-8 py-6"
-              >
-                <Link to="/products">Our Flavors</Link>
               </Button>
             </div>
           </div>

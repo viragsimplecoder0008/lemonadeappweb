@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -93,6 +94,7 @@
 @layer base {
   * {
     @apply border-border;
+    cursor: url('/lovable-uploads/7795e36b-30c9-4f03-adcb-37d3704aaa65.png'), auto;
   }
 
   body {

@@ -10,7 +10,7 @@ import { ShippingAddress, Order } from "@/types";
 import { toast } from "sonner";
 
 const CheckoutForm: React.FC = () => {
-  const { items, totalPrice, clearCart } = useCart();
+  const { cartItems, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
@@ -45,9 +45,10 @@ const CheckoutForm: React.FC = () => {
 
     // Create order
     const orderId = `ORD-${Date.now()}`;
+    const totalPrice = getTotalPrice();
     const order: Order = {
       id: orderId,
-      items,
+      items: cartItems,
       totalPrice,
       shippingAddress,
       status: "pending",
@@ -62,6 +63,8 @@ const CheckoutForm: React.FC = () => {
     toast.success("Order placed successfully!");
     navigate(`/order-success/${orderId}`);
   };
+
+  const totalPrice = getTotalPrice();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -154,7 +157,7 @@ const CheckoutForm: React.FC = () => {
       <Button 
         type="submit"
         className="w-full bg-lemonade-yellow hover:bg-lemonade-green text-black"
-        disabled={items.length === 0}
+        disabled={cartItems.length === 0}
       >
         Place Order - ${totalPrice.toFixed(2)}
       </Button>
