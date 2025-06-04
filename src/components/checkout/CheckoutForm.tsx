@@ -1,252 +1,162 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { addNewOrder } from "@/data/orders";
+import { ShippingAddress, Order } from "@/types";
+import { toast } from "sonner";
 
 const CheckoutForm: React.FC = () => {
+  const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
-  const { cartItems, clearCart, getTotalPrice } = useCart();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [formData, setFormData] = useState({
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: "",
-    email: "",
     address: "",
     city: "",
     state: "",
     postalCode: "",
     country: "USA",
+    email: "",
     phoneNumber: "",
-    deliveryNote: ""
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleInputChange = (field: keyof ShippingAddress, value: string) => {
+    setShippingAddress(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
-    try {
-      // Generate order ID
-      const orderId = `order-${Math.floor(Math.random() * 10000)}`;
-      
-      // Create order object for tracking
-      const newOrder = {
-        id: orderId,
-        items: cartItems.map(item => ({
-          product: item.product,
-          quantity: item.quantity
-        })),
-        totalPrice: getTotalPrice(),
-        status: "pending" as "pending" | "processing" | "shipped" | "delivered",
-        createdAt: new Date().toISOString(),
-        shippingAddress: {
-          fullName: formData.fullName,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          postalCode: formData.postalCode,
-          country: formData.country
-        }
-      };
-      
-      // Add order to orders list for tracking
-      addNewOrder(newOrder);
-      
-      // Prepare the data to be sent
-      const orderData = {
-        orderId,
-        items: cartItems,
-        totalPrice: getTotalPrice(),
-        customerInfo: {
-          fullName: formData.fullName,
-          email: formData.email,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          postalCode: formData.postalCode,
-          phoneNumber: formData.phoneNumber,
-          deliveryNote: formData.deliveryNote
-        }
-      };
-      
-      console.log("Sending order data:", orderData);
-      
-      // Send email notification using the edge function
-      const { data, error } = await supabase.functions.invoke('send-order-email', {
-        body: orderData
-      });
-
-      if (error) {
-        console.error("Error sending order email:", error);
-        toast.error("Order placed, but confirmation email couldn't be sent.");
-      } else {
-        console.log("Email function response:", data);
-        toast.success("Order placed successfully!", {
-          description: "Order details have been sent to the shop owner."
-        });
-      }
-      
-      // Clear the cart and redirect to success page
-      clearCart();
-      navigate(`/order-success/${orderId}`);
-    } catch (error) {
-      console.error("Error processing order:", error);
-      toast.error("There was a problem processing your order. Please try again.");
-      setIsSubmitting(false);
+    // Validate required fields
+    const requiredFields = ['fullName', 'address', 'city', 'state', 'postalCode', 'email', 'phoneNumber'];
+    const missingFields = requiredFields.filter(field => !shippingAddress[field as keyof ShippingAddress]);
+    
+    if (missingFields.length > 0) {
+      toast.error("Please fill in all required fields");
+      return;
     }
+
+    // Create order
+    const orderId = `ORD-${Date.now()}`;
+    const order: Order = {
+      id: orderId,
+      items,
+      totalPrice,
+      shippingAddress,
+      status: "pending",
+      createdAt: new Date().toISOString()
+    };
+
+    // Add order to storage
+    addNewOrder(order);
+    
+    // Clear cart and redirect
+    clearCart();
+    toast.success("Order placed successfully!");
+    navigate(`/order-success/${orderId}`);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Contact Information</h3>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              required
-              placeholder="Required for delivery coordination"
-            />
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="fullName">Full Name *</Label>
+          <Input
+            id="fullName"
+            value={shippingAddress.fullName}
+            onChange={(e) => handleInputChange("fullName", e.target.value)}
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="email">Email Address *</Label>
+          <Input
+            id="email"
+            type="email"
+            value={shippingAddress.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="phoneNumber">Phone Number *</Label>
+          <Input
+            id="phoneNumber"
+            type="tel"
+            value={shippingAddress.phoneNumber}
+            onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+            required
+          />
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Shipping Address</h3>
-        <div className="grid grid-cols-1 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="postalCode">Postal Code</Label>
-              <Input
-                id="postalCode"
-                name="postalCode"
-                value={formData.postalCode}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="deliveryNote">Delivery Instructions (Optional)</Label>
-            <Input
-              id="deliveryNote"
-              name="deliveryNote"
-              value={formData.deliveryNote}
-              onChange={handleChange}
-              placeholder="Additional instructions for delivery"
-            />
-          </div>
+      <div>
+        <Label htmlFor="address">Street Address *</Label>
+        <Input
+          id="address"
+          value={shippingAddress.address}
+          onChange={(e) => handleInputChange("address", e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Label htmlFor="city">City *</Label>
+          <Input
+            id="city"
+            value={shippingAddress.city}
+            onChange={(e) => handleInputChange("city", e.target.value)}
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="state">State *</Label>
+          <Input
+            id="state"
+            value={shippingAddress.state}
+            onChange={(e) => handleInputChange("state", e.target.value)}
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="postalCode">Postal Code *</Label>
+          <Input
+            id="postalCode"
+            value={shippingAddress.postalCode}
+            onChange={(e) => handleInputChange("postalCode", e.target.value)}
+            required
+          />
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Payment Method</h3>
-        <div className="bg-gray-50 p-4 rounded-md">
-          <RadioGroup defaultValue="cod" className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="cod" id="cod" checked />
-              <Label htmlFor="cod" className="font-medium">Cash on Delivery</Label>
-            </div>
-          </RadioGroup>
-          <p className="text-sm text-gray-500 mt-2">
-            You will pay in cash when the order is delivered to your address.
-          </p>
-        </div>
+      <div>
+        <Label htmlFor="country">Country</Label>
+        <Input
+          id="country"
+          value={shippingAddress.country}
+          onChange={(e) => handleInputChange("country", e.target.value)}
+          disabled
+        />
       </div>
 
       <Button 
-        type="submit" 
+        type="submit"
         className="w-full bg-lemonade-yellow hover:bg-lemonade-green text-black"
-        disabled={isSubmitting}
+        disabled={items.length === 0}
       >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          "Complete Order"
-        )}
+        Place Order - ${totalPrice.toFixed(2)}
       </Button>
     </form>
   );

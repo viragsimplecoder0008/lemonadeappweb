@@ -3,7 +3,7 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, ShoppingBag, Mail, Phone } from "lucide-react";
 import { format } from "date-fns";
 import { getOrderById } from "@/data/orders";
 import OrderStatus from "@/components/orders/OrderStatus";
@@ -123,6 +123,21 @@ const OrderDetailPage: React.FC = () => {
                     <span>Total</span>
                     <span>${order.totalPrice.toFixed(2)}</span>
                   </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Contact Information */}
+            <div className="bg-white rounded-lg border p-6">
+              <h3 className="font-medium mb-3">Contact Information</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <Mail className="h-4 w-4 text-gray-500 mr-2" />
+                  <span className="text-sm">{order.shippingAddress.email}</span>
+                </div>
+                <div className="flex items-center">
+                  <Phone className="h-4 w-4 text-gray-500 mr-2" />
+                  <span className="text-sm">{order.shippingAddress.phoneNumber}</span>
                 </div>
               </div>
             </div>
