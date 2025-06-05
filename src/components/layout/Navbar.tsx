@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft } from "lucide-react";
@@ -8,6 +7,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
+import AuthButton from "@/components/auth/AuthButton";
 
 const Navbar: React.FC = () => {
   const { totalItems } = useCart();
@@ -149,6 +149,7 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <AuthButton />
             <KeyboardShortcutsHelp />
             <Link to="/search" className="relative" aria-label="Search">
               <Search className="h-6 w-6" />
@@ -292,6 +293,9 @@ const Navbar: React.FC = () => {
                 <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   VIP Management
                 </Link>
+                <div className="mt-4">
+                  <AuthButton />
+                </div>
                 <div className="mt-4">
                   <KeyboardShortcutsHelp />
                 </div>
