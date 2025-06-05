@@ -24,6 +24,7 @@ import EmployeePage from "./pages/EmployeePage";
 import VipPage from "./pages/VipPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import SocialPage from "./pages/SocialPage";
+import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/vip" element={<VipPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/social" element={<SocialPage />} />
+              <Route path="/auth" element={<AuthPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
