@@ -1,11 +1,8 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-
 const CategoriesSection: React.FC = () => {
-  return (
-    <section className="py-16 bg-gray-50">
+  return <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold">Shop by Category</h2>
@@ -17,12 +14,8 @@ const CategoriesSection: React.FC = () => {
               <span className="text-lemonade-yellow font-bold">Classic</span>
             </div>
             <h3 className="text-xl font-semibold mb-2">Classic Varieties</h3>
-            <p className="text-gray-600 mb-4">Our timeless recipes that never go out of style.</p>
-            <Button 
-              asChild
-              variant="outline" 
-              className="border-lemonade-yellow text-lemonade-dark hover:bg-lemonade-light"
-            >
+            <p className="text-gray-600 mb-4">Our timeless recipe that never go out of style.</p>
+            <Button asChild variant="outline" className="border-lemonade-yellow text-lemonade-dark hover:bg-lemonade-light">
               <Link to="/products?category=classic">Shop Classic</Link>
             </Button>
           </div>
@@ -32,11 +25,7 @@ const CategoriesSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-2">Specialty Blends</h3>
             <p className="text-gray-600 mb-4">Unique flavor combinations for the adventurous palette.</p>
-            <Button 
-              asChild
-              variant="outline" 
-              className="border-lemonade-green text-lemonade-dark hover:bg-lemonade-light"
-            >
+            <Button asChild variant="outline" className="border-lemonade-green text-lemonade-dark hover:bg-lemonade-light">
               <Link to="/products?category=specialty">Shop Specialty</Link>
             </Button>
           </div>
@@ -46,18 +35,12 @@ const CategoriesSection: React.FC = () => {
             </div>
             <h3 className="text-xl font-semibold mb-2">Premium Collection</h3>
             <p className="text-gray-600 mb-4">Luxury lemonade for the most discerning customers.</p>
-            <Button 
-              asChild
-              variant="outline" 
-              className="border-lemonade-pink text-lemonade-dark hover:bg-lemonade-light"
-            >
+            <Button asChild variant="outline" className="border-lemonade-pink text-lemonade-dark hover:bg-lemonade-light">
               <Link to="/products?category=premium">Shop Premium</Link>
             </Button>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CategoriesSection;
