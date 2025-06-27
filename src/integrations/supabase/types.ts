@@ -14,22 +14,28 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          name: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
+          username: string | null
         }
         Insert: {
           created_at?: string
           email: string
           id: string
+          name?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
+          username?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
+          name?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
+          username?: string | null
         }
         Relationships: []
       }
