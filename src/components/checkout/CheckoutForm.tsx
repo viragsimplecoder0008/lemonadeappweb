@@ -24,10 +24,10 @@ const CheckoutForm: React.FC = () => {
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: "",
     address: "",
-    city: "",
-    state: "",
+    city: "Hyderabad",
+    state: "Telangana",
     postalCode: "",
-    country: "USA",
+    country: "India",
     email: "",
     phoneNumber: "",
   });
@@ -42,8 +42,8 @@ const CheckoutForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate required fields
-    const requiredFields = ['fullName', 'address', 'city', 'state', 'postalCode', 'email', 'phoneNumber'];
+    // Validate required fields (email is now optional)
+    const requiredFields = ['fullName', 'address', 'postalCode', 'phoneNumber'];
     const missingFields = requiredFields.filter(field => !shippingAddress[field as keyof ShippingAddress]);
     
     if (missingFields.length > 0) {
@@ -112,13 +112,13 @@ const CheckoutForm: React.FC = () => {
           </div>
           
           <div>
-            <Label htmlFor="email">Email Address *</Label>
+            <Label htmlFor="email">Email Address (Optional)</Label>
             <Input
               id="email"
               type="email"
               value={shippingAddress.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              required
+              placeholder="For order updates and notifications"
             />
           </div>
           
@@ -146,22 +146,24 @@ const CheckoutForm: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <Label htmlFor="city">City *</Label>
+            <Label htmlFor="city">City</Label>
             <Input
               id="city"
               value={shippingAddress.city}
-              onChange={(e) => handleInputChange("city", e.target.value)}
-              required
+              readOnly
+              disabled
+              className="bg-gray-100"
             />
           </div>
           
           <div>
-            <Label htmlFor="state">State *</Label>
+            <Label htmlFor="state">State</Label>
             <Input
               id="state"
               value={shippingAddress.state}
-              onChange={(e) => handleInputChange("state", e.target.value)}
-              required
+              readOnly
+              disabled
+              className="bg-gray-100"
             />
           </div>
           
@@ -181,8 +183,9 @@ const CheckoutForm: React.FC = () => {
           <Input
             id="country"
             value={shippingAddress.country}
-            onChange={(e) => handleInputChange("country", e.target.value)}
+            readOnly
             disabled
+            className="bg-gray-100"
           />
         </div>
 
