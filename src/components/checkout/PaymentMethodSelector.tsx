@@ -1,21 +1,17 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CreditCard, Banknote } from "lucide-react";
-
 interface PaymentMethodSelectorProps {
   selectedMethod: "online" | "cash";
   onMethodChange: (method: "online" | "cash") => void;
 }
-
 const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   selectedMethod,
-  onMethodChange,
+  onMethodChange
 }) => {
-  return (
-    <Card className="mb-6">
+  return <Card className="mb-6">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
@@ -23,11 +19,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <RadioGroup 
-          value={selectedMethod} 
-          onValueChange={(value) => onMethodChange(value as "online" | "cash")}
-          className="space-y-4"
-        >
+        <RadioGroup value={selectedMethod} onValueChange={value => onMethodChange(value as "online" | "cash")} className="space-y-4">
           <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50">
             <RadioGroupItem value="online" id="online" className="mt-1" />
             <div className="flex-1">
@@ -52,15 +44,11 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
                   Cash Payment
                 </div>
               </Label>
-              <p className="text-sm text-gray-600">
-                Pay at pickup - cash before product delivery
-              </p>
+              <p className="text-sm text-gray-600">Pay at pickup - cash before product taken by hand</p>
             </div>
           </div>
         </RadioGroup>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default PaymentMethodSelector;
