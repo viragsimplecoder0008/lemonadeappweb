@@ -33,6 +33,7 @@ export interface Order {
   status: "pending" | "processing" | "shipped" | "delivered";
   createdAt: string;
   isQuickMode?: boolean;
+  paymentMethod?: "online" | "cash";
 }
 
 export interface GameState {
