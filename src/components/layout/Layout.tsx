@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Gamepad2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { AdminVerification } from "@/components/admin/AdminVerification";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,8 +16,8 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) => {
   const isMobile = useIsMobile();
-  // Initialize keyboard shortcuts
-  useKeyboardShortcuts();
+  // Initialize keyboard shortcuts and get admin verification state
+  const { showAdminVerification, setShowAdminVerification } = useKeyboardShortcuts();
   
   return (
     <div 
@@ -41,6 +42,12 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
         <Gamepad2 className="h-6 w-6 text-lemonade-dark" />
       </Link>
       <Footer />
+      
+      {/* Admin Verification Dialog */}
+      <AdminVerification 
+        isOpen={showAdminVerification}
+        onClose={() => setShowAdminVerification(false)}
+      />
     </div>
   );
 };

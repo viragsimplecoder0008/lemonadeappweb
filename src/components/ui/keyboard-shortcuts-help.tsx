@@ -48,11 +48,11 @@ export const KeyboardShortcutsHelp: React.FC = () => {
               </li>
               <li className="flex justify-between">
                 <span>Community Page</span>
-                <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl + Shift + C</kbd>
+                <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Alt + Shift + C</kbd>
               </li>
               <li className="flex justify-between">
                 <span>Track Orders</span>
-                <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl + T, then O</kbd>
+                <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Alt + T</kbd>
               </li>
             </ul>
           </div>
