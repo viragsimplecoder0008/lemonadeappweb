@@ -8,13 +8,13 @@ import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
 import AuthButton from "@/components/auth/AuthButton";
-
 const Navbar: React.FC = () => {
-  const { totalItems } = useCart();
+  const {
+    totalItems
+  } = useCart();
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const isQuickMode = searchParams.get("quick") === "true";
-  
   const handleRevertToNormalMode = () => {
     setSearchParams(prev => {
       prev.delete("quick");
@@ -23,40 +23,32 @@ const Navbar: React.FC = () => {
     // Navigate to products page without quick mode
     window.location.href = "/products";
   };
-  
+
   // Quick mode navbar (minimal)
   if (isQuickMode) {
-    return (
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    return <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
           </Link>
 
           <div className="flex items-center gap-4">
-            <Button 
-              onClick={handleRevertToNormalMode}
-              variant="outline"
-              className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
-            >
+            <Button onClick={handleRevertToNormalMode} variant="outline" className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Exit Quick Mode
               <span className="ml-2 text-xs">(Progress will be lost)</span>
             </Button>
             <Link to="/cart" className="relative">
               <ShoppingCart className="h-6 w-6" />
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {totalItems}
-                </span>
-              )}
+                </span>}
             </Link>
           </div>
         </div>
-      </header>
-    );
+      </header>;
   }
-  
+
   // Normal mode navbar (full navigation)
   return <>
       {/* Desktop Navigation */}
@@ -135,9 +127,7 @@ const Navbar: React.FC = () => {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/social" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
-                    Social
-                  </Link>
+                  <Link to="/social" className="font-medium hover:text-lemonade-yellow transition-colors px-2">Social</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
                   <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
@@ -305,5 +295,4 @@ const Navbar: React.FC = () => {
         </nav>}
     </>;
 };
-
 export default Navbar;

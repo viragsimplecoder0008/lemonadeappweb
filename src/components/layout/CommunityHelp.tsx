@@ -1,16 +1,8 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { 
-  MessageSquare, 
-  HelpCircle, 
-  Users, 
-  Mail 
-} from "lucide-react";
-
+import { MessageSquare, HelpCircle, Users, Mail } from "lucide-react";
 const CommunityHelp: React.FC = () => {
-  return (
-    <section className="bg-lemonade-light py-16">
+  return <section className="bg-lemonade-light py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Community & Help</h2>
@@ -29,10 +21,7 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Connect with other lemonade lovers and share your favorite recipes and experiences.
             </p>
-            <Link 
-              to="/community" 
-              className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
-            >
+            <Link to="/community" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               Join Now →
             </Link>
           </div>
@@ -45,10 +34,7 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Find answers to commonly asked questions about our products, shipping, and more.
             </p>
-            <Link 
-              to="#" 
-              className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
-            >
+            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               View FAQs →
             </Link>
           </div>
@@ -61,10 +47,7 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Need immediate assistance? Chat with our customer support team in real-time.
             </p>
-            <Link 
-              to="#" 
-              className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
-            >
+            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               Start Chat →
             </Link>
           </div>
@@ -77,17 +60,12 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Have a specific question? Send us an email and we'll get back to you as soon as possible.
             </p>
-            <Link 
-              to="#" 
-              className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors"
-            >
+            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               Email Us →
             </Link>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CommunityHelp;
