@@ -22,6 +22,13 @@ const notifyOrderChanges = () => {
   orderChangeListeners.forEach(callback => callback());
 };
 
+// Generate shorter order IDs
+const generateOrderId = (): string => {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 6);
+  return `${timestamp}-${random}`.toUpperCase();
+};
+
 export const getOrderById = async (id: string): Promise<Order | null> => {
   try {
     const { data: orderData, error: orderError } = await supabase
@@ -157,19 +164,21 @@ export const getUserOrders = async (): Promise<Order[]> => {
 };
 
 // Add a function to add a new order
-export const addNewOrder = async (order: Order): Promise<boolean> => {
+export const addNewOrder = async (order: Omit<Order, 'id'>): Promise<string | null> => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       toast.error('Please log in to place an order');
-      return false;
+      return null;
     }
+
+    const orderId = generateOrderId();
 
     // Insert order
     const { error: orderError } = await supabase
       .from('orders')
       .insert({
-        id: order.id,
+        id: orderId,
         user_id: user.id,
         total_price: order.totalPrice,
         status: order.status,
@@ -188,12 +197,12 @@ export const addNewOrder = async (order: Order): Promise<boolean> => {
     if (orderError) {
       console.error('Error creating order:', orderError);
       toast.error('Failed to create order');
-      return false;
+      return null;
     }
 
     // Insert order items
     const orderItems = order.items.map(item => ({
-      order_id: order.id,
+      order_id: orderId,
       product_id: item.product.id,
       product_name: item.product.name,
       product_description: item.product.description,
@@ -210,17 +219,17 @@ export const addNewOrder = async (order: Order): Promise<boolean> => {
     if (itemsError) {
       console.error('Error creating order items:', itemsError);
       // Try to cleanup the order if items failed
-      await supabase.from('orders').delete().eq('id', order.id);
+      await supabase.from('orders').delete().eq('id', orderId);
       toast.error('Failed to create order items');
-      return false;
+      return null;
     }
 
     // Notify listeners
     notifyOrderChanges();
-    return true;
+    return orderId;
   } catch (error) {
     console.error('Error adding order:', error);
     toast.error('Failed to place order');
-    return false;
+    return null;
   }
 };
