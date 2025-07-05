@@ -1,6 +1,7 @@
 
 import { Order } from "../types";
-import { products } from "./products";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Add event system to notify when orders change
 const orderChangeListeners: (() => void)[] = [];
@@ -21,51 +22,205 @@ const notifyOrderChanges = () => {
   orderChangeListeners.forEach(callback => callback());
 };
 
-// Load orders from localStorage if available
-const loadOrdersFromStorage = (): Order[] => {
-  const storedOrders = localStorage.getItem('orders');
-  return storedOrders ? JSON.parse(storedOrders) : [];
-};
+export const getOrderById = async (id: string): Promise<Order | null> => {
+  try {
+    const { data: orderData, error: orderError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-// Initialize with stored orders or empty array
-export const orders: Order[] = loadOrdersFromStorage();
+    if (orderError) {
+      console.error('Error fetching order:', orderError);
+      return null;
+    }
 
-// Add storage event listener to detect changes from other tabs/devices
-window.addEventListener('storage', (event) => {
-  if (event.key === 'orders') {
-    // Refresh the in-memory orders array to match localStorage
-    orders.length = 0;
-    const freshOrders = loadOrdersFromStorage();
-    orders.push(...freshOrders);
-    
-    // Notify listeners of the change
-    notifyOrderChanges();
+    const { data: itemsData, error: itemsError } = await supabase
+      .from('order_items')
+      .select('*')
+      .eq('order_id', id);
+
+    if (itemsError) {
+      console.error('Error fetching order items:', itemsError);
+      return null;
+    }
+
+    // Convert database format to Order type
+    const order: Order = {
+      id: orderData.id,
+      totalPrice: Number(orderData.total_price),
+      status: orderData.status as Order['status'],
+      createdAt: orderData.created_at,
+      isQuickMode: orderData.is_quick_mode || false,
+      paymentMethod: orderData.payment_method as Order['paymentMethod'],
+      shippingAddress: {
+        fullName: orderData.shipping_full_name,
+        address: orderData.shipping_address,
+        city: orderData.shipping_city,
+        state: orderData.shipping_state,
+        postalCode: orderData.shipping_postal_code,
+        country: orderData.shipping_country,
+        email: orderData.shipping_email || '',
+        phoneNumber: orderData.shipping_phone_number,
+      },
+      items: itemsData.map(item => ({
+        quantity: item.quantity,
+        product: {
+          id: item.product_id,
+          name: item.product_name,
+          description: item.product_description || '',
+          price: Number(item.product_price),
+          imageUrl: item.product_image_url || undefined,
+          category: item.product_category,
+          inStock: true,
+        }
+      }))
+    };
+
+    return order;
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    return null;
   }
-});
-
-export const getOrderById = (id: string): Order | undefined => {
-  // Always get the latest orders from storage
-  const freshOrders = loadOrdersFromStorage();
-  return freshOrders.find(order => order.id === id);
 };
 
-export const getUserOrders = (): Order[] => {
-  // Always get the latest orders from storage
-  return loadOrdersFromStorage();
+export const getUserOrders = async (): Promise<Order[]> => {
+  try {
+    const { data: ordersData, error: ordersError } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (ordersError) {
+      console.error('Error fetching orders:', ordersError);
+      return [];
+    }
+
+    // Fetch items for all orders
+    const orderIds = ordersData.map(order => order.id);
+    if (orderIds.length === 0) return [];
+
+    const { data: itemsData, error: itemsError } = await supabase
+      .from('order_items')
+      .select('*')
+      .in('order_id', orderIds);
+
+    if (itemsError) {
+      console.error('Error fetching order items:', itemsError);
+      return [];
+    }
+
+    // Group items by order_id
+    const itemsByOrderId = itemsData.reduce((acc, item) => {
+      if (!acc[item.order_id]) acc[item.order_id] = [];
+      acc[item.order_id].push(item);
+      return acc;
+    }, {} as Record<string, typeof itemsData>);
+
+    // Convert database format to Order type
+    const orders: Order[] = ordersData.map(orderData => ({
+      id: orderData.id,
+      totalPrice: Number(orderData.total_price),
+      status: orderData.status as Order['status'],
+      createdAt: orderData.created_at,
+      isQuickMode: orderData.is_quick_mode || false,
+      paymentMethod: orderData.payment_method as Order['paymentMethod'],
+      shippingAddress: {
+        fullName: orderData.shipping_full_name,
+        address: orderData.shipping_address,
+        city: orderData.shipping_city,
+        state: orderData.shipping_state,
+        postalCode: orderData.shipping_postal_code,
+        country: orderData.shipping_country,
+        email: orderData.shipping_email || '',
+        phoneNumber: orderData.shipping_phone_number,
+      },
+      items: (itemsByOrderId[orderData.id] || []).map(item => ({
+        quantity: item.quantity,
+        product: {
+          id: item.product_id,
+          name: item.product_name,
+          description: item.product_description || '',
+          price: Number(item.product_price),
+          imageUrl: item.product_image_url || undefined,
+          category: item.product_category,
+          inStock: true,
+        }
+      }))
+    }));
+
+    return orders;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    return [];
+  }
 };
 
 // Add a function to add a new order
-export const addNewOrder = (order: Order): void => {
-  const freshOrders = loadOrdersFromStorage(); // Get latest orders
-  freshOrders.unshift(order); // Add to the beginning of the array
-  
-  // Save to localStorage
-  localStorage.setItem('orders', JSON.stringify(freshOrders));
-  
-  // Update in-memory orders
-  orders.length = 0;
-  orders.push(...freshOrders);
-  
-  // Notify listeners
-  notifyOrderChanges();
+export const addNewOrder = async (order: Order): Promise<boolean> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error('Please log in to place an order');
+      return false;
+    }
+
+    // Insert order
+    const { error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        id: order.id,
+        user_id: user.id,
+        total_price: order.totalPrice,
+        status: order.status,
+        is_quick_mode: order.isQuickMode || false,
+        payment_method: order.paymentMethod,
+        shipping_full_name: order.shippingAddress.fullName,
+        shipping_address: order.shippingAddress.address,
+        shipping_city: order.shippingAddress.city,
+        shipping_state: order.shippingAddress.state,
+        shipping_postal_code: order.shippingAddress.postalCode,
+        shipping_country: order.shippingAddress.country,
+        shipping_email: order.shippingAddress.email || null,
+        shipping_phone_number: order.shippingAddress.phoneNumber,
+      });
+
+    if (orderError) {
+      console.error('Error creating order:', orderError);
+      toast.error('Failed to create order');
+      return false;
+    }
+
+    // Insert order items
+    const orderItems = order.items.map(item => ({
+      order_id: order.id,
+      product_id: item.product.id,
+      product_name: item.product.name,
+      product_description: item.product.description,
+      product_price: item.product.price,
+      product_image_url: item.product.imageUrl,
+      product_category: item.product.category,
+      quantity: item.quantity,
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('order_items')
+      .insert(orderItems);
+
+    if (itemsError) {
+      console.error('Error creating order items:', itemsError);
+      // Try to cleanup the order if items failed
+      await supabase.from('orders').delete().eq('id', order.id);
+      toast.error('Failed to create order items');
+      return false;
+    }
+
+    // Notify listeners
+    notifyOrderChanges();
+    return true;
+  } catch (error) {
+    console.error('Error adding order:', error);
+    toast.error('Failed to place order');
+    return false;
+  }
 };

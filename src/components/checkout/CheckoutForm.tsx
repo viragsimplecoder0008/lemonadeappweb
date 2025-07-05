@@ -39,7 +39,7 @@ const CheckoutForm: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields (email is now optional)
@@ -76,12 +76,14 @@ const CheckoutForm: React.FC = () => {
       };
 
       // Add order to storage
-      addNewOrder(order);
+      const success = await addNewOrder(order);
       
-      // Clear cart and redirect
-      clearCart();
-      toast.success("Order placed successfully!");
-      navigate(`/order-success/${orderId}`);
+      if (success) {
+        // Clear cart and redirect
+        clearCart();
+        toast.success("Order placed successfully!");
+        navigate(`/order-success/${orderId}`);
+      }
     } catch (error) {
       console.error("Error creating order:", error);
       toast.error("Failed to place order. Please try again.");

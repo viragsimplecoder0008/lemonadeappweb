@@ -23,14 +23,21 @@ const AdminDashboard: React.FC = () => {
   const [festivalName, setFestivalName] = useState("");
   const [festivalDiscount, setFestivalDiscount] = useState("10");
   const [activeFestivals, setActiveFestivals] = useState<{name: string, discount: string}[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
 
   // Order statistics
-  const orders = getUserOrders();
   const totalOrders = orders.length;
   const revenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
   const uniqueCustomers = new Set(orders.map(order => order.shippingAddress.fullName)).size;
   
   useEffect(() => {
+    // Load orders
+    const fetchOrders = async () => {
+      const fetchedOrders = await getUserOrders();
+      setOrders(fetchedOrders);
+    };
+    fetchOrders();
+    
     // Load any saved festivals from localStorage
     const savedFestivals = localStorage.getItem('festivals');
     if (savedFestivals) {

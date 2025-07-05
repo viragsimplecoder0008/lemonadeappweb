@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserOrders, subscribeToOrderChanges } from "@/data/orders";
+import { Order } from "@/types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import { Map, RefreshCw, Eye, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 export const EmployeeOrderView: React.FC = () => {
-  const [orders, setOrders] = useState(getUserOrders());
+  const [orders, setOrders] = useState<Order[]>([]);
   const navigate = useNavigate();
   
   // Subscribe to order changes
@@ -33,8 +34,8 @@ export const EmployeeOrderView: React.FC = () => {
     };
   }, []);
   
-  const refreshOrders = () => {
-    const freshOrders = getUserOrders();
+  const refreshOrders = async () => {
+    const freshOrders = await getUserOrders();
     setOrders(freshOrders);
   };
   

@@ -9,6 +9,107 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string | null
+          product_category: string
+          product_description: string | null
+          product_id: string
+          product_image_url: string | null
+          product_name: string
+          product_price: number
+          quantity: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          product_category: string
+          product_description?: string | null
+          product_id: string
+          product_image_url?: string | null
+          product_name: string
+          product_price: number
+          quantity: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          product_category?: string
+          product_description?: string | null
+          product_id?: string
+          product_image_url?: string | null
+          product_name?: string
+          product_price?: number
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_quick_mode: boolean | null
+          payment_method: string | null
+          shipping_address: string
+          shipping_city: string
+          shipping_country: string
+          shipping_email: string | null
+          shipping_full_name: string
+          shipping_phone_number: string
+          shipping_postal_code: string
+          shipping_state: string
+          status: string
+          total_price: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          is_quick_mode?: boolean | null
+          payment_method?: string | null
+          shipping_address: string
+          shipping_city: string
+          shipping_country: string
+          shipping_email?: string | null
+          shipping_full_name: string
+          shipping_phone_number: string
+          shipping_postal_code: string
+          shipping_state: string
+          status: string
+          total_price: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_quick_mode?: boolean | null
+          payment_method?: string | null
+          shipping_address?: string
+          shipping_city?: string
+          shipping_country?: string
+          shipping_email?: string | null
+          shipping_full_name?: string
+          shipping_phone_number?: string
+          shipping_postal_code?: string
+          shipping_state?: string
+          status?: string
+          total_price?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

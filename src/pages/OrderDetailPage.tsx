@@ -1,16 +1,39 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, MapPin, ShoppingBag, Mail, Phone, Zap } from "lucide-react";
 import { format } from "date-fns";
 import { getOrderById } from "@/data/orders";
+import { Order } from "@/types";
 import OrderStatus from "@/components/orders/OrderStatus";
 
 const OrderDetailPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  const order = orderId ? getOrderById(orderId) : null;
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (orderId) {
+        const fetchedOrder = await getOrderById(orderId);
+        setOrder(fetchedOrder);
+      }
+      setLoading(false);
+    };
+    fetchOrder();
+  }, [orderId]);
+  
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 text-center">
+          <p>Loading order details...</p>
+        </div>
+      </Layout>
+    );
+  }
   
   if (!order) {
     return (

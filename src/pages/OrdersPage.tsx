@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,19 @@ import { Search, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import OrdersList from "@/components/orders/OrdersList";
 import { getUserOrders } from "@/data/orders";
+import { Order } from "@/types";
 
 const OrdersPage: React.FC = () => {
   const [orderIdInput, setOrderIdInput] = useState("");
-  const userOrders = getUserOrders();
+  const [userOrders, setUserOrders] = useState<Order[]>([]);
+  
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const orders = await getUserOrders();
+      setUserOrders(orders);
+    };
+    fetchOrders();
+  }, []);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
