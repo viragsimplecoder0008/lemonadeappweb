@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { ArrowLeft } from "lucide-react";
 import { useCart } from "@/context/CartContext";
@@ -9,6 +9,7 @@ import CheckoutForm from "@/components/checkout/CheckoutForm";
 
 const CheckoutPage: React.FC = () => {
   const { cartItems } = useCart();
+  const navigate = useNavigate();
   
   if (cartItems.length === 0) {
     return (
@@ -42,7 +43,7 @@ const CheckoutPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg border p-6">
-              <CheckoutForm />
+              <CheckoutForm onOrderComplete={(orderId) => navigate(`/order-success/${orderId}`)} />
             </div>
           </div>
           

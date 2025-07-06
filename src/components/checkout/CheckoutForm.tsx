@@ -8,14 +8,14 @@ import { useCart } from "@/context/CartContext";
 import { ShippingAddress } from "@/types";
 import { toast } from "sonner";
 import { addNewOrder } from "@/data/orders";
-import { PaymentMethodSelector } from "./PaymentMethodSelector";
+import PaymentMethodSelector from "./PaymentMethodSelector";
 
 interface CheckoutFormProps {
   onOrderComplete: (orderId: string) => void;
 }
 
 const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
-  const { items, getTotalPrice, clearCart } = useCart();
+  const { cartItems, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('online');
@@ -41,7 +41,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (items.length === 0) {
+    if (cartItems.length === 0) {
       toast.error("Your cart is empty");
       return;
     }
@@ -50,7 +50,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
 
     try {
       const orderData = {
-        items,
+        items: cartItems,
         totalPrice: getTotalPrice(),
         shippingAddress,
         status: "pending" as const,

@@ -34,7 +34,7 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Find answers to commonly asked questions about our products, shipping, and more.
             </p>
-            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
+            <Link to="/faq" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               View FAQs →
             </Link>
           </div>
@@ -47,7 +47,7 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Need immediate assistance? Chat with our customer support team in real-time.
             </p>
-            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
+            <Link to="/live-chat" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               Start Chat →
             </Link>
           </div>
@@ -60,9 +60,9 @@ const CommunityHelp: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Have a specific question? Send us an email and we'll get back to you as soon as possible.
             </p>
-            <Link to="#" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
+            <a href="mailto:viraj.vmaster1@gmail.com" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
               Email Us →
-            </Link>
+            </a>
           </div>
         </div>
       </div>
