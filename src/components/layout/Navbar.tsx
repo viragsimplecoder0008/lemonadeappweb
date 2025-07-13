@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
@@ -15,6 +15,7 @@ const Navbar: React.FC = () => {
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const isQuickMode = searchParams.get("quick") === "true";
+  const [showOnlyMenuIcon, setShowOnlyMenuIcon] = useState(false);
   const handleRevertToNormalMode = () => {
     setSearchParams(prev => {
       prev.delete("quick");
@@ -206,8 +207,8 @@ const Navbar: React.FC = () => {
         </div>
       </header>
       
-      {/* Mobile Navigation (Bottom bar) */}
-      {isMobile && <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-around py-2">
+      {/* Mobile Navigation (Floating menu button) */}
+      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-around py-2">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Home</span>
@@ -244,6 +245,14 @@ const Navbar: React.FC = () => {
             </SheetTrigger>
             <SheetContent side="bottom">
               <nav className="flex flex-col gap-4 mt-8 pb-16">
+                <Button 
+                  onClick={() => setShowOnlyMenuIcon(true)}
+                  variant="outline"
+                  className="w-full justify-start gap-2 mb-4"
+                >
+                  <EyeOff className="h-4 w-4" />
+                  Show only menu bar icon
+                </Button>
                 <Link to="/" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Home
                 </Link>
@@ -293,6 +302,76 @@ const Navbar: React.FC = () => {
             </SheetContent>
           </Sheet>
         </nav>}
+
+      {/* Floating menu button when in minimal mode */}
+      {isMobile && showOnlyMenuIcon && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="lg" className="rounded-full shadow-lg bg-primary hover:bg-primary/90">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom">
+              <nav className="flex flex-col gap-4 mt-8 pb-16">
+                <Button 
+                  onClick={() => setShowOnlyMenuIcon(false)}
+                  variant="outline"
+                  className="w-full justify-start gap-2 mb-4"
+                >
+                  <Menu className="h-4 w-4" />
+                  Show full menu bar
+                </Button>
+                <Link to="/" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Home
+                </Link>
+                <Link to="/products" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  All Products
+                </Link>
+                <Link to="/products?category=classic" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Classic
+                </Link>
+                <Link to="/products?category=specialty" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Specialty
+                </Link>
+                <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Premium
+                </Link>
+                <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Quick - Specialty
+                </Link>
+                <Link to="/products?category=classic&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Quick - Classic
+                </Link>
+                <Link to="/orders" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Track Order
+                </Link>
+                <Link to="/cart" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Cart ({totalItems})
+                </Link>
+                <Link to="/docs" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Docs
+                </Link>
+                <Link to="/social" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Social
+                </Link>
+                <Link to="/search" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Search
+                </Link>
+                <Link to="/vip" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  VIP Management
+                </Link>
+                <div className="mt-4">
+                  <AuthButton />
+                </div>
+                <div className="mt-4">
+                  <KeyboardShortcutsHelp />
+                </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+      )}
     </>;
 };
 export default Navbar;
