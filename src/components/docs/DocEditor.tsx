@@ -16,22 +16,12 @@ const DocEditor: React.FC<DocEditorProps> = ({ docId }) => {
     const doc = getDocById(docId);
     if (doc) {
       setTitle(doc.title);
-      // Convert HTML content to plain text for editing
-      const tempElement = document.createElement("div");
-      tempElement.innerHTML = doc.content;
-      setContent(tempElement.innerText || tempElement.textContent || "");
+      setContent(doc.content);
     }
   }, [docId]);
   
   const handleSave = () => {
-    // Convert plain text to simple HTML paragraphs for storage
-    const htmlContent = content
-      .split("\n")
-      .filter(paragraph => paragraph.trim() !== "")
-      .map(paragraph => `<p>${paragraph}</p>`)
-      .join("\n");
-    
-    updateDoc(docId, { title, content: htmlContent });
+    updateDoc(docId, { title, content });
   };
   
   useEffect(() => {
@@ -50,15 +40,16 @@ const DocEditor: React.FC<DocEditorProps> = ({ docId }) => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="text-2xl font-bold"
+        placeholder="Document Title"
       />
       <Textarea 
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="min-h-[500px]"
-        placeholder="Write your document content here..."
+        className="min-h-[500px] font-mono text-sm"
+        placeholder="Write your HTML content here..."
       />
       <div className="text-sm text-gray-500">
-        Changes are saved automatically. Use line breaks for paragraphs.
+        Changes are saved automatically. Use HTML tags for formatting.
       </div>
     </div>
   );
