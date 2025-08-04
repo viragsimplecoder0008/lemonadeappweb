@@ -94,31 +94,7 @@ const Footer: React.FC = () => {
                 </li>}
             </ul>
           </div>
-          <div>
-            <h4 className="text-md font-semibold mb-4">Customer Service</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
-                  FAQ
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
-                  Shipping Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-sm text-gray-300 hover:text-lemonade-yellow transition-colors">
-                  Returns & Refunds
-                </a>
-              </li>
-            </ul>
-          </div>
+          
           <div>
             <h4 className="text-md font-semibold mb-4">Connect With Us</h4>
             <div className="flex space-x-4">
