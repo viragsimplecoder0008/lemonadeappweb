@@ -104,21 +104,6 @@ const Footer: React.FC = () => {
               </a>
             </div>
             
-            <div className="mt-6 space-y-2">
-              <Button variant="outline" size="sm" className={`w-full ${isEmployee ? 'bg-lemonade-yellow text-black' : 'bg-transparent text-gray-300'}`} onClick={handleEmployeeAction}>
-                <UserPlus className="mr-2 h-4 w-4" />
-                {isEmployee ? "Send Message to Admin" : "Employee Mode"}
-              </Button>
-              
-              <Button variant="outline" size="sm" className={`w-full ${isAdmin ? 'bg-lemonade-yellow text-black' : 'bg-transparent text-gray-300'}`} onClick={handleAdminAction}>
-                <User className="mr-2 h-4 w-4" />
-                {isAdmin ? "View Employee Messages" : "Admin Mode"}
-              </Button>
-              
-              {isAdmin && <Button variant="outline" size="sm" className="w-full bg-lemonade-yellow text-black" onClick={() => window.location.href = "/admin"}>
-                  Admin Dashboard
-                </Button>}
-            </div>
           </div>
         </div>
       </div>

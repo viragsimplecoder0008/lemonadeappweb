@@ -58,22 +58,6 @@ export const useKeyboardShortcuts = () => {
             navigate('/community');
             toast.success('Shortcut: Community page');
             break;
-          case 'A': // Alt+Shift+A for Admin mode
-          case 'a':
-            event.preventDefault();
-            setShowAdminVerification(true);
-            break;
-          case 'E': // Alt+Shift+E for Employee mode
-          case 'e':
-            event.preventDefault();
-            if (!isEmployee) {
-              setEmployeeMode(true);
-              toast.success('Employee mode activated');
-            } else {
-              setEmployeeMode(false);
-              toast.info('Employee mode deactivated');
-            }
-            break;
         }
       }
     };

@@ -28,6 +28,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     if (storedAdmin === 'true') setIsAdmin(true);
     if (storedEmployee === 'true') setIsEmployee(true);
+
+    // Listen for admin activation events
+    const handleActivateAdminMode = () => {
+      setIsAdmin(true);
+      setIsEmployee(false);
+    };
+
+    window.addEventListener('activateAdminMode', handleActivateAdminMode);
+    return () => window.removeEventListener('activateAdminMode', handleActivateAdminMode);
   }, []);
 
   // Update localStorage when state changes
@@ -62,12 +71,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   return (
-    <AdminContext.Provider value={{ 
-      isAdmin, 
-      isEmployee, 
-      setAdminMode, 
-      setEmployeeMode 
-    }}>
+    <AdminContext.Provider 
+      value={{ 
+        isAdmin, 
+        isEmployee, 
+        setAdminMode, 
+        setEmployeeMode 
+      }}
+      data-admin-context
+    >
       {children}
     </AdminContext.Provider>
   );

@@ -10,6 +10,7 @@ import { Map, RefreshCw, Eye, Zap, Package, User, Calendar, CreditCard } from "l
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ProgressTracker } from "@/components/employee/ProgressTracker";
 
 export const EmployeeOrderView: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -168,7 +169,8 @@ export const EmployeeOrderView: React.FC = () => {
         {/* Order Details Panel */}
         <div>
           {selectedOrder ? (
-            <Card>
+            <div className="space-y-4">
+              <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>Order Details</span>
@@ -254,9 +256,15 @@ export const EmployeeOrderView: React.FC = () => {
                       </Badge>
                     </p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                 </div>
+               </CardContent>
+             </Card>
+             
+              {/* Progress Tracker */}
+              <div className="mt-4">
+                <ProgressTracker orderId={selectedOrder.id} orderNumber={selectedOrder.id} />
+              </div>
+            </div>
           ) : (
             <Card>
               <CardContent className="flex items-center justify-center h-64 text-gray-500">
