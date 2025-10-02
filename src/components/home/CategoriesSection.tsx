@@ -8,7 +8,7 @@ const CategoriesSection: React.FC = () => {
           <h2 className="text-3xl font-bold">Shop by Category</h2>
           <p className="mt-2 text-gray-600">Find the perfect lemonade for any occasion</p>
         </div>
-        <img src="https://73bdd375-beaf-4ed6-9758-fc845cb0c633.lovableproject.com/lovable-uploads/728fd164-7561-40f4-bcb1-156caafb7496.png">
+        <img src="https://73bdd375-beaf-4ed6-9758-fc845cb0c633.lovableproject.com/lovable-uploads/728fd164-7561-40f4-bcb1-156caafb7496.png"/>
             </div>
             <h3 className="text-xl font-semibold mb-2">Classic Varieties</h3>
             <p className="text-gray-600 mb-4">Our timeless recipe that never go out of style.</p>
