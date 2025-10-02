@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
   // Normal mode navbar (full navigation)
   return <>
       {/* Desktop Navigation */}
-      <header className={`${isMobile ? 'hidden' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 shadow-lg`}>
+      <header className={`${isMobile ? 'hidden' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl`}>
         <div className="flex h-16 items-center justify-between px-6">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
