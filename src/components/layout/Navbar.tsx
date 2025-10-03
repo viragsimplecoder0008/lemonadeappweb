@@ -208,7 +208,7 @@ const Navbar: React.FC = () => {
       </header>
       
       {/* Mobile Navigation (Floating menu button) */}
-      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex items-center justify-around py-2">
+      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/10 backdrop-blur-xl border border-white/20 z-50 flex items-center justify-around py-2 rounded-full shadow-2xl">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
             <span className="text-xs mt-1">Home</span>
