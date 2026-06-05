@@ -40,15 +40,43 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
-    console.log("Received order email request:", { orderId, totalPrice, customerEmail: customerInfo.email });
+    // Require authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-    // Generate the items HTML
+    const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
+    console.log("Received order email request:", { orderId, totalPrice, userId: userData.user.id });
+
+    // Basic sanitization helper to prevent HTML injection in emails
+    const esc = (s: unknown) =>
+      String(s ?? "").replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!
+      );
+
+    // Generate the items HTML (escaped)
     const itemsHtml = items.map(item => `
       <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.product.name}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.quantity}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">$${(item.product.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${esc(item.product.name)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${esc(item.quantity)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">$${(Number(item.product.price) * Number(item.quantity)).toFixed(2)}</td>
       </tr>
     `).join('');
 
