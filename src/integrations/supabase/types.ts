@@ -110,7 +110,7 @@ export type Database = {
           shipping_state: string
           status: string
           total_price: number
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string | null
@@ -127,7 +127,7 @@ export type Database = {
           shipping_state: string
           status: string
           total_price: number
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string | null
@@ -144,7 +144,7 @@ export type Database = {
           shipping_state?: string
           status?: string
           total_price?: number
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -237,6 +237,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_for_vip: { Args: { _full_name: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
