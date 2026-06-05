@@ -42,8 +42,6 @@ const DocsPage: React.FC = () => {
   const docs = getAllDocs();
   const isMobile = useIsMobile();
 
-  const CORRECT_PASSWORD = "admin123";
-  
   const handleEditClick = () => {
     if (isAdmin) {
       setIsEditing(true);
@@ -51,18 +49,13 @@ const DocsPage: React.FC = () => {
       setShowAdminLoginDialog(true);
     }
   };
-  
+
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminPassword === CORRECT_PASSWORD) {
-      setIsAdmin(true);
-      setIsEditing(true);
-      setShowAdminLoginDialog(false);
-      toast.success("Admin login successful");
-    } else {
-      toast.error("Incorrect password");
-      setAdminPassword("");
-    }
+    // Hardcoded admin password removed. Admin status comes from server-side user_roles.
+    setAdminPassword("");
+    setShowAdminLoginDialog(false);
+    toast.error("Admin access required. Please sign in with an admin account.");
   };
   
   const handleSaveClick = () => {

@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useAdmin } from "@/context/AdminContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AdminVerificationProps {
   isOpen: boolean;
@@ -13,24 +11,31 @@ interface AdminVerificationProps {
 }
 
 export const AdminVerification: React.FC<AdminVerificationProps> = ({ isOpen, onClose }) => {
-  const [password, setPassword] = useState("");
   const { setAdminMode } = useAdmin();
+  const [checking, setChecking] = useState(false);
 
-  const handleVerify = () => {
-    if (password === "admin123") {
-      setAdminMode(true);
-      toast.success("Admin mode activated");
-      setPassword("");
-      onClose();
-    } else {
-      toast.error("Incorrect password");
+  const handleVerify = async () => {
+    setChecking(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please sign in first");
+      setChecking(false);
+      return;
     }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleVerify();
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+    setChecking(false);
+    if (error || !data) {
+      toast.error("Your account does not have admin access");
+      return;
     }
+    setAdminMode(true);
+    toast.success("Admin mode activated");
+    onClose();
   };
 
   return (
@@ -39,23 +44,12 @@ export const AdminVerification: React.FC<AdminVerificationProps> = ({ isOpen, on
         <DialogHeader>
           <DialogTitle>Admin Verification</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">Admin Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Enter admin password"
-              autoFocus
-            />
-          </div>
+        <div className="py-4 text-sm text-muted-foreground">
+          Admin access is granted server-side via your user role. Click verify to enable admin mode for your signed-in account.
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleVerify}>Verify</Button>
+          <Button onClick={handleVerify} disabled={checking}>{checking ? "Checking..." : "Verify"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -102,20 +102,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handlePasswordSubmit = () => {
-    if (password === "admin123") {
-      setIsPasswordDialogOpen(false);
-      setPassword("");
-      
-      // For stock toggle, handle it immediately without showing product dialog
-      if (action === "stock") {
-        handleStockToggle();
-      } else {
-        // For other actions, show the product dialog
-        setIsProductDialogOpen(true);
-      }
-    } else {
-      toast.error("Incorrect password");
-    }
+    // Hardcoded passwords removed. Admin actions require a server-verified admin role.
+    setIsPasswordDialogOpen(false);
+    setPassword("");
+    toast.error("Admin access required. Please sign in with an admin account.");
   };
 
   const handleStockToggle = () => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,17 @@ import { ShippingAddress } from "@/types";
 import { toast } from "sonner";
 import { addNewOrder } from "@/data/orders";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+
+const checkoutSchema = z.object({
+  fullName: z.string().trim().min(1, "Name required").max(100),
+  email: z.string().trim().email("Invalid email").max(255),
+  address: z.string().trim().min(1, "Address required").max(500),
+  city: z.string().trim().min(1).max(100),
+  state: z.string().trim().min(1).max(100),
+  postalCode: z.string().trim().min(3).max(20),
+  country: z.string().trim().min(1).max(100),
+  phoneNumber: z.string().trim().min(7).max(20).regex(/^[0-9+\-\s()]+$/, "Invalid phone"),
+});
 
 interface CheckoutFormProps {
   onOrderComplete: (orderId: string) => void;
@@ -43,6 +55,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
     
     if (cartItems.length === 0) {
       toast.error("Your cart is empty");
+      return;
+    }
+
+    const validation = checkoutSchema.safeParse(shippingAddress);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message ?? "Invalid input");
       return;
     }
 

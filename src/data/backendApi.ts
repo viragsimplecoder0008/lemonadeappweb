@@ -1,36 +1,24 @@
-
 import { Order } from "@/types";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-const BACKEND_API_URL = 'https://uuainsdbkdpunvqqlzfy.supabase.co/functions/v1/get-orders';
-
-// Function to fetch orders from our backend API
+// Function to fetch orders from our backend API (auth required)
 export const getOrdersFromBackend = async (): Promise<Order[]> => {
   try {
-    console.log('Frontend: Requesting orders from backend API...');
-    
-    const response = await fetch(BACKEND_API_URL, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1YWluc2Ria2RwdW52cXFsemZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0MjkxOTksImV4cCI6MjA1OTAwNTE5OX0.9ezvAaSNhvL_DjMjX-2NRLOlzcHJBZAAsIQYMzpBjZg'}`,
-      },
+    const { data, error } = await supabase.functions.invoke("get-orders", {
+      method: "GET",
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      console.error('Frontend: Backend API error:', errorData);
-      toast.error('Failed to fetch orders from backend');
+    if (error) {
+      console.error("Frontend: Backend API error:", error);
+      toast.error("Failed to fetch orders");
       return [];
     }
 
-    const data = await response.json();
-    console.log(`Frontend: Received ${data.orders?.length || 0} orders from backend`);
-    
-    return data.orders || [];
+    return (data?.orders as Order[]) || [];
   } catch (error) {
-    console.error('Frontend: Error calling backend API:', error);
-    toast.error('Failed to connect to backend service');
+    console.error("Frontend: Error calling backend API:", error);
+    toast.error("Failed to connect to backend service");
     return [];
   }
 };
@@ -49,5 +37,5 @@ export const subscribeToOrderChanges = (callback: () => void): () => void => {
 };
 
 export const notifyOrderChanges = () => {
-  orderChangeListeners.forEach(callback => callback());
+  orderChangeListeners.forEach((callback) => callback());
 };

@@ -1,5 +1,5 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -40,15 +40,43 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
-    console.log("Received order email request:", { orderId, totalPrice, customerEmail: customerInfo.email });
+    // Require authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
-    // Generate the items HTML
+    const { orderId, items, totalPrice, customerInfo }: OrderEmailRequest = await req.json();
+    console.log("Received order email request:", { orderId, totalPrice, userId: userData.user.id });
+
+    // Basic sanitization helper to prevent HTML injection in emails
+    const esc = (s: unknown) =>
+      String(s ?? "").replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!
+      );
+
+    // Generate the items HTML (escaped)
     const itemsHtml = items.map(item => `
       <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.product.name}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${item.quantity}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #ddd;">$${(item.product.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${esc(item.product.name)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${esc(item.quantity)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">$${(Number(item.product.price) * Number(item.quantity)).toFixed(2)}</td>
       </tr>
     `).join('');
 
@@ -58,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
         // For testing, use the Resend onboarding email
         from: "Lemonade Luxury <onboarding@resend.dev>",
         to: ["lemonaderich.82@gmail.com"], // Only send to the store owner
-        subject: `New Order #${orderId}`,
+        subject: `New Order #${esc(orderId)}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="background-color: #F9D923; color: #2A2B2E; padding: 20px; text-align: center;">
@@ -66,15 +94,15 @@ const handler = async (req: Request): Promise<Response> => {
             </h1>
             
             <div style="padding: 20px;">
-              <h2>Order #${orderId}</h2>
+              <h2>Order #${esc(orderId)}</h2>
               
               <div style="margin-bottom: 20px;">
                 <h3>Customer Information</h3>
-                <p><strong>Name:</strong> ${customerInfo.fullName}</p>
-                <p><strong>Email:</strong> ${customerInfo.email}</p>
-                <p><strong>Phone:</strong> ${customerInfo.phoneNumber || 'Not provided'}</p>
-                <p><strong>Shipping Address:</strong> ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.state} ${customerInfo.postalCode}</p>
-                ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${customerInfo.deliveryNote}</p>` : ''}
+                <p><strong>Name:</strong> ${esc(customerInfo.fullName)}</p>
+                <p><strong>Email:</strong> ${esc(customerInfo.email)}</p>
+                <p><strong>Phone:</strong> ${esc(customerInfo.phoneNumber || 'Not provided')}</p>
+                <p><strong>Shipping Address:</strong> ${esc(customerInfo.address)}, ${esc(customerInfo.city)}, ${esc(customerInfo.state)} ${esc(customerInfo.postalCode)}</p>
+                ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${esc(customerInfo.deliveryNote)}</p>` : ''}
               </div>
               
               <div style="margin-bottom: 20px;">
