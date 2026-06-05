@@ -58,6 +58,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
       return;
     }
 
+    const validation = checkoutSchema.safeParse(shippingAddress);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message ?? "Invalid input");
+      return;
+    }
+
     setIsProcessing(true);
 
     try {
