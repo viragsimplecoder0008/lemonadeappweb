@@ -12,7 +12,7 @@ const CommunityHelp: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-md text-center transition-transform hover:translate-y-[-5px]">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-lemonade-yellow mb-4">
               <Users className="h-7 w-7 text-black" />
@@ -39,18 +39,6 @@ const CommunityHelp: React.FC = () => {
             </Link>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md text-center transition-transform hover:translate-y-[-5px]">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-lemonade-yellow mb-4">
-              <MessageSquare className="h-7 w-7 text-black" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Live Chat</h3>
-            <p className="text-gray-600 mb-4">
-              Need immediate assistance? Chat with our customer support team in real-time.
-            </p>
-            <Link to="/live-chat" className="text-lemonade-blue font-medium hover:text-lemonade-green transition-colors">
-              Start Chat →
-            </Link>
-          </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md text-center transition-transform hover:translate-y-[-5px]">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-lemonade-yellow mb-4">

@@ -57,15 +57,6 @@ const initialProducts: Product[] = [
     inStock: true
   },
   {
-    id: "lemonade-jaljeera",
-    name: "Jaljeera Lemonade",
-    description: "Indian-inspired with cumin, mint, and a blend of spices for a unique taste experience.",
-    price: 5.29,
-    imageUrl: "/jaljeera-lemonade.jpg",
-    category: "premium",
-    inStock: true
-  },
-  {
     id: "lemonade-cola",
     name: "Cola Lemonade",
     description: "The perfect fusion of cola flavors with our classic lemonade for a refreshing twist.",
@@ -90,7 +81,10 @@ let loadedProducts: Product[];
 try {
   const storedProducts = localStorage.getItem("products");
   if (storedProducts) {
-    loadedProducts = JSON.parse(storedProducts);
+    const parsed: Product[] = JSON.parse(storedProducts);
+    // Filter out removed products (e.g. Jaljeera)
+    loadedProducts = parsed.filter(p => p.id !== "lemonade-jaljeera");
+    localStorage.setItem("products", JSON.stringify(loadedProducts));
   } else {
     loadedProducts = initialProducts;
     // Initialize localStorage with default products
