@@ -86,7 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
         // For testing, use the Resend onboarding email
         from: "Lemonade Luxury <onboarding@resend.dev>",
         to: ["lemonaderich.82@gmail.com"], // Only send to the store owner
-        subject: `New Order #${orderId}`,
+        subject: `New Order #${esc(orderId)}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="background-color: #F9D923; color: #2A2B2E; padding: 20px; text-align: center;">
@@ -94,15 +94,15 @@ const handler = async (req: Request): Promise<Response> => {
             </h1>
             
             <div style="padding: 20px;">
-              <h2>Order #${orderId}</h2>
+              <h2>Order #${esc(orderId)}</h2>
               
               <div style="margin-bottom: 20px;">
                 <h3>Customer Information</h3>
-                <p><strong>Name:</strong> ${customerInfo.fullName}</p>
-                <p><strong>Email:</strong> ${customerInfo.email}</p>
-                <p><strong>Phone:</strong> ${customerInfo.phoneNumber || 'Not provided'}</p>
-                <p><strong>Shipping Address:</strong> ${customerInfo.address}, ${customerInfo.city}, ${customerInfo.state} ${customerInfo.postalCode}</p>
-                ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${customerInfo.deliveryNote}</p>` : ''}
+                <p><strong>Name:</strong> ${esc(customerInfo.fullName)}</p>
+                <p><strong>Email:</strong> ${esc(customerInfo.email)}</p>
+                <p><strong>Phone:</strong> ${esc(customerInfo.phoneNumber || 'Not provided')}</p>
+                <p><strong>Shipping Address:</strong> ${esc(customerInfo.address)}, ${esc(customerInfo.city)}, ${esc(customerInfo.state)} ${esc(customerInfo.postalCode)}</p>
+                ${customerInfo.deliveryNote ? `<p><strong>Delivery Note:</strong> ${esc(customerInfo.deliveryNote)}</p>` : ''}
               </div>
               
               <div style="margin-bottom: 20px;">
