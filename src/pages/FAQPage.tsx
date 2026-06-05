@@ -29,10 +29,6 @@ const FAQPage: React.FC = () => {
       answer: "Yes! We offer special pricing for bulk orders and catering services. Please contact us at least 48 hours in advance for large orders."
     },
     {
-      question: "Are your products suitable for people with dietary restrictions?",
-      answer: "Most of our lemonades are naturally gluten-free and vegan. Please check individual product descriptions for specific dietary information or contact us for detailed ingredient lists."
-    },
-    {
       question: "What is your return policy?",
       answer: "We stand behind our quality. If you're not satisfied with your order, contact us within 24 hours of delivery for a full refund or replacement."
     },

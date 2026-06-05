@@ -30,7 +30,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onOrderComplete }) => {
   const { cartItems, getTotalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('online');
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'cash'>('cash');
   
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: "",

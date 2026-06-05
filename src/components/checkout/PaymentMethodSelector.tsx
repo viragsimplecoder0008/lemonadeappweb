@@ -20,10 +20,10 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       </CardHeader>
       <CardContent>
         <RadioGroup value={selectedMethod} onValueChange={value => onMethodChange(value as "online" | "cash")} className="space-y-4">
-          <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50">
-            <RadioGroupItem value="online" id="online" className="mt-1" />
+          <div className="flex items-start space-x-3 p-4 border rounded-lg opacity-60 cursor-not-allowed">
+            <RadioGroupItem value="online" id="online" className="mt-1" disabled />
             <div className="flex-1">
-              <Label htmlFor="online" className="font-medium cursor-pointer">
+              <Label htmlFor="online" className="font-medium">
                 <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="h-4 w-4" />
                   Online Payment (Coming soon)
@@ -34,6 +34,7 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               </p>
             </div>
           </div>
+          
           
           <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-gray-50">
             <RadioGroupItem value="cash" id="cash" className="mt-1" />

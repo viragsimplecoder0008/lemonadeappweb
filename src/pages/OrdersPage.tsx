@@ -94,7 +94,7 @@ const OrdersPage: React.FC = () => {
                 If you have any questions about your order, please contact our customer service.
               </p>
               <Button asChild className="w-full" variant="outline">
-                <Link to="#">Contact Support</Link>
+                <a href="mailto:viraj.vmaster1@gmail.com?subject=Order%20Support">Contact Support</a>
               </Button>
             </div>
           </div>
