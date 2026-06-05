@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -150,31 +150,34 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string
-          email: string
+          email: string | null
           id: string
           name: string | null
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
+          role: string | null
+          updated_at: string | null
           username: string | null
+          vip_full_name: string | null
+          vip_status: string | null
         }
         Insert: {
-          created_at?: string
-          email: string
+          email?: string | null
           id: string
           name?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
+          role?: string | null
+          updated_at?: string | null
           username?: string | null
+          vip_full_name?: string | null
+          vip_status?: string | null
         }
         Update: {
-          created_at?: string
-          email?: string
+          email?: string | null
           id?: string
           name?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
+          role?: string | null
+          updated_at?: string | null
           username?: string | null
+          vip_full_name?: string | null
+          vip_status?: string | null
         }
         Relationships: []
       }
@@ -213,13 +216,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_admin: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      user_role: "admin" | "customer"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -346,8 +346,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      user_role: ["admin", "customer"],
-    },
+    Enums: {},
   },
 } as const
