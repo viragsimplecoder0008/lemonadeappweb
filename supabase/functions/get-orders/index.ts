@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -8,86 +7,90 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Create Supabase client with service role key for backend operations
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? ''
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    })
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: userData, error: userError } = await userClient.auth.getUser(token)
+    if (userError || !userData?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const userId = userData.user.id
+
+    // Check if user is employee/admin
     const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
+      supabaseUrl,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    console.log('Backend API: Fetching orders from Supabase...')
+    const { data: roles } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
 
-    // Fetch orders from Supabase database
-    const { data: ordersData, error: ordersError } = await supabaseAdmin
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const isStaff = (roles ?? []).some((r: { role: string }) => r.role === 'admin' || r.role === 'employee')
 
+    let ordersQuery = supabaseAdmin.from('orders').select('*').order('created_at', { ascending: false })
+    if (!isStaff) {
+      ordersQuery = ordersQuery.eq('user_id', userId)
+    }
+
+    const { data: ordersData, error: ordersError } = await ordersQuery
     if (ordersError) {
-      console.error('Backend API: Error fetching orders:', ordersError)
-      return new Response(
-        JSON.stringify({ error: 'Failed to fetch orders from database' }),
-        { 
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Failed to fetch orders' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     if (!ordersData || ordersData.length === 0) {
-      console.log('Backend API: No orders found')
-      return new Response(
-        JSON.stringify({ orders: [] }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
+      return new Response(JSON.stringify({ orders: [] }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
-    // Fetch order items for all orders
-    const orderIds = ordersData.map(order => order.id)
-    
-    console.log(`Backend API: Fetching items for ${orderIds.length} orders...`)
-
+    const orderIds = ordersData.map(o => o.id)
     const { data: itemsData, error: itemsError } = await supabaseAdmin
       .from('order_items')
       .select('*')
       .in('order_id', orderIds)
 
     if (itemsError) {
-      console.error('Backend API: Error fetching order items:', itemsError)
-      return new Response(
-        JSON.stringify({ error: 'Failed to fetch order items from database' }),
-        { 
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Failed to fetch order items' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
-    // Group items by order_id
-    const itemsByOrderId = (itemsData || []).reduce((acc, item) => {
+    const itemsByOrderId = (itemsData || []).reduce((acc: Record<string, any[]>, item: any) => {
       if (!acc[item.order_id]) acc[item.order_id] = []
       acc[item.order_id].push(item)
       return acc
-    }, {} as Record<string, typeof itemsData>)
+    }, {})
 
-    console.log(`Backend API: Processing ${ordersData.length} orders with items...`)
-
-    // Transform database format to frontend Order type
-    const orders = ordersData.map(orderData => ({
+    const orders = ordersData.map((orderData: any) => ({
       id: orderData.id,
       totalPrice: Number(orderData.total_price),
       status: orderData.status,
@@ -104,7 +107,7 @@ serve(async (req) => {
         email: orderData.shipping_email || '',
         phoneNumber: orderData.shipping_phone_number,
       },
-      items: (itemsByOrderId[orderData.id] || []).map(item => ({
+      items: (itemsByOrderId[orderData.id] || []).map((item: any) => ({
         quantity: item.quantity,
         product: {
           id: item.product_id,
@@ -118,24 +121,16 @@ serve(async (req) => {
       }))
     }))
 
-    console.log(`Backend API: Successfully processed ${orders.length} orders`)
-
-    return new Response(
-      JSON.stringify({ orders }),
-      { 
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    )
+    return new Response(JSON.stringify({ orders }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
 
   } catch (error) {
     console.error('Backend API: Unexpected error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    )
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 })
