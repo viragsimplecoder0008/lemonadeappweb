@@ -6,12 +6,13 @@ import { useAdmin } from '@/context/AdminContext';
 
 interface Profile {
   id: string;
-  username: string;
-  email: string;
-  name: string;
-  role: string;
-  created_at: string;
-  updated_at: string;
+  username: string | null;
+  email: string | null;
+  name: string | null;
+  role: string | null;
+  updated_at: string | null;
+  vip_status: string | null;
+  vip_full_name: string | null;
 }
 
 interface AuthContextType {
