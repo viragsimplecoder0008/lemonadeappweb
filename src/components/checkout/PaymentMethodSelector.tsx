@@ -26,11 +26,11 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               <Label htmlFor="online" className="font-medium cursor-pointer">
                 <div className="flex items-center gap-2 mb-1">
                   <CreditCard className="h-4 w-4" />
-                  Online Payment
+                  Online Payment (Coming soon)
                 </div>
               </Label>
               <p className="text-sm text-gray-600">
-                Pay securely with your credit or debit card online
+                Pay securely with your credit or debit card online - (coming soon)
               </p>
             </div>
           </div>
@@ -41,10 +41,10 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
               <Label htmlFor="cash" className="font-medium cursor-pointer">
                 <div className="flex items-center gap-2 mb-1">
                   <Banknote className="h-4 w-4" />
-                  Cash Payment
+                  COD
                 </div>
               </Label>
-              <p className="text-sm text-gray-600">Pay at pickup - cash before product taken by hand</p>
+              <p className="text-sm text-gray-600">Pay at pickup - COD</p>
             </div>
           </div>
         </RadioGroup>
