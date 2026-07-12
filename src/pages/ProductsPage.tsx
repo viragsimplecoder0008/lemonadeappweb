@@ -62,7 +62,7 @@ const ProductsPage: React.FC = () => {
             Specialty
           </Button>
           {!isQuickMode && <Button variant={activeCategory === "premium" ? "default" : "outline"} onClick={() => handleFilterChange("premium")} className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}>
-              Premium
+              Golden Flavors
             </Button>}
         </div>
         
