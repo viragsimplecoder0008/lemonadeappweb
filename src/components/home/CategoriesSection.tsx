@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shapes, Rose, Crown } from "lucide-react";
+import { Shapes, Flower2 as Rose, Crown } from "lucide-react";
 
 const CategoriesSection: React.FC = () => {
   return (
