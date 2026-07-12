@@ -40,6 +40,12 @@ const AuthButton: React.FC = () => {
             </div>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/profile">
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => signOut()}>
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out

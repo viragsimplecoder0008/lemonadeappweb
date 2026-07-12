@@ -29,6 +29,7 @@ import AuthPage from "./pages/AuthPage";
 import FAQPage from "./pages/FAQPage";
 import LiveChatPage from "./pages/LiveChatPage";
 import LiveChatAdminPage from "./pages/LiveChatAdminPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/live-chat" element={<LiveChatPage />} />
                 <Route path="/live-chat/admin" element={<LiveChatAdminPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
