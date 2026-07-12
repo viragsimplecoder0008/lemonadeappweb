@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import ProductGrid from "@/components/products/ProductGrid";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
+import CustomOrderDialog from "@/components/products/CustomOrderDialog";
 const ProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
@@ -51,7 +52,7 @@ const ProductsPage: React.FC = () => {
           </div>}
         
         {/* Category filter buttons */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-8 items-center">
           {!isQuickMode && <Button variant={activeCategory === "all" ? "default" : "outline"} onClick={() => handleFilterChange("all")} className={activeCategory === "all" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}>
               All
             </Button>}
@@ -64,6 +65,9 @@ const ProductsPage: React.FC = () => {
           {!isQuickMode && <Button variant={activeCategory === "premium" ? "default" : "outline"} onClick={() => handleFilterChange("premium")} className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}>
               Golden Flavors
             </Button>}
+          <div className="ml-auto">
+            <CustomOrderDialog />
+          </div>
         </div>
         
         {/* Products grid */}
