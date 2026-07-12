@@ -174,7 +174,7 @@ const Navbar: React.FC = () => {
                     Specialty
                   </Link>
                   <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                    Premium
+                    Golden Flavors
                   </Link>
                   <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                     Quick - Specialty
@@ -258,7 +258,7 @@ const Navbar: React.FC = () => {
                   Specialty
                 </Link>
                 <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Premium
+                  Golden Flavors
                 </Link>
                 <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Quick - Specialty
@@ -327,7 +327,7 @@ const Navbar: React.FC = () => {
                   Specialty
                 </Link>
                 <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
-                  Premium
+                  Golden Flavors
                 </Link>
                 <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Quick - Specialty
