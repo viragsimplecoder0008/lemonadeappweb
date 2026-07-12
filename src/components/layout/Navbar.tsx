@@ -207,34 +207,26 @@ const Navbar: React.FC = () => {
         </div>
       </header>
       
-      {/* Mobile Navigation (Floating menu button) */}
-      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/10 backdrop-blur-xl border border-white/20 z-50 flex items-center justify-around py-2 rounded-full shadow-2xl">
+      {/* Mobile Navigation (Floating bottom bar - 5 items max) */}
+      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/70 backdrop-blur-xl border border-white/40 z-50 grid grid-cols-5 items-center py-2 rounded-2xl shadow-2xl">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
-            <span className="text-xs mt-1">Home</span>
+            <span className="text-[10px] mt-1">Home</span>
           </Link>
           <Link to="/products" className="flex flex-col items-center p-2">
             <Package className="h-5 w-5" />
-            <span className="text-xs mt-1">Products</span>
-          </Link>
-          <Link to="/social" className="flex flex-col items-center p-2">
-            <Users className="h-5 w-5" />
-            <span className="text-xs mt-1">Social</span>
-          </Link>
-          <Link to="/search" className="flex flex-col items-center p-2">
-            <Search className="h-5 w-5" />
-            <span className="text-xs mt-1">Search</span>
-          </Link>
-          <Link to="/orders" className="flex flex-col items-center p-2">
-            <Truck className="h-5 w-5" />
-            <span className="text-xs mt-1">Orders</span>
+            <span className="text-[10px] mt-1">Products</span>
           </Link>
           <Link to="/cart" className="flex flex-col items-center p-2 relative">
             <ShoppingCart className="h-5 w-5" />
-            {totalItems > 0 && <span className="absolute top-0 right-0 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+            {totalItems > 0 && <span className="absolute top-0 right-3 bg-lemonade-yellow text-black text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
                 {totalItems}
               </span>}
-            <span className="text-xs mt-1">Cart</span>
+            <span className="text-[10px] mt-1">Cart</span>
+          </Link>
+          <Link to="/orders" className="flex flex-col items-center p-2">
+            <Truck className="h-5 w-5" />
+            <span className="text-[10px] mt-1">Orders</span>
           </Link>
           <Sheet>
             <SheetTrigger asChild>
