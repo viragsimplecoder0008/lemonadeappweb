@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
                       </li>
                       <li>
                         <Link to="/products?category=premium" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
-                          <div className="font-medium">Premium</div>
+                          <div className="font-medium">Golden Flavors</div>
                           <div className="text-sm text-muted-foreground">Our most exclusive blends</div>
                         </Link>
                       </li>
