@@ -38,6 +38,7 @@ const CustomOrderDialog: React.FC = () => {
     setSubmitting(true);
     const price = size === "Large" ? 180 : size === "Small" ? 100 : 140;
     const { error } = await supabase.from("orders").insert({
+      id: crypto.randomUUID(),
       user_id: user.id,
       total_price: price,
       status: "pending",
