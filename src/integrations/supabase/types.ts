@@ -14,6 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_groups: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          group_id: string
+          id: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          group_id: string
+          id?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "chat_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_percent: number
+          expires_at: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_percent: number
+          expires_at?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_percent?: number
+          expires_at?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lemon_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string | null
@@ -97,7 +207,9 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
+          custom_details: Json | null
           id: string
+          is_custom: boolean
           is_quick_mode: boolean | null
           payment_method: string | null
           shipping_address: string
@@ -114,7 +226,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          custom_details?: Json | null
           id: string
+          is_custom?: boolean
           is_quick_mode?: boolean | null
           payment_method?: string | null
           shipping_address: string
@@ -131,7 +245,9 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          custom_details?: Json | null
           id?: string
+          is_custom?: boolean
           is_quick_mode?: boolean | null
           payment_method?: string | null
           shipping_address?: string
@@ -148,11 +264,48 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          in_stock: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string
+          id: string
+          image_url?: string | null
+          in_stock?: boolean
+          name: string
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          in_stock?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           email: string | null
           id: string
+          lemons: number
           name: string | null
           role: string | null
           updated_at: string | null
@@ -164,6 +317,7 @@ export type Database = {
           avatar_url?: string | null
           email?: string | null
           id: string
+          lemons?: number
           name?: string | null
           role?: string | null
           updated_at?: string | null
@@ -175,6 +329,7 @@ export type Database = {
           avatar_url?: string | null
           email?: string | null
           id?: string
+          lemons?: number
           name?: string | null
           role?: string | null
           updated_at?: string | null
@@ -241,6 +396,10 @@ export type Database = {
     }
     Functions: {
       apply_for_vip: { Args: { _full_name: string }; Returns: undefined }
+      award_lemons: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -249,6 +408,10 @@ export type Database = {
         Returns: boolean
       }
       is_employee_or_admin: { Args: { _user_id: string }; Returns: boolean }
+      redeem_lemons: {
+        Args: { _amount: number; _reason: string }
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin" | "employee" | "customer"

@@ -2,7 +2,9 @@
 import React, { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Award, Gift, Star, BadgeCheck, MapPin } from "lucide-react";
+import { Award, Gift, Star, BadgeCheck, MapPin, Citrus } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -124,7 +126,21 @@ const VipPage: React.FC = () => {
                 Use it ANYWHERE for whatever you love!
               </p>
             </div>
+
+            {/* Benefit 6 - Lemons */}
+            <div className="bg-[#F2FCE2]/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+              <div className="bg-[#9b87f5] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Citrus className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-center text-[#1A1F2C] mb-2">Earn 🍋 Lemons</h3>
+              <p className="text-center text-[#1A1F2C]/80">
+                Earn lemons on every VIP purchase and redeem them for free lemonade! <span className="italic">*T&C apply</span>
+              </p>
+            </div>
           </div>
+
+          <LemonsPanel />
+
 
           {/* Call To Action */}
           <div className="bg-[#1A1F2C]/90 backdrop-blur-sm text-white rounded-2xl p-8 shadow-xl text-center">
@@ -218,6 +234,56 @@ const VipPage: React.FC = () => {
         </DialogContent>
       </Dialog>
     </Layout>
+  );
+};
+
+const LemonsPanel: React.FC = () => {
+  const { user, profile } = useAuth();
+  const [balance, setBalance] = React.useState<number>(0);
+  const [amount, setAmount] = React.useState<number>(50);
+  const [loading, setLoading] = React.useState(false);
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    if (profile) setBalance((profile as any).lemons ?? 0);
+  }, [profile]);
+
+  const redeem = async () => {
+    if (!user) return;
+    setLoading(true);
+    const { data, error } = await supabase.rpc("redeem_lemons", {
+      _amount: amount,
+      _reason: "Redeemed for lemonade credit",
+    });
+    setLoading(false);
+    if (error) {
+      toast({ title: "Redeem failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    setBalance(data as unknown as number);
+    toast({ title: "Redeemed!", description: `Your new balance is ${data} 🍋` });
+  };
+
+  if (!user) return null;
+  return (
+    <div className="bg-[#1A1F2C]/90 backdrop-blur-sm text-white rounded-2xl p-6 shadow-xl mb-12">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-bold flex items-center gap-2"><Citrus className="h-6 w-6 text-yellow-300"/> Your Lemons</h3>
+          <p className="text-4xl font-extrabold mt-2">{balance} 🍋</p>
+          <p className="text-xs text-gray-400 mt-1">Earn 5 lemons per ₹100 spent. Redeem 50 lemons for ₹50 off. *T&C apply.</p>
+        </div>
+        <div className="flex items-end gap-2">
+          <div>
+            <Label htmlFor="redeem" className="text-white">Redeem amount</Label>
+            <Input id="redeem" type="number" min={1} value={amount} onChange={(e) => setAmount(parseInt(e.target.value) || 0)} className="w-32 text-black" />
+          </div>
+          <Button onClick={redeem} disabled={loading || amount <= 0 || amount > balance} className="bg-[#9b87f5] hover:bg-[#8975e8]">
+            {loading ? "..." : "Redeem"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
