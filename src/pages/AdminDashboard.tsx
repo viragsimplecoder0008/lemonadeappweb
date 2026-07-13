@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserOrders } from "@/data/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminMessages } from "@/components/admin/AdminMessages";
+import AdminCoupons from "@/components/admin/AdminCoupons";
 import { products } from "@/data/products";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
