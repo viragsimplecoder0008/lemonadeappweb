@@ -7,7 +7,9 @@ import { ShoppingCart, Edit, Trash2, Plus, CheckCircle2, XCircle } from "lucide-
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useAdmin } from "@/context/AdminContext";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Link as RouterLink } from "react-router-dom";
 import {
   ContextMenu,
   ContextMenuContent,
