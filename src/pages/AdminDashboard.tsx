@@ -222,9 +222,18 @@ const AdminDashboard: React.FC = () => {
                     <div className="space-y-2">
                       {activeFestivals.map((festival, index) => (
                         <div key={index} className="flex justify-between items-center p-3 border rounded-md">
-                          <div>
-                            <p className="font-medium">{festival.name}</p>
-                            <p className="text-sm text-gray-500">{festival.discount}% discount</p>
+                          <div className="flex items-center gap-3">
+                            {festival.color && (
+                              <span
+                                aria-hidden
+                                className="inline-block w-5 h-5 rounded-full border"
+                                style={{ backgroundColor: festival.color }}
+                              />
+                            )}
+                            <div>
+                              <p className="font-medium">{festival.name}</p>
+                              <p className="text-sm text-gray-500">{festival.discount}% discount</p>
+                            </div>
                           </div>
                           <Button 
                             variant="outline" 
