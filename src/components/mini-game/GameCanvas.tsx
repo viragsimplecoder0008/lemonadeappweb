@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from "react";
 import { GameObject, GameCanvasProps } from "./types";
 
@@ -242,7 +241,12 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       // Draw score
       ctx.font = "20px Arial";
       ctx.fillStyle = "black";
-      ctx.fillText(`Score: ${score}`, 10, 30);
+      let scoreText = `Score: ${score}`;
+      // If player reached 100 and hasn't missed 20 times, show special message
+      if (score >= 100 && misses < 20) {
+        scoreText = `Score: 100! Amazing!`;
+      }
+      ctx.fillText(scoreText, 10, 30);
       
       // Update high score if the current score is higher
       if (score > highScore) {
@@ -260,7 +264,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [gameStarted, gameOver, score, highScore, setScore, setHighScore]);
+  }, [gameStarted, gameOver, score, highScore, setScore, setHighScore, misses]);
   
   return (
     <canvas
