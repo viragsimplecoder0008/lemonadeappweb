@@ -15,6 +15,8 @@ const MiniGamePage: React.FC = () => {
     setGameOver,
     highScore,
     setHighScore,
+    misses,
+    setMisses,
     startGame,
     restartGame
   } = useGameLogic();
@@ -26,6 +28,9 @@ const MiniGamePage: React.FC = () => {
         
         <div className="max-w-3xl mx-auto">
           <GameInfo highScore={highScore} />
+          <p className="text-center mb-2 text-sm text-gray-600">
+            Catch 100 lemons with fewer than 20 misses to earn a 20% discount on Strawberry Lemonade! Misses: {misses}/20
+          </p>
           
           <div className="flex justify-center mb-4">
             <GameControls
@@ -46,6 +51,8 @@ const MiniGamePage: React.FC = () => {
               setGameOver={setGameOver}
               highScore={highScore}
               setHighScore={setHighScore}
+              misses={misses}
+              setMisses={setMisses}
             />
           </div>
         </div>
