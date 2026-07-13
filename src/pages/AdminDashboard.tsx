@@ -23,7 +23,8 @@ const AdminDashboard: React.FC = () => {
   const [festival, setFestival] = useState("regular");
   const [festivalName, setFestivalName] = useState("");
   const [festivalDiscount, setFestivalDiscount] = useState("10");
-  const [activeFestivals, setActiveFestivals] = useState<{name: string, discount: string}[]>([]);
+  const [festivalColor, setFestivalColor] = useState("#FFD700");
+  const [activeFestivals, setActiveFestivals] = useState<{name: string, discount: string, color?: string}[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
 
   // Order statistics
