@@ -9,7 +9,9 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   setScore, 
   setGameOver,
   highScore,
-  setHighScore
+  setHighScore,
+  misses,
+  setMisses
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glassPosRef = useRef({ x: 0, y: 0 });
