@@ -43,7 +43,11 @@ const AdminDashboard: React.FC = () => {
     // Load any saved festivals from localStorage
     const savedFestivals = localStorage.getItem('festivals');
     if (savedFestivals) {
-      setActiveFestivals(JSON.parse(savedFestivals));
+      const parsed = JSON.parse(savedFestivals);
+      setActiveFestivals(parsed);
+      // Apply latest festival's theme color to CSS root
+      const last = parsed[parsed.length - 1];
+      if (last?.color) document.documentElement.style.setProperty("--festival-color", last.color);
     }
   }, []);
 
