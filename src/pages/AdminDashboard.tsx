@@ -76,15 +76,17 @@ const AdminDashboard: React.FC = () => {
 
     const newFestival = {
       name: festivalName,
-      discount: festivalDiscount
+      discount: festivalDiscount,
+      color: festivalColor,
     };
 
     const updatedFestivals = [...activeFestivals, newFestival];
     setActiveFestivals(updatedFestivals);
     localStorage.setItem('festivals', JSON.stringify(updatedFestivals));
+    document.documentElement.style.setProperty("--festival-color", festivalColor);
     
     setFestivalName("");
-    toast.success(`${festivalName} festival added with ${festivalDiscount}% discount!`);
+    toast.success(`${festivalName} festival added with ${festivalDiscount}% discount and theme applied!`);
   };
 
   const handleRemoveFestival = (index: number) => {
@@ -92,6 +94,12 @@ const AdminDashboard: React.FC = () => {
     updatedFestivals.splice(index, 1);
     setActiveFestivals(updatedFestivals);
     localStorage.setItem('festivals', JSON.stringify(updatedFestivals));
+    if (updatedFestivals.length === 0) {
+      document.documentElement.style.removeProperty("--festival-color");
+    } else {
+      const last = updatedFestivals[updatedFestivals.length - 1];
+      if (last.color) document.documentElement.style.setProperty("--festival-color", last.color);
+    }
     toast.success("Festival removed successfully");
   };
 
