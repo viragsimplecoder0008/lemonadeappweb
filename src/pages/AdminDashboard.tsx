@@ -250,6 +250,11 @@ const AdminDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="coupons">
+            <AdminCoupons />
+          </TabsContent>
+          
           
           <TabsContent value="products">
             <Card>
