@@ -128,6 +128,7 @@ const AdminDashboard: React.FC = () => {
           <TabsList className="mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="festivals">Festivals</TabsTrigger>
+            <TabsTrigger value="coupons">Coupons</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="vip">VIP Management</TabsTrigger>
           </TabsList>
