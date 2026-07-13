@@ -72,7 +72,7 @@ const ProfilePage: React.FC = () => {
                   <AvatarFallback>{(username || "?").charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <Label htmlFor="avatar">Avatar Image URL</Label>
+                  <Label htmlFor="avatar">Avatar Image URL (Real Uploads Coming Soon)</Label>
                   <Input
                     id="avatar"
                     placeholder="https://..."
