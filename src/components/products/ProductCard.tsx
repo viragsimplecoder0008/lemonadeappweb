@@ -7,7 +7,9 @@ import { ShoppingCart, Edit, Trash2, Plus, CheckCircle2, XCircle } from "lucide-
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useAdmin } from "@/context/AdminContext";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+
 import {
   ContextMenu,
   ContextMenuContent,
@@ -34,6 +36,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
   const { isAdmin } = useAdmin();
+  const { profile } = useAuth();
+  const isGolden = product.category === "premium";
+  const canBuyGolden = profile?.vip_status === "approved" || isAdmin;
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [password, setPassword] = useState("");
@@ -54,6 +59,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
+    if (isGolden && !canBuyGolden) {
+      toast.error("Golden Flavors are VIP-only. Apply for VIP on /vip to unlock this drink.");
+      return;
+    }
     addToCart(product);
     toast.success(`Added ${product.name} to your cart`);
   };

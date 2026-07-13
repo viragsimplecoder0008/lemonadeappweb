@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getUserOrders } from "@/data/orders";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AdminMessages } from "@/components/admin/AdminMessages";
+import AdminCoupons from "@/components/admin/AdminCoupons";
 import { products } from "@/data/products";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +23,8 @@ const AdminDashboard: React.FC = () => {
   const [festival, setFestival] = useState("regular");
   const [festivalName, setFestivalName] = useState("");
   const [festivalDiscount, setFestivalDiscount] = useState("10");
-  const [activeFestivals, setActiveFestivals] = useState<{name: string, discount: string}[]>([]);
+  const [festivalColor, setFestivalColor] = useState("#FFD700");
+  const [activeFestivals, setActiveFestivals] = useState<{name: string, discount: string, color?: string}[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
 
   // Order statistics
@@ -41,7 +43,11 @@ const AdminDashboard: React.FC = () => {
     // Load any saved festivals from localStorage
     const savedFestivals = localStorage.getItem('festivals');
     if (savedFestivals) {
-      setActiveFestivals(JSON.parse(savedFestivals));
+      const parsed = JSON.parse(savedFestivals);
+      setActiveFestivals(parsed);
+      // Apply latest festival's theme color to CSS root
+      const last = parsed[parsed.length - 1];
+      if (last?.color) document.documentElement.style.setProperty("--festival-color", last.color);
     }
   }, []);
 
@@ -70,15 +76,17 @@ const AdminDashboard: React.FC = () => {
 
     const newFestival = {
       name: festivalName,
-      discount: festivalDiscount
+      discount: festivalDiscount,
+      color: festivalColor,
     };
 
     const updatedFestivals = [...activeFestivals, newFestival];
     setActiveFestivals(updatedFestivals);
     localStorage.setItem('festivals', JSON.stringify(updatedFestivals));
+    document.documentElement.style.setProperty("--festival-color", festivalColor);
     
     setFestivalName("");
-    toast.success(`${festivalName} festival added with ${festivalDiscount}% discount!`);
+    toast.success(`${festivalName} festival added with ${festivalDiscount}% discount and theme applied!`);
   };
 
   const handleRemoveFestival = (index: number) => {
@@ -86,6 +94,12 @@ const AdminDashboard: React.FC = () => {
     updatedFestivals.splice(index, 1);
     setActiveFestivals(updatedFestivals);
     localStorage.setItem('festivals', JSON.stringify(updatedFestivals));
+    if (updatedFestivals.length === 0) {
+      document.documentElement.style.removeProperty("--festival-color");
+    } else {
+      const last = updatedFestivals[updatedFestivals.length - 1];
+      if (last.color) document.documentElement.style.setProperty("--festival-color", last.color);
+    }
     toast.success("Festival removed successfully");
   };
 
@@ -114,6 +128,7 @@ const AdminDashboard: React.FC = () => {
           <TabsList className="mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="festivals">Festivals</TabsTrigger>
+            <TabsTrigger value="coupons">Coupons</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="vip">VIP Management</TabsTrigger>
           </TabsList>
@@ -154,7 +169,7 @@ const AdminDashboard: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <Label htmlFor="festivalName">Festival Name</Label>
                       <Input 
@@ -165,7 +180,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="festivalDiscount">Discount Percentage</Label>
+                      <Label htmlFor="festivalDiscount">Discount %</Label>
                       <Select 
                         value={festivalDiscount} 
                         onValueChange={setFestivalDiscount}
@@ -183,6 +198,16 @@ const AdminDashboard: React.FC = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div>
+                      <Label htmlFor="festivalColor">Theme Color</Label>
+                      <Input
+                        id="festivalColor"
+                        type="color"
+                        value={festivalColor}
+                        onChange={(e) => setFestivalColor(e.target.value)}
+                        className="h-10 p-1"
+                      />
+                    </div>
                     <div className="flex items-end">
                       <Button onClick={handleAddFestival} className="w-full">Add Festival</Button>
                     </div>
@@ -197,9 +222,18 @@ const AdminDashboard: React.FC = () => {
                     <div className="space-y-2">
                       {activeFestivals.map((festival, index) => (
                         <div key={index} className="flex justify-between items-center p-3 border rounded-md">
-                          <div>
-                            <p className="font-medium">{festival.name}</p>
-                            <p className="text-sm text-gray-500">{festival.discount}% discount</p>
+                          <div className="flex items-center gap-3">
+                            {festival.color && (
+                              <span
+                                aria-hidden
+                                className="inline-block w-5 h-5 rounded-full border"
+                                style={{ backgroundColor: festival.color }}
+                              />
+                            )}
+                            <div>
+                              <p className="font-medium">{festival.name}</p>
+                              <p className="text-sm text-gray-500">{festival.discount}% discount</p>
+                            </div>
                           </div>
                           <Button 
                             variant="outline" 
@@ -216,6 +250,11 @@ const AdminDashboard: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="coupons">
+            <AdminCoupons />
+          </TabsContent>
+          
           
           <TabsContent value="products">
             <Card>

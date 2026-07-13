@@ -9,7 +9,9 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
   setScore, 
   setGameOver,
   highScore,
-  setHighScore
+  setHighScore,
+  misses,
+  setMisses
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const glassPosRef = useRef({ x: 0, y: 0 });
@@ -211,15 +213,21 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
                      lemon.y < glassPosRef.current.y + glassHeight / 2;
                      
         if (inGlassX && inGlassY) {
-          // Caught a lemon!
-          // This is the part that's causing the error. 
-          // We need to update the score directly, not with a callback function
-          setScore(score + 1);
+          setScore(s => {
+            const next = s + 1;
+            if (next >= 100) setGameOver(true);
+            return next;
+          });
           return false;
         }
         
-        // Remove lemons that fall off screen
+        // Remove lemons that fall off screen (miss)
         if (lemon.y > canvas.height) {
+          setMisses(m => {
+            const next = m + 1;
+            if (next >= 20) setGameOver(true);
+            return next;
+          });
           return false;
         }
         
@@ -239,7 +247,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       // Update high score if the current score is higher
       if (score > highScore) {
         setHighScore(score);
-        localStorage.setItem("lemonCatcherHighScore", score.toString());
+        try { localStorage.setItem("lemonCatcherHighScore", score.toString()); } catch {}
       }
       
       animationRef.current = requestAnimationFrame(gameLoop);
