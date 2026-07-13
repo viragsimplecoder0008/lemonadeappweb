@@ -247,7 +247,7 @@ const GameCanvas: React.FC<GameCanvasProps> = ({
       // Update high score if the current score is higher
       if (score > highScore) {
         setHighScore(score);
-        localStorage.setItem("lemonCatcherHighScore", score.toString());
+        try { localStorage.setItem("lemonCatcherHighScore", score.toString()); } catch {}
       }
       
       animationRef.current = requestAnimationFrame(gameLoop);
