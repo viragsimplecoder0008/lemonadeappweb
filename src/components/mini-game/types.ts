@@ -22,8 +22,10 @@ export interface GameCanvasProps {
   gameStarted: boolean;
   gameOver: boolean;
   score: number;
-  setScore: (score: number) => void;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
   setGameOver: (gameOver: boolean) => void;
   highScore: number;
-  setHighScore: (highScore: number) => void;
+  setHighScore: React.Dispatch<React.SetStateAction<number>>;
+  misses: number;
+  setMisses: React.Dispatch<React.SetStateAction<number>>;
 }
