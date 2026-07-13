@@ -36,6 +36,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
   const { isAdmin } = useAdmin();
+  const { profile } = useAuth();
+  const isGolden = product.category === "premium";
+  const canBuyGolden = profile?.vip_status === "approved" || isAdmin;
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [password, setPassword] = useState("");
