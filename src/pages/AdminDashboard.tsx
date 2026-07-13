@@ -169,7 +169,7 @@ const AdminDashboard: React.FC = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <Label htmlFor="festivalName">Festival Name</Label>
                       <Input 
@@ -180,7 +180,7 @@ const AdminDashboard: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="festivalDiscount">Discount Percentage</Label>
+                      <Label htmlFor="festivalDiscount">Discount %</Label>
                       <Select 
                         value={festivalDiscount} 
                         onValueChange={setFestivalDiscount}
@@ -197,6 +197,16 @@ const AdminDashboard: React.FC = () => {
                           <SelectItem value="30">30%</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="festivalColor">Theme Color</Label>
+                      <Input
+                        id="festivalColor"
+                        type="color"
+                        value={festivalColor}
+                        onChange={(e) => setFestivalColor(e.target.value)}
+                        className="h-10 p-1"
+                      />
                     </div>
                     <div className="flex items-end">
                       <Button onClick={handleAddFestival} className="w-full">Add Festival</Button>
