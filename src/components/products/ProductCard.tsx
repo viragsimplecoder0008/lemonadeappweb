@@ -59,6 +59,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleAddToCart = () => {
+    if (isGolden && !canBuyGolden) {
+      toast.error("Golden Flavors are VIP-only. Apply for VIP on /vip to unlock this drink.");
+      return;
+    }
     addToCart(product);
     toast.success(`Added ${product.name} to your cart`);
   };
