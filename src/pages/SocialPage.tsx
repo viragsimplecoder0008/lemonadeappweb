@@ -50,7 +50,8 @@ const SocialPage: React.FC = () => {
       author: "You",
       timestamp: "Just now",
       likes: 0,
-      comments: 0
+      comments: 0,
+      liked: false,
     };
 
     setPosts([post, ...posts]);
