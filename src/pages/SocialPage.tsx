@@ -15,28 +15,11 @@ interface Post {
   timestamp: string;
   likes: number;
   comments: number;
+  liked?: boolean;
 }
 
 const SocialPage: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: "1",
-      content: "Just tried the new strawberry lemonade - absolutely amazing! 🍓",
-      author: "Sarah Johnson",
-      timestamp: "2 hours ago",
-      likes: 15,
-      comments: 3
-    },
-    {
-      id: "2",
-      content: "Perfect day for some classic lemonade at the park!",
-      image: "/classic-lemonade.jpg",
-      author: "Mike Chen",
-      timestamp: "5 hours ago",
-      likes: 28,
-      comments: 7
-    }
-  ]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   const [newPost, setNewPost] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -67,7 +50,8 @@ const SocialPage: React.FC = () => {
       author: "You",
       timestamp: "Just now",
       likes: 0,
-      comments: 0
+      comments: 0,
+      liked: false,
     };
 
     setPosts([post, ...posts]);
@@ -78,9 +62,9 @@ const SocialPage: React.FC = () => {
   };
 
   const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { ...post, likes: post.likes + 1 }
+    setPosts(prev => prev.map(post =>
+      post.id === postId
+        ? { ...post, liked: !post.liked, likes: post.likes + (post.liked ? -1 : 1) }
         : post
     ));
   };
@@ -162,6 +146,11 @@ const SocialPage: React.FC = () => {
 
         {/* Posts Feed */}
         <div className="space-y-6">
+          {posts.length === 0 && (
+            <div className="text-center text-gray-500 py-12">
+              No posts yet. Be the first to share your lemonade moment!
+            </div>
+          )}
           {posts.map((post) => (
             <Card key={post.id}>
               <CardContent className="p-6">
@@ -195,9 +184,9 @@ const SocialPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleLike(post.id)}
-                        className="text-gray-600 hover:text-red-500"
+                        className={`hover:text-red-500 ${post.liked ? 'text-red-500' : 'text-gray-600'}`}
                       >
-                        <Heart className="h-4 w-4 mr-1" />
+                        <Heart className={`h-4 w-4 mr-1 ${post.liked ? 'fill-red-500' : ''}`} />
                         {post.likes}
                       </Button>
                       <Button

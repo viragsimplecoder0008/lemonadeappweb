@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import CommunityHelp from "./CommunityHelp";
+import BackButton from "./BackButton";
 import { Link } from "react-router-dom";
 import { Gamepad2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -31,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
     >
       <Navbar />
       <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? 'pb-20' : 'pt-24'}`}>
+        <BackButton />
         {children}
       </main>
       {showCommunityHelp && <CommunityHelp />}

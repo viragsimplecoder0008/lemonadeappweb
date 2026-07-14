@@ -235,7 +235,7 @@ const Navbar: React.FC = () => {
                 <span className="text-xs mt-1">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom">
+            <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
               <nav className="flex flex-col gap-4 mt-8 pb-16">
                 <Button 
                   onClick={() => setShowOnlyMenuIcon(true)}
@@ -304,7 +304,7 @@ const Navbar: React.FC = () => {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom">
+            <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
               <nav className="flex flex-col gap-4 mt-8 pb-16">
                 <Button 
                   onClick={() => setShowOnlyMenuIcon(false)}

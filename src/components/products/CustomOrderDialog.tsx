@@ -37,7 +37,7 @@ const CustomOrderDialog: React.FC = () => {
     }
     setSubmitting(true);
     const price = size === "Large" ? 180 : size === "Small" ? 100 : 140;
-    const { error } = await supabase.from("orders").insert({
+    const payload = {
       id: crypto.randomUUID(),
       user_id: user.id,
       total_price: price,
@@ -45,7 +45,7 @@ const CustomOrderDialog: React.FC = () => {
       payment_method: "cod",
       is_custom: true,
       custom_details: { sweetness: sweetness[0], ingredients, notes, size },
-      shipping_full_name: profile?.name || profile?.username || "Customer",
+      shipping_full_name: profile?.name || profile?.username || user.email?.split("@")[0] || "Customer",
       shipping_address: address,
       shipping_city: "Hyderabad",
       shipping_state: "Telangana",
@@ -53,9 +53,14 @@ const CustomOrderDialog: React.FC = () => {
       shipping_country: "India",
       shipping_phone_number: phone,
       shipping_email: profile?.email || user.email || null,
-    });
+    };
+    const { error } = await supabase.from("orders").insert(payload);
     setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      console.error("Custom order insert failed:", error);
+      toast.error(error.message || "Failed to place custom order");
+      return;
+    }
     toast.success("Custom order placed! ETA 24+ hours. Track it in your Orders page.");
     setOpen(false);
     setIngredients([]); setNotes(""); setAddress(""); setPhone(""); setSweetness([50]);

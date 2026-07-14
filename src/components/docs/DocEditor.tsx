@@ -46,10 +46,13 @@ const DocEditor: React.FC<DocEditorProps> = ({ docId }) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         className="min-h-[500px] font-mono text-sm"
-        placeholder="Write your HTML content here..."
+        placeholder={`Markdown syntax:\n\n# Heading\n## Sub-heading\n**bold** *italic*\n- list item\n\n^^Header="Pro Tip",Content="VIP gets discounts!",Color="blue"^^\n\n!coloredText."Woah!".red\n\nTABLE: Platform | Controls\n Desktop: Arrow keys\n Mobile: Swipe`}
       />
       <div className="text-sm text-gray-500">
-        Changes are saved automatically. Use HTML tags for formatting.
+        Autosaves every 5s. Use markdown + custom tags:
+        <code className="ml-2">^^Header="",Content="",Color=""^^</code>,
+        <code className="ml-2">!coloredText."text".red</code>,
+        <code className="ml-2">TABLE: A | B</code>
       </div>
     </div>
   );

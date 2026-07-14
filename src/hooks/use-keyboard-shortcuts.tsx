@@ -51,12 +51,25 @@ export const useKeyboardShortcuts = () => {
       
       // Alt + Shift shortcuts
       if (event.altKey && event.shiftKey && !event.ctrlKey) {
-        switch (event.key) {
-          case 'C': // Alt+Shift+C for Community
-          case 'c':
+        switch (event.key.toLowerCase()) {
+          case 'c': // Alt+Shift+C for Community
             event.preventDefault();
             navigate('/community');
             toast.success('Shortcut: Community page');
+            break;
+          case 'a': // Alt+Shift+A for Admin verification
+            event.preventDefault();
+            if (isAdmin) {
+              setAdminMode(false);
+              toast.success('Admin mode disabled');
+            } else {
+              setShowAdminVerification(true);
+            }
+            break;
+          case 'e': // Alt+Shift+E for Employee mode toggle
+            event.preventDefault();
+            setEmployeeMode(!isEmployee);
+            toast.success(isEmployee ? 'Employee mode disabled' : 'Employee mode enabled');
             break;
         }
       }
