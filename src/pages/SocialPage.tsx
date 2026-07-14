@@ -15,28 +15,11 @@ interface Post {
   timestamp: string;
   likes: number;
   comments: number;
+  liked?: boolean;
 }
 
 const SocialPage: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([
-    {
-      id: "1",
-      content: "Just tried the new strawberry lemonade - absolutely amazing! 🍓",
-      author: "Sarah Johnson",
-      timestamp: "2 hours ago",
-      likes: 15,
-      comments: 3
-    },
-    {
-      id: "2",
-      content: "Perfect day for some classic lemonade at the park!",
-      image: "/classic-lemonade.jpg",
-      author: "Mike Chen",
-      timestamp: "5 hours ago",
-      likes: 28,
-      comments: 7
-    }
-  ]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   const [newPost, setNewPost] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
