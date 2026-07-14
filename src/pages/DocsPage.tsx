@@ -59,7 +59,7 @@ const DocsPage: React.FC = () => {
         createDoc({
           id: newDocId.trim().toLowerCase().replace(/\s+/g, "-"),
           title: newDocTitle,
-          content: `<p>New document content</p>`,
+          content: `## New Document\n\nWrite your content using markdown. Try:\n\n^^Header="Tip",Content="This is a colored box.",Color="blue"^^`,
           updatedAt: new Date().toISOString(),
         });
         toast.success("New document created!");
