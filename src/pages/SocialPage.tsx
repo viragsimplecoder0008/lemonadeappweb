@@ -146,6 +146,11 @@ const SocialPage: React.FC = () => {
 
         {/* Posts Feed */}
         <div className="space-y-6">
+          {posts.length === 0 && (
+            <div className="text-center text-gray-500 py-12">
+              No posts yet. Be the first to share your lemonade moment!
+            </div>
+          )}
           {posts.map((post) => (
             <Card key={post.id}>
               <CardContent className="p-6">
