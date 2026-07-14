@@ -179,9 +179,9 @@ const SocialPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleLike(post.id)}
-                        className="text-gray-600 hover:text-red-500"
+                        className={`hover:text-red-500 ${post.liked ? 'text-red-500' : 'text-gray-600'}`}
                       >
-                        <Heart className="h-4 w-4 mr-1" />
+                        <Heart className={`h-4 w-4 mr-1 ${post.liked ? 'fill-red-500' : ''}`} />
                         {post.likes}
                       </Button>
                       <Button
