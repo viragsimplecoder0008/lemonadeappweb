@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import CommunityHelp from "./CommunityHelp";
+import BackButton from "./BackButton";
 import { Link } from "react-router-dom";
 import { Gamepad2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
