@@ -62,9 +62,9 @@ const SocialPage: React.FC = () => {
   };
 
   const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId 
-        ? { ...post, likes: post.likes + 1 }
+    setPosts(prev => prev.map(post =>
+      post.id === postId
+        ? { ...post, liked: !post.liked, likes: post.likes + (post.liked ? -1 : 1) }
         : post
     ));
   };
