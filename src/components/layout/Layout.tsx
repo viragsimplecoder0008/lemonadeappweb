@@ -32,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
     >
       <Navbar />
       <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? 'pb-20' : 'pt-24'}`}>
+        <BackButton />
         {children}
       </main>
       {showCommunityHelp && <CommunityHelp />}
