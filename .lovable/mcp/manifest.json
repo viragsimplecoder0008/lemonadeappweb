@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://oyeecjsbyuodlwqqzqkm.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "lemonade-mcp",
+      "version": "0.1.0",
+      "title": "Lemonade."
+    },
+    "tools": [
+      {
+        "name": "list_my_orders",
+        "title": "List my orders",
+        "description": "List the signed-in user's Lemonade. orders, most recent first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "description": "Max orders to return."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_order",
+        "title": "Get order details",
+        "description": "Fetch a single order by id (including its items) for the signed-in user.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The order id."
+            }
+          },
+          "required": [
+            "order_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_products",
+        "title": "List Lemonade. products",
+        "description": "Browse the Lemonade. product catalog. Optionally filter by category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Optional category filter, e.g. 'classic', 'specialty', 'premium'."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_profile",
+        "title": "Get my profile",
+        "description": "Return the signed-in user's Lemonade. profile, including lemon balance and VIP status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "redeem_lemons",
+        "title": "Redeem lemons",
+        "description": "Redeem lemons from the signed-in user's balance. Returns the new balance.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "Number of lemons to redeem."
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Short reason for the redemption."
+            }
+          },
+          "required": [
+            "amount",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

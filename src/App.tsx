@@ -30,6 +30,7 @@ import FAQPage from "./pages/FAQPage";
 import LiveChatPage from "./pages/LiveChatPage";
 import LiveChatAdminPage from "./pages/LiveChatAdminPage";
 import ProfilePage from "./pages/ProfilePage";
+import OAuthConsentPage from "./pages/OAuthConsentPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -71,6 +72,7 @@ const App = () => (
                 <Route path="/live-chat" element={<LiveChatPage />} />
                 <Route path="/live-chat/admin" element={<LiveChatAdminPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsentPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
