@@ -1,4 +1,4 @@
-# Lemonade. — Handcrafted Gourmet Lemonade E-Commerce & AI Platform
+# Lemonade — Handcrafted Gourmet Lemonade E-Commerce & AI Platform
 
 [![React](https://img.shields.io/badge/React-18.3-blue.svg?logo=react)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-purple.svg?logo=vite)](https://vitejs.dev/)
@@ -7,7 +7,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL_|_Realtime-green.svg?logo=supabase)](https://supabase.com/)
 [![AI Model](https://img.shields.io/badge/AI_Engine-Gemini_3.6_Flash-orange.svg)](https://ai.google.dev/)
 
-**Lemonade.** is a modern, high-performance web application designed for a luxury handcrafted lemonade beverage brand based in Hyderabad, India. Built with **React 18**, **Vite**, **TypeScript**, **Tailwind CSS**, and **Supabase**, it features full e-commerce capabilities, an AI-powered streaming support chatbot, a tiered VIP loyalty rewards system, a canvas mini-game, real-time community chat channels, and an administrative control panel.
+**Lemonade** is a modern, high-performance web application designed for a luxury handcrafted lemonade beverage brand based in Hyderabad, India. Built with **React 18**, **Vite**, **TypeScript**, **Tailwind CSS**, and **Supabase**, it features full e-commerce capabilities, an AI-powered streaming support chatbot, a tiered VIP loyalty rewards system, a canvas mini-game, real-time community chat channels, and an administrative control panel.
 
 ---
 
@@ -158,4 +158,4 @@ supabase functions deploy mcp
 
 ## License & Credits
 
-Built by the **Lemonade.** development team. Powered by [Vite](https://vitejs.dev/), [React](https://react.org/), [Tailwind CSS](https://tailwindcss.com/), [Supabase](https://supabase.com/), and [Google Gemini](https://ai.google.dev/).
+Built by the **Lemonade** development team. Powered by [Vite](https://vitejs.dev/), [React](https://react.org/), [Tailwind CSS](https://tailwindcss.com/), [Supabase](https://supabase.com/), and [Google Gemini](https://ai.google.dev/).
