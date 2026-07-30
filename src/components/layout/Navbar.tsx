@@ -90,6 +90,12 @@ const Navbar: React.FC = () => {
                         </Link>
                       </li>
                       <li>
+                        <Link to="/monsoon-winter" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                          <div className="font-medium text-blue-600">Monsoon / Winter</div>
+                          <div className="text-sm text-muted-foreground">Warm & cozy seasonal blends</div>
+                        </Link>
+                      </li>
+                      <li>
                         <Link to="/products" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
                           <div className="font-medium">All Products</div>
                           <div className="text-sm text-muted-foreground">Browse our entire collection</div>

@@ -11,6 +11,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 // Pages
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
+import MonsoonWinterPage from "./pages/MonsoonWinterPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
@@ -53,6 +54,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/products" element={<ProductsPage />} />
+                <Route path="/monsoon-winter" element={<MonsoonWinterPage />} />
                 <Route path="/products/:productId" element={<ProductDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
