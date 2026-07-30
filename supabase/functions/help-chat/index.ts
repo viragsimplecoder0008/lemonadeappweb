@@ -62,13 +62,34 @@ Deno.serve(async (req) => {
     const vip = (profile as { vip_status?: string } | null)?.vip_status;
     const hasVip = !!vip && vip !== "none";
 
+    const priceMap: Record<string, number> = {
+      classic: 3.99,
+      mint: 4.49,
+      strawberry: 4.99,
+      blueberry: 4.99,
+      lavender: 5.49,
+      ginger: 4.79,
+      cola: 4.79,
+      rose: 5.49,
+    };
+
+    const products = (productsRes.data ?? []).map((p) => {
+      const idKey = p.id ? String(p.id).toLowerCase().replace("lemonade-", "") : "";
+      const nameKey = p.name ? String(p.name).toLowerCase().split(" ")[0] : "";
+      const matchedPrice = priceMap[idKey] ?? priceMap[nameKey];
+      return {
+        ...p,
+        price: matchedPrice !== undefined ? matchedPrice : p.price,
+      };
+    });
+
     const context = {
       signedIn: !!user,
       profile,
       vipPrivileges: hasVip ? "Yes" : "No",
       lemonBalance: (profile as { lemons?: number } | null)?.lemons ?? 0,
       orders,
-      products: productsRes.data ?? [],
+      products,
       activeCoupons: couponsRes.data ?? [],
       customerReviews: reviewsRes.data ?? [],
       cart: client.cart ?? [],

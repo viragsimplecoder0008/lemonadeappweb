@@ -10,6 +10,8 @@ import { faqs } from "@/data/faq";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "react-router-dom";
 
+import MarkdownRenderer from "@/components/docs/MarkdownRenderer";
+
 interface ChatMsg {
   role: "user" | "assistant";
   content: string;
@@ -168,10 +170,18 @@ const HelpChat: React.FC = () => {
                   className={
                     m.role === "user"
                       ? "max-w-[85%] rounded-2xl bg-lemonade-yellow px-3 py-2 text-sm text-lemonade-dark"
-                      : "max-w-[95%] text-sm whitespace-pre-wrap text-foreground"
+                      : "max-w-[95%] text-sm text-foreground"
                   }
                 >
-                  {m.content || (loading ? "Thinking…" : "")}
+                  {m.role === "user" ? (
+                    m.content
+                  ) : m.content ? (
+                    <MarkdownRenderer source={m.content} />
+                  ) : loading ? (
+                    "Thinking…"
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             ))}

@@ -51,6 +51,47 @@ const renderInline = (text: string, keyPrefix = ""): React.ReactNode[] => {
   return nodes;
 };
 
+const parseGfmTable = (lines: string[], key: string) => {
+  if (lines.length < 2) return null;
+
+  const splitRow = (line: string) => {
+    let trimmed = line.trim();
+    if (trimmed.startsWith("|")) trimmed = trimmed.slice(1);
+    if (trimmed.endsWith("|")) trimmed = trimmed.slice(0, -1);
+    return trimmed.split("|").map((s) => s.trim());
+  };
+
+  const headers = splitRow(lines[0]);
+  const dataRows = lines.slice(2).map((l) => splitRow(l));
+
+  return (
+    <div key={key} className="overflow-x-auto my-3">
+      <table className="w-full text-xs sm:text-sm border-collapse border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+        <thead>
+          <tr className="bg-lemonade-yellow/20 text-lemonade-dark border-b border-gray-200">
+            {headers.map((h, i) => (
+              <th key={i} className="border-r border-gray-200 p-2 text-left font-semibold last:border-r-0">
+                {renderInline(h, `th${i}`)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {dataRows.map((row, i) => (
+            <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+              {row.map((cell, j) => (
+                <td key={j} className="border-r border-b border-gray-200 p-2 text-gray-800 last:border-r-0">
+                  {renderInline(cell, `td${i}${j}`)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 const parseTable = (block: string, key: string) => {
   // Expected format:
   // TABLE: Header1 | Header2
@@ -98,7 +139,7 @@ const MarkdownRenderer: React.FC<Props> = ({ source }) => {
     return `\n@@BOX${boxes.length - 1}@@\n`;
   });
 
-  // Split into blocks by blank lines OR table-start.
+  // Split into blocks by blank lines OR box/table delimiters
   const blocks = withBoxTokens.split(/\n\s*\n/);
   const output: React.ReactNode[] = [];
   let listBuf: string[] = [];
@@ -132,36 +173,64 @@ const MarkdownRenderer: React.FC<Props> = ({ source }) => {
       return;
     }
 
-    // Table
+    // Custom TABLE syntax
     if (trimmed.startsWith("TABLE:")) {
       flushList(`fl${bi}`);
       output.push(parseTable(trimmed, `tbl${bi}`));
       return;
     }
 
-    // Line-by-line handling for headings / hr / list / paragraph
+    // Line-by-line handling for headings / hr / list / GFM table / paragraph
     const lines = trimmed.split("\n");
-    const isList = lines.every(l => l.trim().startsWith("- "));
-    if (isList) {
-      lines.forEach(l => listBuf.push(l.trim().slice(2)));
-      flushList(`fl${bi}`);
-      return;
-    }
-    flushList(`fl${bi}`);
-    lines.forEach((line, li) => {
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
       const l = line.trim();
-      if (l.startsWith("### ")) {
-        output.push(<h3 key={`h3${bi}${li}`} className="text-xl font-semibold mt-4 mb-2">{renderInline(l.slice(4), `h3i${bi}`)}</h3>);
-      } else if (l.startsWith("## ")) {
-        output.push(<h2 key={`h2${bi}${li}`} className="text-2xl font-bold mt-6 mb-3">{renderInline(l.slice(3), `h2i${bi}`)}</h2>);
-      } else if (l.startsWith("# ")) {
-        output.push(<h1 key={`h1${bi}${li}`} className="text-3xl font-bold mt-6 mb-4">{renderInline(l.slice(2), `h1i${bi}`)}</h1>);
-      } else if (l === "---") {
-        output.push(<hr key={`hr${bi}${li}`} className="my-4" />);
-      } else if (l) {
-        output.push(<p key={`p${bi}${li}`} className="my-2 leading-relaxed">{renderInline(l, `pi${bi}${li}`)}</p>);
+
+      // Check if current line starts a GFM Markdown table
+      if (
+        l.startsWith("|") &&
+        i + 1 < lines.length &&
+        lines[i + 1].trim().startsWith("|") &&
+        /^\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?$/.test(lines[i + 1].trim())
+      ) {
+        flushList(`fl${bi}${i}`);
+        const tableLines: string[] = [];
+        while (i < lines.length && lines[i].trim().startsWith("|")) {
+          tableLines.push(lines[i]);
+          i++;
+        }
+        const gfmTable = parseGfmTable(tableLines, `gfmtbl${bi}${i}`);
+        if (gfmTable) {
+          output.push(gfmTable);
+        }
+        continue;
       }
-    });
+
+      // Check bullet lists
+      if (l.startsWith("- ")) {
+        listBuf.push(l.slice(2));
+        i++;
+        continue;
+      } else {
+        flushList(`fl${bi}${i}`);
+      }
+
+      // Check headings / hr / paragraph
+      if (l.startsWith("### ")) {
+        output.push(<h3 key={`h3${bi}${i}`} className="text-xl font-semibold mt-4 mb-2">{renderInline(l.slice(4), `h3i${bi}${i}`)}</h3>);
+      } else if (l.startsWith("## ")) {
+        output.push(<h2 key={`h2${bi}${i}`} className="text-2xl font-bold mt-6 mb-3">{renderInline(l.slice(3), `h2i${bi}${i}`)}</h2>);
+      } else if (l.startsWith("# ")) {
+        output.push(<h1 key={`h1${bi}${i}`} className="text-3xl font-bold mt-6 mb-4">{renderInline(l.slice(2), `h1i${bi}${i}`)}</h1>);
+      } else if (l === "---") {
+        output.push(<hr key={`hr${bi}${i}`} className="my-4" />);
+      } else if (l) {
+        output.push(<p key={`p${bi}${i}`} className="my-1 leading-relaxed">{renderInline(l, `pi${bi}${i}`)}</p>);
+      }
+      i++;
+    }
+    flushList(`fl${bi}_end`);
   });
 
   return <div className="max-w-none">{output}</div>;

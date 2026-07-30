@@ -148,14 +148,14 @@ CREATE TRIGGER trg_coupons_updated BEFORE UPDATE ON public.coupons
 
 -- Seed products (idempotent)
 INSERT INTO public.products (id, name, description, price, image_url, category, in_stock) VALUES
-  ('classic', 'Classic Lemonade', 'Refreshing traditional lemonade made with fresh lemons.', 60, '/classic-lemonade.jpg', 'classic', true),
-  ('mint', 'Mint Lemonade', 'Cool mint lemonade for a refreshing burst.', 80, '/mint-lemonade.jpg', 'classic', true),
-  ('ginger', 'Ginger Lemonade', 'Zesty ginger lemonade with a spicy kick.', 90, '/ginger-lemonade.jpg', 'speciality', true),
-  ('strawberry', 'Strawberry Lemonade', 'Sweet strawberry blend.', 110, '/strawberry-lemonade.jpg', 'speciality', true),
-  ('blueberry', 'Blueberry Lemonade', 'Rich blueberry infusion.', 120, '/blueberry-lemonade.jpg', 'speciality', true),
-  ('lavender', 'Lavender Lemonade', 'Floral lavender-infused lemonade.', 150, '/lavender-lemonade.jpg', 'golden', true),
-  ('rose', 'Rose Lemonade', 'Delicate rose-petal lemonade.', 150, '/rose-lemonade.jpg', 'golden', true),
-  ('cola', 'Cola Lemonade', 'Cola-inspired premium blend.', 160, '/cola-lemonade.jpg', 'golden', true)
+  ('classic', 'Classic Lemonade', 'Refreshing traditional lemonade made with fresh lemons.', 3.99, '/classic-lemonade.jpg', 'classic', true),
+  ('mint', 'Mint Lemonade', 'Cool mint lemonade for a refreshing burst.', 4.49, '/mint-lemonade.jpg', 'classic', true),
+  ('ginger', 'Ginger Lemonade', 'Zesty ginger lemonade with a spicy kick.', 4.79, '/ginger-lemonade.jpg', 'speciality', true),
+  ('strawberry', 'Strawberry Lemonade', 'Sweet strawberry blend.', 4.99, '/strawberry-lemonade.jpg', 'speciality', true),
+  ('blueberry', 'Blueberry Lemonade', 'Rich blueberry infusion.', 4.99, '/blueberry-lemonade.jpg', 'speciality', true),
+  ('lavender', 'Lavender Lemonade', 'Floral lavender-infused lemonade.', 5.49, '/lavender-lemonade.jpg', 'golden', true),
+  ('rose', 'Rose Lemonade', 'Delicate rose-petal lemonade.', 5.49, '/rose-lemonade.jpg', 'golden', true),
+  ('cola', 'Cola Lemonade', 'Cola-inspired premium blend.', 4.79, '/cola-lemonade.jpg', 'golden', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Seed a default chat group
