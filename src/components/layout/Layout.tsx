@@ -44,6 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
       >
         <Gamepad2 className="h-6 w-6 text-lemonade-dark" />
       </Link>
+      <HelpChat />
       <Footer />
       
       {/* Admin Verification Dialog */}
