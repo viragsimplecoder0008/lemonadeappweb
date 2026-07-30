@@ -28,12 +28,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { products as allProducts } from "@/data/products";
+import { monsoonWinterProducts } from "@/data/monsoonWinterProducts";
 
 interface ProductCardProps {
   product: Product;
+  storageKey?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "products" }) => {
   const { addToCart } = useCart();
   const { isAdmin } = useAdmin();
   const { profile } = useAuth();
@@ -117,8 +119,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     toast.error("Admin access required. Please sign in with an admin account.");
   };
 
+  const getTargetProducts = (): Product[] => {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) return JSON.parse(stored);
+    } catch {
+      /* ignore */
+    }
+    return storageKey === "monsoon_winter_products" ? monsoonWinterProducts : allProducts;
+  };
+
   const handleStockToggle = () => {
-    let updatedProducts = [...allProducts];
+    let updatedProducts = [...getTargetProducts()];
     const index = updatedProducts.findIndex(p => p.id === product.id);
     
     if (index !== -1) {
@@ -126,7 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         ...updatedProducts[index],
         inStock: !updatedProducts[index].inStock
       };
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
       toast.success(`${product.name} is now ${updatedProducts[index].inStock ? 'in stock' : 'out of stock'}`);
       
       setTimeout(() => {
@@ -136,25 +148,25 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const handleProductSubmit = () => {
-    let updatedProducts = [...allProducts];
+    let updatedProducts = [...getTargetProducts()];
     
     if (action === "edit") {
       const index = updatedProducts.findIndex(p => p.id === product.id);
       if (index !== -1) {
         updatedProducts[index] = editProduct;
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
         toast.success(`${editProduct.name} has been updated`);
       }
     } else if (action === "delete") {
       updatedProducts = updatedProducts.filter(p => p.id !== product.id);
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
       toast.success(`${product.name} has been deleted`);
     } else if (action === "add") {
       if (!newProduct.id) {
         newProduct.id = `lemonade-${new Date().getTime()}`;
       }
       updatedProducts.push(newProduct as Product);
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
+      localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
       toast.success(`${newProduct.name} has been added`);
     }
     

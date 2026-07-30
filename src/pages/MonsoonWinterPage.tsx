@@ -109,12 +109,12 @@ const MonsoonWinterPage: React.FC = () => {
 
         {/* Products grid */}
         {filteredProducts.length > 0 ? (
-          <ProductGrid products={filteredProducts} />
+          <ProductGrid products={filteredProducts} storageKey="monsoon_winter_products" />
         ) : (
           <div className="text-center py-16 bg-slate-50/50 rounded-2xl border border-dashed border-gray-300 my-4">
-            <p className="text-lg font-medium text-gray-700 mb-1">Monsoon / Winter Products Coming Soon</p>
-            <p className="text-sm text-gray-500 max-w-md mx-auto">
-              No products found in this category yet. You can add Monsoon / Winter items to <code className="bg-gray-200 px-1 py-0.5 rounded text-xs">monsoonWinterProducts</code>.
+            <p className="text-lg font-medium text-gray-700 mb-1">Monsoon / Winter Products</p>
+            <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
+              Right-click any product card to Edit, Mark Out of Stock, Delete, or Add New products to the Monsoon / Winter collection.
             </p>
           </div>
         )}
