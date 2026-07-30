@@ -9,6 +9,7 @@ import { Gamepad2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { AdminVerification } from "@/components/admin/AdminVerification";
+import HelpChat from "@/components/help/HelpChat";
 
 interface LayoutProps {
   children: React.ReactNode;
