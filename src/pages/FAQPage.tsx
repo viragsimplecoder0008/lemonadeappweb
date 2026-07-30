@@ -1,47 +1,9 @@
 import React from "react";
 import Layout from "@/components/layout/Layout";
+import { faqs } from "@/data/faq";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const FAQPage: React.FC = () => {
-  const faqs = [
-    {
-      question: "What ingredients do you use in your lemonades?",
-      answer: "We use only the finest natural ingredients including fresh lemons, pure water, organic cane sugar, and natural flavor extracts. All our products are made without artificial preservatives or colors."
-    },
-    {
-      question: "How long do your lemonades stay fresh?",
-      answer: "Our lemonades are best consumed within 3-5 days of delivery when refrigerated. Each bottle has a freshness date printed on the label."
-    },
-    {
-      question: "Do you offer delivery?",
-      answer: "Yes! We deliver to most areas within 24-48 hours of order placement. Delivery fees vary by location and order size."
-    },
-    {
-      question: "Can I customize my order?",
-      answer: "Absolutely! You can adjust sweetness levels, add extra flavors, or create custom blends. Contact us during checkout to specify your preferences."
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards, debit cards for online payments, and cash on delivery for local orders."
-    },
-    {
-      question: "Do you offer bulk orders for events?",
-      answer: "Yes! We offer special pricing for bulk orders and catering services. Please contact us at least 48 hours in advance for large orders."
-    },
-    {
-      question: "What is your return policy?",
-      answer: "We stand behind our quality. If you're not satisfied with your order, contact us within 24 hours of delivery for a full refund or replacement."
-    },
-    {
-      question: "How can I track my order?",
-      answer: "Once your order is placed, you'll receive a confirmation email with a tracking number. You can also check your order status on our Orders page."
-    },
-    {
-      question: "Do you have a loyalty program?",
-      answer: "Yes! Join our VIP program to earn points on every purchase, get exclusive discounts, and receive early access to new flavors."
-    }
-  ];
-
   return (
     <Layout>
       <div className="container mx-auto px-4 py-16">
