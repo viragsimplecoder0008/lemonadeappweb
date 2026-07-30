@@ -1,4 +1,4 @@
-# 🍋 Lemonade. — Handcrafted Gourmet Lemonade E-Commerce & AI Platform
+# Lemonade. — Handcrafted Gourmet Lemonade E-Commerce & AI Platform
 
 [![React](https://img.shields.io/badge/React-18.3-blue.svg?logo=react)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-purple.svg?logo=vite)](https://vitejs.dev/)
@@ -11,36 +11,36 @@
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-### 🛒 E-Commerce & Product Customization
+### E-Commerce & Product Customization
 * **Curated Flavor Catalog**: Explore categories ranging from *Classic* (Classic, Mint) to *Specialty* (Ginger, Strawberry, Blueberry) and *Golden Flavors* (Lavender, Rose, Cola).
 * **Custom Brew Builder**: Customizer for users to adjust sweetness levels, mix natural ingredient infusions, and add custom brewing requests (`is_custom` order flow).
 * **Shopping Cart & Checkout**: Persistent cart state, Cash on Delivery (COD) payment processing, order history, and order tracking.
 * **Coupon & Promotion Engine**: Active promo code validation with automatic expiry dates and percentage-based discounts.
 
-### 🤖 AI Support Assistant ("Lemonade Help")
+### AI Support Assistant ("Lemonade Help")
 * **Real-time Streaming Chat**: Integrated with Supabase Edge Functions and the Lovable AI Gateway running **Google Gemini 3.6 Flash**.
 * **Context-Aware Reasoning**: The AI automatically inspects the user's active cart items, current page URL, user profile, past order history, available coupons, FAQ data, and Markdown documentation.
 * **Rich Markdown & GFM Table Rendering**: Custom frontend Markdown engine rendering inline text styling, callout boxes, and GitHub Flavored Markdown (GFM) comparison tables directly within the chat window.
 
-### 👑 VIP Loyalty Program & "Lemons" Currency
+### VIP Loyalty Program & "Lemons" Currency
 * **Rewards Balance**: Users earn **Lemons** (reward points) on purchases that can be redeemed for complimentary drinks.
 * **VIP Privilege Tier**: Employee-approved VIP status granting exclusive access to *Golden Flavors* and priority customer support.
 * **Lemon Catcher Mini-Game**: An interactive canvas arcade game where players catch falling lemons to achieve high scores and automatically unlock a 20% discount coupon on Strawberry Lemonade.
 
-### 💬 Community & Real-Time Social Hub
+### Community & Real-Time Social Hub
 * **Real-time Chat Channels**: Public chat rooms (*General*, *Recipes*, *Feedback*) powered by Supabase Realtime channels.
 * **Ratings & Product Reviews**: Customer review submission system with verified order tags and star ratings.
 
-### 🔐 Role-Based Access Control (RBAC) & Administration
+### Role-Based Access Control (RBAC) & Administration
 * **Multi-Role User System**: Support for **Customer**, **Employee**, and **Admin** roles.
 * **Admin Dashboard**: Full CRUD management over products, promo coupons, live support moderation, and festival theme customization.
 * **Interactive Documentation Engine**: Built-in Markdown documentation center (`/docs`) with live in-browser editing for administrators.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technology | Details |
 | :--- | :--- | :--- |
@@ -55,7 +55,7 @@
 
 ---
 
-## 📁 Directory Architecture
+## Directory Architecture
 
 ```
 lemonade-rich/
@@ -86,7 +86,7 @@ lemonade-rich/
 
 ---
 
-## 💳 Product Pricing Catalog
+## Product Pricing Catalog
 
 | Flavor | Category | Price (INR) | VIP Required |
 | :--- | :--- | :---: | :---: |
@@ -101,7 +101,7 @@ lemonade-rich/
 
 ---
 
-## 🚀 Local Development Setup
+## Local Development Setup
 
 ### Prerequisites
 * **Node.js**: v18.0.0 or higher
@@ -140,7 +140,7 @@ lemonade-rich/
 
 ---
 
-## ⚡ Supabase & Edge Functions Setup
+## Supabase & Edge Functions Setup
 
 The project uses Supabase Edge Functions for AI support chat and MCP tool integration.
 
@@ -156,6 +156,6 @@ supabase functions deploy mcp
 
 ---
 
-## 📄 License & Credits
+## License & Credits
 
-Built with ❤️ by the **Lemonade.** development team. Powered by [Vite](https://vitejs.dev/), [React](https://react.org/), [Tailwind CSS](https://tailwindcss.com/), [Supabase](https://supabase.com/), and [Google Gemini](https://ai.google.dev/).
+Built by the **Lemonade.** development team. Powered by [Vite](https://vitejs.dev/), [React](https://react.org/), [Tailwind CSS](https://tailwindcss.com/), [Supabase](https://supabase.com/), and [Google Gemini](https://ai.google.dev/).
