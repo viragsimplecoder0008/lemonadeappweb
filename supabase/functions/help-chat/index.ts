@@ -37,11 +37,19 @@ Deno.serve(async (req) => {
     const { data: userData } = await supabase.auth.getUser();
     const user = userData?.user ?? null;
 
-    const [productsRes, couponsRes, reviewsRes] = await Promise.all([
+    const [productsRes, couponsRes, reviewsRes, bannerRes] = await Promise.all([
       supabase.from("products").select("id,name,description,price,category,in_stock").limit(60),
       supabase.from("coupons").select("code,discount_percent,expires_at,active").eq("active", true).limit(30),
       supabase.from("reviews").select("product_id,rating,comment,created_at").order("created_at", { ascending: false }).limit(30),
+      supabase.from("news_banner_items").select("*").order("sort_order", { ascending: true }),
     ]);
+
+    let isStaff = false;
+    if (user) {
+      const { data: staff } = await supabase.rpc("is_employee_or_admin", { _user_id: user.id });
+      isStaff = staff === true;
+    }
+
 
     let profile: unknown = null;
     let orders: unknown = [];
