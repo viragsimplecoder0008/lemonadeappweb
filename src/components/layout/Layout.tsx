@@ -1,6 +1,7 @@
 
 import React from "react";
 import Navbar from "./Navbar";
+import NewsBanner from "./NewsBanner";
 import Footer from "./Footer";
 import CommunityHelp from "./CommunityHelp";
 import BackButton from "./BackButton";
@@ -31,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
         backgroundAttachment: "fixed",
       }}
     >
+      <NewsBanner />
       <Navbar />
       <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? 'pb-20' : 'pt-24'}`}>
         <BackButton />
