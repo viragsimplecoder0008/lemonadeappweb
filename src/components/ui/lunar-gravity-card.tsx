@@ -10,7 +10,6 @@ import { useTheme } from "@/context/ThemeContext";
 // 3D Glass of Lemonade Component using THREE.LatheGeometry & THREE.MeshPhysicalMaterial
 const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const liquidMeshRef = useRef<THREE.Mesh>(null);
 
   // 1. GENERATE THE GLASS CONTAINER PROFILE
   const glassGeometry = useMemo(() => {
@@ -41,16 +40,17 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
     });
   }, []);
 
-  // 2. GENERATE THE LEMONADE LIQUID PROFILE (Color: 0xffea00)
-  const liquidGeometry = useMemo(() => {
+  // 2. GENERATE THE LEMONADE LIQUID PROFILE (Strictly offset to prevent clipping)
+  const { liquidGeometry, initialPositions } = useMemo(() => {
     const liquidPoints = [];
     liquidPoints.push(new THREE.Vector2(0, 0.21));      // Sits slightly above inner glass floor
-    liquidPoints.push(new THREE.Vector2(0.77, 0.21));   // Corner edge
-    liquidPoints.push(new THREE.Vector2(1.10, 2.9));    // Liquid surface line (shorter than rim)
-    liquidPoints.push(new THREE.Vector2(0, 2.9));       // Center top surface
+    liquidPoints.push(new THREE.Vector2(0.75, 0.21));   // Corner edge
+    liquidPoints.push(new THREE.Vector2(1.02, 2.7));    // Liquid surface line (safe height below rim)
+    liquidPoints.push(new THREE.Vector2(0, 2.7));       // Center top surface
     const geom = new THREE.LatheGeometry(liquidPoints, 64);
     geom.center();
-    return geom;
+    const initialPos = new Float32Array(geom.attributes.position.array);
+    return { liquidGeometry: geom, initialPositions: initialPos };
   }, []);
 
   const liquidMaterial = useMemo(() => {
@@ -71,14 +71,31 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.25;
       // Gentle glass tilt physics sway
-      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 2.2) * 0.04;
-      groupRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 1.8) * 0.03;
+      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 2.0) * 0.03;
+      groupRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 1.5) * 0.02;
     }
-    if (liquidMeshRef.current) {
-      // Real-time counter-slosh liquid surface physics
-      liquidMeshRef.current.rotation.z = -Math.sin(state.clock.elapsedTime * 2.2) * 0.06;
-      liquidMeshRef.current.rotation.x = -Math.cos(state.clock.elapsedTime * 1.8) * 0.05;
-      liquidMeshRef.current.position.y = Math.sin(state.clock.elapsedTime * 3.0) * 0.02;
+
+    // REAL VERTEX-LEVEL LIQUID SURFACE WAVE SLOSHING PHYSICS (Zero clipping)
+    if (liquidGeometry) {
+      const pos = liquidGeometry.attributes.position;
+      const time = state.clock.elapsedTime * 3.5;
+
+      for (let i = 0; i < pos.count; i++) {
+        const x = initialPositions[i * 3];
+        const y = initialPositions[i * 3 + 1];
+        const z = initialPositions[i * 3 + 2];
+
+        // Apply fluid wave deformation ONLY to top liquid surface (y > 0.7)
+        if (y > 0.7) {
+          const r = Math.sqrt(x * x + z * z);
+          // Wave equation tapering off near walls so liquid NEVER clips outer glass
+          const wave = Math.sin(x * 2.5 + time) * 0.06 * Math.max(0, 1.0 - r / 1.05) +
+                       Math.cos(z * 2.5 + time * 1.2) * 0.06 * Math.max(0, 1.0 - r / 1.05);
+          pos.setY(i, y + wave);
+        }
+      }
+      pos.needsUpdate = true;
+      liquidGeometry.computeVertexNormals();
     }
   });
 
@@ -92,8 +109,8 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
     >
       {/* Outer Glass Tumbler */}
       <mesh geometry={glassGeometry} material={glassMaterial} castShadow receiveShadow />
-      {/* Inner Lemonade Liquid with Dynamic Sloshing Physics */}
-      <mesh ref={liquidMeshRef} geometry={liquidGeometry} material={liquidMaterial} receiveShadow />
+      {/* Inner Lemonade Liquid with Vertex Wave Fluid Physics */}
+      <mesh geometry={liquidGeometry} material={liquidMaterial} receiveShadow />
     </group>
   );
 };
