@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, X, Flame } from "lucide-react";
 
-const NewsBanner: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true);
+interface NewsBannerProps {
+  onClose?: () => void;
+}
 
-  if (!isVisible) return null;
-
+const NewsBanner: React.FC<NewsBannerProps> = ({ onClose }) => {
   return (
-    <div className="bg-gradient-to-r from-amber-500 via-lemonade-yellow to-amber-500 text-slate-950 px-4 py-2 text-xs md:text-sm font-medium shadow-sm flex items-center justify-between z-50 relative border-b border-amber-300/40">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-500 via-lemonade-yellow to-amber-500 text-slate-950 px-4 py-2 text-xs md:text-sm font-medium shadow-md flex items-center justify-between border-b border-amber-400/60">
       <div className="flex flex-wrap items-center justify-center gap-2 mx-auto text-center">
         <span className="bg-slate-950 text-amber-300 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider flex items-center gap-1 shadow-sm">
           <Sparkles className="h-3 w-3" /> NEWS
@@ -25,13 +25,15 @@ const NewsBanner: React.FC = () => {
           Check out Hot Chocolate!
         </Link>
       </div>
-      <button
-        onClick={() => setIsVisible(false)}
-        className="p-1 hover:bg-black/10 rounded-full transition-colors ml-2 flex-shrink-0"
-        aria-label="Close news banner"
-      >
-        <X className="h-4 w-4 text-slate-950" />
-      </button>
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="p-1 hover:bg-black/10 rounded-full transition-colors ml-2 flex-shrink-0"
+          aria-label="Close news banner"
+        >
+          <X className="h-4 w-4 text-slate-950" />
+        </button>
+      )}
     </div>
   );
 };

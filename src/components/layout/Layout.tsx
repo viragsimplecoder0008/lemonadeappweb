@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./Navbar";
 import NewsBanner from "./NewsBanner";
 import Footer from "./Footer";
@@ -19,6 +19,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) => {
   const isMobile = useIsMobile();
+  const [showNewsBanner, setShowNewsBanner] = useState(true);
   // Initialize keyboard shortcuts and get admin verification state
   const { showAdminVerification, setShowAdminVerification } = useKeyboardShortcuts();
   
@@ -32,9 +33,9 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
         backgroundAttachment: "fixed",
       }}
     >
-      <NewsBanner />
-      <Navbar />
-      <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? 'pb-20' : 'pt-24'}`}>
+      {showNewsBanner && <NewsBanner onClose={() => setShowNewsBanner(false)} />}
+      <Navbar hasBanner={showNewsBanner} />
+      <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? (showNewsBanner ? 'pb-20 pt-10' : 'pb-20') : (showNewsBanner ? 'pt-32' : 'pt-24')} transition-all duration-300`}>
         <BackButton />
         {children}
       </main>

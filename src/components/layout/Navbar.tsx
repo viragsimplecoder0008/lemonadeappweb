@@ -8,7 +8,11 @@ import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
 import AuthButton from "@/components/auth/AuthButton";
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  hasBanner?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
   const {
     totalItems
   } = useCart();
@@ -53,7 +57,7 @@ const Navbar: React.FC = () => {
   // Normal mode navbar (full navigation)
   return <>
       {/* Desktop Navigation */}
-      <header className={`${isMobile ? 'hidden' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl`}>
+      <header className={`${isMobile ? 'hidden' : hasBanner ? 'fixed top-12 left-1/2 -translate-x-1/2' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl transition-all duration-300`}>
         <div className="flex h-16 items-center justify-between px-6">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
