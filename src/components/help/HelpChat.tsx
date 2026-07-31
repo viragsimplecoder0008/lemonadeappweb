@@ -135,11 +135,14 @@ const HelpChat: React.FC = () => {
           }
         }
       }
+      // The assistant can edit the news banner via tools — refresh it after each reply.
+      window.dispatchEvent(new Event("news-banner-updated"));
     } catch {
       setMessages((m) => [...m, { role: "assistant", content: "Something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
     }
+
   };
 
   return (
