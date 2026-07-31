@@ -1,4 +1,5 @@
 import { Product } from "../types";
+import { supabase } from "@/integrations/supabase/client";
 
 // Initial product data
 const initialProducts: Product[] = [
@@ -137,4 +138,47 @@ export const getProductById = (id: string): Product | undefined => {
 
 export const getProductsByCategory = (category: string): Product[] => {
   return products.filter(product => product.category === category);
+};
+
+export const saveProductToDatabase = async (product: Product): Promise<boolean> => {
+  try {
+    const { error } = await supabase.from("products").upsert(
+      {
+        id: product.id,
+        name: product.name,
+        description: product.description || "",
+        price: Number(product.price),
+        category: product.category || "classic",
+        image_url: product.imageUrl || null,
+        in_stock: product.inStock !== false,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "id" }
+    );
+
+    if (error) {
+      console.error("Failed to save product to Supabase database:", error);
+      return false;
+    }
+    console.log(`Product ${product.name} saved to Supabase database.`);
+    return true;
+  } catch (err) {
+    console.error("Error saving product to database:", err);
+    return false;
+  }
+};
+
+export const deleteProductFromDatabase = async (productId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase.from("products").delete().eq("id", productId);
+    if (error) {
+      console.error("Failed to delete product from Supabase database:", error);
+      return false;
+    }
+    console.log(`Product ${productId} deleted from Supabase database.`);
+    return true;
+  } catch (err) {
+    console.error("Error deleting product from database:", err);
+    return false;
+  }
 };

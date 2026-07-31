@@ -9,6 +9,7 @@ import { useCart } from "@/context/CartContext";
 import { useAdmin } from "@/context/AdminContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { saveProductToDatabase, deleteProductFromDatabase } from "@/data/products";
 
 import {
   ContextMenu,
@@ -151,17 +152,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "produc
     return storageKey === "monsoon_winter_products" ? monsoonWinterProducts : allProducts;
   };
 
-  const handleStockToggle = () => {
+  const handleStockToggle = async () => {
     let updatedProducts = [...getTargetProducts()];
     const index = updatedProducts.findIndex(p => p.id === product.id);
     
     if (index !== -1) {
-      updatedProducts[index] = {
+      const updatedProduct = {
         ...updatedProducts[index],
         inStock: !updatedProducts[index].inStock
       };
+      updatedProducts[index] = updatedProduct;
       localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
-      toast.success(`${product.name} is now ${updatedProducts[index].inStock ? 'in stock' : 'out of stock'}`);
+
+      await saveProductToDatabase(updatedProduct);
+
+      toast.success(`${product.name} is now ${updatedProduct.inStock ? 'in stock' : 'out of stock'}`);
       
       setTimeout(() => {
         window.location.reload();
@@ -169,7 +174,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "produc
     }
   };
 
-  const handleProductSubmit = () => {
+  const handleProductSubmit = async () => {
     let updatedProducts = [...getTargetProducts()];
     
     if (action === "edit") {
@@ -177,18 +182,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "produc
       if (index !== -1) {
         updatedProducts[index] = editProduct;
         localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
+        await saveProductToDatabase(editProduct);
         toast.success(`${editProduct.name} has been updated`);
       }
     } else if (action === "delete") {
       updatedProducts = updatedProducts.filter(p => p.id !== product.id);
       localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
+      await deleteProductFromDatabase(product.id);
       toast.success(`${product.name} has been deleted`);
     } else if (action === "add") {
       if (!newProduct.id) {
-        newProduct.id = `lemonade-${new Date().getTime()}`;
+        newProduct.id = newProduct.name ? newProduct.name.trim().replace(/\s+/g, "-") : `lemonade-${Date.now()}`;
       }
-      updatedProducts.push(newProduct as Product);
+      const prodToAdd = newProduct as Product;
+      updatedProducts.push(prodToAdd);
       localStorage.setItem(storageKey, JSON.stringify(updatedProducts));
+      await saveProductToDatabase(prodToAdd);
       toast.success(`${newProduct.name} has been added`);
     }
     

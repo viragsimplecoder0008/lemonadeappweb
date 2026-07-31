@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductGrid from "@/components/products/ProductGrid";
 import { monsoonWinterProducts } from "@/data/monsoonWinterProducts";
+import { saveProductToDatabase } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import CustomOrderDialog from "@/components/products/CustomOrderDialog";
 import { CloudRain, Snowflake, Plus } from "lucide-react";
@@ -117,7 +118,7 @@ const MonsoonWinterPage: React.FC = () => {
     toast.error("Admin access required. Please sign in with an admin account.");
   };
 
-  const handleAddSubmit = () => {
+  const handleAddSubmit = async () => {
     if (!newProduct.name || !newProduct.price) {
       toast.error("Product name and price are required!");
       return;
@@ -140,6 +141,10 @@ const MonsoonWinterPage: React.FC = () => {
       const updated = [...stored, productToAdd];
       localStorage.setItem("monsoon_winter_products", JSON.stringify(updated));
       setFilteredProducts(updated);
+
+      // Persist directly to Supabase database
+      await saveProductToDatabase(productToAdd);
+
       toast.success(`${productToAdd.name} added to Monsoon / Winter collection!`);
       setIsAddDialogOpen(false);
       setTimeout(() => {

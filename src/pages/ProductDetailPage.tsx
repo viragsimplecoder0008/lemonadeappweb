@@ -130,6 +130,7 @@ const ProductDetailPage: React.FC = () => {
                 </label>
                 <ProductQuantity
                   quantity={quantity}
+                  max={isBulkOrder ? 50 : 5}
                   onChange={(newQty) => {
                     if (!isBulkOrder && newQty > 5) {
                       toast.error(`Without a Bulk Order, you can only get 5 ${product.name}s.`);
