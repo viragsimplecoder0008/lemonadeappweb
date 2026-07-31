@@ -17,21 +17,30 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
-  useEffect(() => {
+  const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
-    if (theme === "dark") {
+    if (newTheme === "dark") {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
     }
-    localStorage.setItem("lemonade-theme", theme);
+    localStorage.setItem("lemonade-theme", newTheme);
+  };
+
+  useEffect(() => {
+    applyTheme(theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+    setThemeState((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      applyTheme(next);
+      return next;
+    });
   };
 
   const setTheme = (newTheme: Theme) => {
+    applyTheme(newTheme);
     setThemeState(newTheme);
   };
 

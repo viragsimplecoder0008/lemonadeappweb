@@ -149,18 +149,18 @@ const HelpChat: React.FC = () => {
     <>
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`fixed ${isMobile ? "bottom-40" : "bottom-20"} right-5 z-50 flex items-center gap-2 rounded-full bg-white dark:bg-slate-900 border border-lemonade-yellow px-4 py-3 shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 text-slate-900 dark:text-slate-100`}
+        className={`fixed ${isMobile ? "bottom-40" : "bottom-20"} right-5 z-50 flex items-center gap-2 rounded-full border border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 backdrop-blur-xl shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 px-4 py-3`}
         aria-label="Open Lemonade Help chat"
       >
-        <MessageCircleQuestion className="h-5 w-5 text-lemonade-dark dark:text-lemonade-yellow" />
+        <MessageCircleQuestion className="h-5 w-5 text-lemonade-dark dark:text-lemonade-yellow animate-pulse" />
         <span className="text-sm font-semibold">Lemonade Help</span>
       </button>
 
       {open && (
         <div
-          className={`fixed ${isMobile ? "bottom-24 left-3 right-3" : "bottom-36 right-5 w-[380px]"} z-50 flex flex-col h-[65vh] max-h-[520px] rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300`}
+          className={`fixed ${isMobile ? "bottom-24 left-3 right-3" : "bottom-36 right-5 w-[380px]"} z-50 flex flex-col h-[65vh] max-h-[520px] rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-300`}
         >
-          <div className="flex items-center justify-between px-4 py-3 bg-slate-900 text-white font-bold border-b border-slate-800">
+          <div className="flex items-center justify-between px-4 py-3 bg-slate-100/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 font-bold border-b border-slate-200/80 dark:border-slate-800 backdrop-blur-xl">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-lemonade-green animate-pulse" />
               <span>Lemonade Help</span>
@@ -168,19 +168,19 @@ const HelpChat: React.FC = () => {
             <button 
               onClick={() => setOpen(false)} 
               aria-label="Close help chat"
-              className="p-1 hover:bg-slate-800 rounded-full transition-colors"
+              className="p-1 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 rounded-full transition-colors"
             >
-              <X className="h-4 w-4 text-slate-300 hover:text-white" />
+              <X className="h-4 w-4 text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50 dark:bg-slate-900/50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/20 dark:bg-slate-950/20 backdrop-blur-md">
             {messages.map((m, i) => (
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
                 <div
                   className={
                     m.role === "user"
                       ? "max-w-[85%] rounded-2xl bg-lemonade-yellow px-4 py-2 text-sm text-slate-950 font-medium shadow-sm"
-                      : "max-w-[90%] rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm"
+                      : "max-w-[90%] rounded-2xl bg-white/75 dark:bg-slate-800/75 border border-slate-200/80 dark:border-slate-700/80 px-4 py-3 text-sm text-slate-900 dark:text-slate-100 shadow-sm backdrop-blur-md"
                   }
                 >
                   {m.role === "user" ? (
@@ -201,14 +201,14 @@ const HelpChat: React.FC = () => {
             ))}
             <div ref={endRef} />
           </div>
-          <form onSubmit={send} className="flex gap-2 p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+          <form onSubmit={send} className="flex gap-2 p-3 border-t border-slate-200/80 dark:border-slate-800 bg-slate-100/60 dark:bg-slate-900/60 backdrop-blur-xl">
             <Input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about orders, flavors, coupons…"
               maxLength={500}
-              className="bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 placeholder:text-slate-400"
+              className="bg-white/75 dark:bg-slate-800/75 text-slate-900 dark:text-slate-100 border-slate-300/80 dark:border-slate-700/80 placeholder:text-slate-400 backdrop-blur-md"
             />
             <Button 
               type="submit" 

@@ -1,4 +1,4 @@
-"use client";
+""use client";
 
 import React, { useRef, useMemo, Suspense, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -7,7 +7,8 @@ import * as THREE from "three";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/context/ThemeContext";
 
-// 3D Glass of Lemonade Component using THREE.LatheGeometry & THREE.MeshPhysicalMaterial
+const particlesCount = 12000; 
+
 const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -75,7 +76,7 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
       groupRef.current.rotation.x = Math.cos(state.clock.elapsedTime * 1.5) * 0.02;
     }
 
-    // REAL VERTEX-LEVEL LIQUID SURFACE WAVE SLOSHING PHYSICS (Zero clipping)
+    // HIGH-PERFORMANCE VERTEX LIQUID SURFACE WAVE PHYSICS (No computeVertexNormals bottleneck)
     if (liquidGeometry) {
       const pos = liquidGeometry.attributes.position;
       const time = state.clock.elapsedTime * 3.5;
@@ -85,17 +86,14 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
         const y = initialPositions[i * 3 + 1];
         const z = initialPositions[i * 3 + 2];
 
-        // Apply fluid wave deformation ONLY to top liquid surface (y > 0.7)
         if (y > 0.7) {
           const r = Math.sqrt(x * x + z * z);
-          // Wave equation tapering off near walls so liquid NEVER clips outer glass
           const wave = Math.sin(x * 2.5 + time) * 0.06 * Math.max(0, 1.0 - r / 1.05) +
                        Math.cos(z * 2.5 + time * 1.2) * 0.06 * Math.max(0, 1.0 - r / 1.05);
           pos.setY(i, y + wave);
         }
       }
       pos.needsUpdate = true;
-      liquidGeometry.computeVertexNormals();
     }
   });
 
@@ -111,6 +109,11 @@ const RealisticLemonadeGlass = ({ onClick }: { onClick?: () => void }) => {
       <mesh geometry={glassGeometry} material={glassMaterial} castShadow receiveShadow />
       {/* Inner Lemonade Liquid with Vertex Wave Fluid Physics */}
       <mesh geometry={liquidGeometry} material={liquidMaterial} receiveShadow />
+      {/* 3D Drinking Straw */}
+      <mesh position={[0.25, 0.6, 0.1]} rotation={[0.1, 0, -0.28]} castShadow>
+        <cylinderGeometry args={[0.06, 0.06, 4.2, 16]} />
+        <meshStandardMaterial color="#36AE7C" roughness={0.2} metalness={0.1} />
+      </mesh>
     </group>
   );
 };
@@ -165,7 +168,15 @@ const [ringPositions, ringColors, ringRandoms] = (() => {
   return [pos, col, rnd];
 })();
 
-const ParticleRing = ({ ringState, massiveAsteroidsRef }: { ringState: 'hidden' | 'animating' | 'visible', massiveAsteroidsRef: React.MutableRefObject<Float32Array> }) => {
+const ParticleRing = ({ 
+  ringState, 
+  massiveAsteroidsRef, 
+  isDark = true 
+}: { 
+  ringState: 'hidden' | 'animating' | 'visible', 
+  massiveAsteroidsRef: React.MutableRefObject<Float32Array>,
+  isDark?: boolean
+}) => {
   const pointsRef = useRef<THREE.Points>(null);
 
   const uniforms = useRef({
@@ -305,7 +316,7 @@ const ParticleRing = ({ ringState, massiveAsteroidsRef }: { ringState: 'hidden' 
         />
       </bufferGeometry>
       <pointsMaterial 
-        size={0.008} 
+        size={0.01} 
         vertexColors 
         transparent 
         opacity={0.9} 
@@ -335,13 +346,14 @@ const generateAsteroids = (count: number) => {
     const rotationSpeedY = (Math.random() - 0.5) * 0.05;
     const rotationSpeedZ = (Math.random() - 0.5) * 0.05;
 
-    const scale = 0.02 + Math.pow(Math.random(), 4) * 0.18;
+    const scale = 0.04 + Math.pow(Math.random(), 3) * 0.15;
+    const isSugar = i % 5 === 0; // ~20% sugar cubes, ~80% lemons
 
     data.push({
       angle, baseRadius, radialAmplitude, radialSpeed, phase, zOffset, speed,
       rx: Math.random() * Math.PI, ry: Math.random() * Math.PI, rz: Math.random() * Math.PI,
       rsx: rotationSpeedX, rsy: rotationSpeedY, rsz: rotationSpeedZ,
-      scale
+      scale, isSugar
     });
   }
   data.sort((a, b) => b.scale - a.scale);
@@ -349,35 +361,42 @@ const generateAsteroids = (count: number) => {
 };
 
 const AsteroidBelt = ({ ringState, massiveAsteroidsRef }: { ringState: 'hidden' | 'animating' | 'visible', massiveAsteroidsRef: React.MutableRefObject<Float32Array> }) => {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const lemonMeshRef = useRef<THREE.InstancedMesh>(null);
+  const sugarMeshRef = useRef<THREE.InstancedMesh>(null);
 
   const count = 75; 
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   const [asteroids] = useState(() => generateAsteroids(count));
 
+  const lemons = useMemo(() => asteroids.filter(a => !a.isSugar), [asteroids]);
+  const sugars = useMemo(() => asteroids.filter(a => a.isSugar), [asteroids]);
+
   const scaleRef = useRef(0);
 
   useFrame((state, delta) => {
-    if (!meshRef.current) return;
+    if (!lemonMeshRef.current || !sugarMeshRef.current) return;
 
     const targetScale = ringState === 'hidden' ? 0 : 1;
     const lerpSpeed = ringState === 'hidden' ? 5 : 2;
     scaleRef.current = THREE.MathUtils.lerp(scaleRef.current, targetScale, delta * lerpSpeed);
 
     if (scaleRef.current < 0.01) {
-      meshRef.current.visible = false;
+      lemonMeshRef.current.visible = false;
+      sugarMeshRef.current.visible = false;
       return;
     }
-    meshRef.current.visible = true;
+    lemonMeshRef.current.visible = true;
+    sugarMeshRef.current.visible = true;
+
+    let lemonIdx = 0;
+    let sugarIdx = 0;
 
     asteroids.forEach((ast, i) => {
-
       ast.angle += ast.speed * delta; 
-
       ast.phase += ast.radialSpeed * delta;
-      let currentRadius = ast.baseRadius + Math.sin(ast.phase) * ast.radialAmplitude;
 
+      let currentRadius = ast.baseRadius + Math.sin(ast.phase) * ast.radialAmplitude;
       if (currentRadius < 2.15) {
         const penetration = 2.15 - currentRadius;
         currentRadius = 2.15 + penetration * 0.85;
@@ -397,26 +416,54 @@ const AsteroidBelt = ({ ringState, massiveAsteroidsRef }: { ringState: 'hidden' 
 
       dummy.position.set(x, y, ast.zOffset);
       dummy.rotation.set(ast.rx, ast.ry, ast.rz);
-      dummy.scale.setScalar(ast.scale * scaleRef.current);
-      dummy.updateMatrix();
 
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
+      if (ast.isSugar) {
+        // Sugar Cube scaling
+        dummy.scale.setScalar(ast.scale * 1.1 * scaleRef.current);
+        dummy.updateMatrix();
+        sugarMeshRef.current!.setMatrixAt(sugarIdx++, dummy.matrix);
+      } else {
+        // Ellipsoid Lemon scaling
+        dummy.scale.set(
+          ast.scale * 1.45 * scaleRef.current,
+          ast.scale * 0.95 * scaleRef.current,
+          ast.scale * 0.95 * scaleRef.current
+        );
+        dummy.updateMatrix();
+        lemonMeshRef.current!.setMatrixAt(lemonIdx++, dummy.matrix);
+      }
     });
 
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    lemonMeshRef.current.instanceMatrix.needsUpdate = true;
+    sugarMeshRef.current.instanceMatrix.needsUpdate = true;
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]} castShadow receiveShadow>
-      <dodecahedronGeometry args={[1, 0]} />
-      <meshStandardMaterial 
-        color="#fffde7"
-        roughness={0.1}
-        metalness={0.1}
-        transparent
-        opacity={0.95}
-      />
-    </instancedMesh>
+    <group>
+      {/* Floating 3D Lemons */}
+      <instancedMesh ref={lemonMeshRef} args={[undefined, undefined, lemons.length]} castShadow receiveShadow>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshStandardMaterial 
+          color="#facc15"
+          roughness={0.35}
+          metalness={0.05}
+        />
+      </instancedMesh>
+
+      {/* Floating 3D Sugar Cubes */}
+      <instancedMesh ref={sugarMeshRef} args={[undefined, undefined, sugars.length]} castShadow receiveShadow>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshPhysicalMaterial 
+          color="#ffffff"
+          roughness={0.1}
+          metalness={0.05}
+          transmission={0.7}
+          transparent
+          opacity={0.95}
+          ior={1.54}
+        />
+      </instancedMesh>
+    </group>
   );
 };
 
@@ -428,15 +475,7 @@ export interface LunarGravityCardProps {
 
 export default function LunarGravityCard({ 
   className,
-  title = (
-    <>
-      <span className="text-zinc-50 drop-shadow-sm">Lemonade</span>
-      <br />
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-emerald-400 drop-shadow-md">
-        For Every Taste.
-      </span>
-    </>
-  ),
+  title,
   description = "Experience the perfect blend of sweet and tart with our handcrafted lemonade varieties. Flawlessly smooth and refreshingly vibrant."
 }: LunarGravityCardProps) {
   const { theme } = useTheme();
@@ -444,34 +483,68 @@ export default function LunarGravityCard({
   const [ringState, setRingState] = useState<'hidden' | 'animating' | 'visible'>('visible');
   const massiveAsteroidsRef = useRef<Float32Array>(new Float32Array(75 * 4));
 
+  const defaultTitle = (
+    <>
+      <span className={cn("drop-shadow-sm transition-colors duration-300", isDark ? "text-zinc-50" : "text-slate-900")}>
+        Lemonade
+      </span>
+      <br />
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-emerald-500 drop-shadow-md">
+        For Every Taste.
+      </span>
+    </>
+  );
+
   return (
     <div className={cn(
-      "w-full max-w-[1000px] min-h-[700px] md:min-h-[auto] md:h-[540px] rounded-[2.5rem] flex flex-col md:flex-row relative overflow-hidden transition-colors duration-300 border shadow-2xl",
-      isDark 
-        ? "bg-black border-white/[0.08] shadow-[0_30px_100px_rgba(0,0,0,0.6)] text-slate-100"
-        : "bg-slate-950 border-slate-800 shadow-[0_30px_100px_rgba(249,217,35,0.2)] text-slate-100",
+      "w-full max-w-[1000px] min-h-[700px] md:min-h-[auto] md:h-[540px] rounded-[2.5rem] flex flex-col md:flex-row relative overflow-hidden transition-all duration-300 border shadow-2xl",
+      isDark ? "border-white/[0.08] text-slate-100 shadow-[0_30px_100px_rgba(0,0,0,0.6)]" : "border-amber-300/80 text-slate-900 shadow-[0_30px_100px_rgba(249,217,35,0.3)]",
       className
     )}>
       
-      <div className="absolute top-0 left-0 md:inset-y-0 md:left-0 w-full h-[60%] md:h-full md:w-[60%] bg-gradient-to-b md:bg-gradient-to-r from-black via-black/90 to-transparent z-10 pointer-events-none"></div>
+      {/* Dark Card Background Layer */}
+      <div className={cn("absolute inset-0 bg-black transition-opacity duration-500 z-0", isDark ? "opacity-100" : "opacity-0")} />
+      {/* Light Card Background Layer */}
+      <div className={cn("absolute inset-0 bg-gradient-to-br from-amber-50 via-amber-100/80 to-yellow-100/60 transition-opacity duration-500 z-0", isDark ? "opacity-0" : "opacity-100")} />
 
+      {/* Dark Background Overlay */}
+      <div className={cn(
+        "absolute top-0 left-0 md:inset-y-0 md:left-0 w-full h-[60%] md:h-full md:w-[60%] z-10 pointer-events-none transition-opacity duration-500 bg-gradient-to-b md:bg-gradient-to-r from-black via-black/90 to-transparent",
+        isDark ? "opacity-100" : "opacity-0"
+      )} />
+      {/* Light Background Overlay */}
+      <div className={cn(
+        "absolute top-0 left-0 md:inset-y-0 md:left-0 w-full h-[60%] md:h-full md:w-[60%] z-10 pointer-events-none transition-opacity duration-500 bg-gradient-to-b md:bg-gradient-to-r from-amber-50 via-amber-50/90 to-transparent",
+        isDark ? "opacity-0" : "opacity-100"
+      )} />
+
+      {/* Left Column Content */}
       <div className="w-full md:w-[45%] flex flex-col justify-center px-10 py-12 md:p-0 md:pl-16 relative z-20 pointer-events-none">
         <h2 className="text-[3.5rem] md:text-[4.5rem] font-bold tracking-tighter leading-[0.9] mb-6">
-          {title}
+          {title || defaultTitle}
         </h2>
-        <p className="text-base md:text-lg text-zinc-300 font-medium leading-relaxed max-w-[340px]">
+        <p className={cn(
+          "text-base md:text-lg font-medium leading-relaxed max-w-[340px] transition-colors duration-300",
+          isDark ? "text-zinc-300" : "text-slate-700"
+        )}>
           {description}
         </p>
       </div>
      
+      {/* 3D Canvas View */}
       <div className="relative md:absolute md:right-0 md:top-0 w-full h-[450px] md:h-full md:w-[65%] pointer-events-auto z-0 flex items-center justify-center">
         <div className="absolute inset-0 w-full h-full">
-          <Canvas shadows camera={{ position: [0, 0, 7.5], fov: 45 }} dpr={[1, 2]}>
+          <Canvas 
+            shadows 
+            camera={{ position: [0, 0, 7.5], fov: 45 }} 
+            dpr={[1, 2]}
+            gl={{ preserveDrawingBuffer: true, alpha: true }}
+          >
             <Environment preset="city" />
 
-            <ambientLight intensity={1.8} />
+            <ambientLight intensity={isDark ? 1.8 : 2.2} />
             <directionalLight position={[8, 5, 5]} intensity={3.0} color="#ffffff" castShadow shadow-mapSize={[2048, 2048]} />
-            <directionalLight position={[-5, 3, -5]} intensity={2.5} color="#ffff00" />
+            <directionalLight position={[-5, 3, -5]} intensity={2.5} color="#ffea00" />
             <pointLight position={[0, 0.5, 1]} intensity={3.5} color="#ffff00" />
 
             <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} />
@@ -479,7 +552,7 @@ export default function LunarGravityCard({
             <group rotation={[0, 0, 0]}>
               <Suspense fallback={null}>
                 <RealisticLemonadeGlass onClick={() => { if(ringState === 'hidden') setRingState('animating') }} />
-                <ParticleRing ringState={ringState} massiveAsteroidsRef={massiveAsteroidsRef} />
+                <ParticleRing ringState={ringState} massiveAsteroidsRef={massiveAsteroidsRef} isDark={isDark} />
                 <AsteroidBelt ringState={ringState} massiveAsteroidsRef={massiveAsteroidsRef} />
                 <Environment preset="city" />
               </Suspense>

@@ -27,18 +27,20 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
   const { showAdminVerification, setShowAdminVerification } = useKeyboardShortcuts();
   
   return (
-    <div 
-      className="flex flex-col min-h-screen bg-repeat transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100"
-      style={{
-        backgroundImage: isDark ? "none" : "url('/lovable-uploads/e90c5a89-271b-4ebb-82f2-12bbc2e388fa.png')",
-        backgroundRepeat: "repeat",
-        backgroundSize: "300px",
-        backgroundAttachment: "fixed",
-      }}
-    >
+    <div className="flex flex-col min-h-screen relative bg-slate-50 dark:bg-slate-950 transition-colors duration-300 text-slate-900 dark:text-slate-100">
+      {/* Fixed Pattern Background Layer (Fades smoothly without image reload flicker) */}
+      <div 
+        className="fixed inset-0 pointer-events-none transition-opacity duration-500 z-0 opacity-100 dark:opacity-0"
+        style={{
+          backgroundImage: "url('/lovable-uploads/e90c5a89-271b-4ebb-82f2-12bbc2e388fa.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "300px",
+        }}
+      />
+      
       {showNewsBanner && <NewsBanner onClose={() => setShowNewsBanner(false)} />}
       <Navbar hasBanner={showNewsBanner} />
-      <main className={`flex-grow bg-white/90 dark:bg-slate-900/90 dark:text-slate-100 backdrop-blur-sm ${isMobile ? (showNewsBanner ? 'pb-20 pt-10' : 'pb-20') : (showNewsBanner ? 'pt-32' : 'pt-24')} transition-all duration-300`}>
+      <main className={`relative z-10 flex-grow bg-white/90 dark:bg-slate-900/90 dark:text-slate-100 backdrop-blur-sm ${isMobile ? (showNewsBanner ? 'pb-20 pt-10' : 'pb-20') : (showNewsBanner ? 'pt-32' : 'pt-24')} transition-all duration-300`}>
         <BackButton />
         {children}
       </main>
