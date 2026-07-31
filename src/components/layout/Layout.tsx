@@ -11,6 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { AdminVerification } from "@/components/admin/AdminVerification";
 import HelpChat from "@/components/help/HelpChat";
+import { useTheme } from "@/context/ThemeContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,15 +20,17 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) => {
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [showNewsBanner, setShowNewsBanner] = useState(true);
   // Initialize keyboard shortcuts and get admin verification state
   const { showAdminVerification, setShowAdminVerification } = useKeyboardShortcuts();
   
   return (
     <div 
-      className="flex flex-col min-h-screen bg-repeat"
+      className="flex flex-col min-h-screen bg-repeat transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100"
       style={{
-        backgroundImage: "url('/lovable-uploads/e90c5a89-271b-4ebb-82f2-12bbc2e388fa.png')",
+        backgroundImage: isDark ? "none" : "url('/lovable-uploads/e90c5a89-271b-4ebb-82f2-12bbc2e388fa.png')",
         backgroundRepeat: "repeat",
         backgroundSize: "300px",
         backgroundAttachment: "fixed",
@@ -35,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showCommunityHelp = true }) =
     >
       {showNewsBanner && <NewsBanner onClose={() => setShowNewsBanner(false)} />}
       <Navbar hasBanner={showNewsBanner} />
-      <main className={`flex-grow bg-white/90 backdrop-blur-sm ${isMobile ? (showNewsBanner ? 'pb-20 pt-10' : 'pb-20') : (showNewsBanner ? 'pt-32' : 'pt-24')} transition-all duration-300`}>
+      <main className={`flex-grow bg-white/90 dark:bg-slate-900/90 dark:text-slate-100 backdrop-blur-sm ${isMobile ? (showNewsBanner ? 'pb-20 pt-10' : 'pb-20') : (showNewsBanner ? 'pt-32' : 'pt-24')} transition-all duration-300`}>
         <BackButton />
         {children}
       </main>

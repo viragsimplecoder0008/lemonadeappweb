@@ -1,88 +1,105 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ShoppingBag, Truck } from "lucide-react";
+import { getOrderById } from "@/data/orders";
+import { Order } from "@/types";
 
 const OrderSuccessPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (orderId) {
+      getOrderById(orderId).then((fetchedOrder) => {
+        setOrder(fetchedOrder);
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [orderId]);
+
+  const customerName = order?.shippingAddress?.fullName || "Valued Customer";
+  const totalPrice = order?.totalPrice || 0;
+  const items = order?.items || [];
   
+  // Calculate subtotal and discounts
+  const subtotal = items.length > 0 
+    ? items.reduce((acc, item) => acc + (item.product.price * item.quantity), 0)
+    : totalPrice;
+  const couponDiscount = Math.max(0, subtotal - totalPrice);
+
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="w-16 h-16 mx-auto flex items-center justify-center bg-green-100 rounded-full mb-6">
-            <CheckCircle className="h-10 w-10 text-green-600" />
-          </div>
-          
-          <h1 className="text-3xl font-bold mb-4">Order Confirmed!</h1>
-          <p className="text-xl text-gray-600 mb-2">
-            Thank you for your purchase.
-          </p>
-          <p className="text-lg text-gray-600 mb-8">
-            Your order #{orderId} has been placed and is being processed.
-          </p>
-          
-          <div className="bg-white p-8 border rounded-lg mb-8 text-left">
-            <h2 className="text-xl font-semibold mb-4">What happens next?</h2>
-            <div className="space-y-4">
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0">
-                  <div className="w-10 h-10 bg-lemonade-yellow rounded-full flex items-center justify-center">
-                    <span className="font-bold text-black">1</span>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-md mx-auto">
+          <h6 className="text-sm font-bold text-slate-700 dark:text-slate-300 text-center mb-4">
+            If you didn't get a bill, then your order is free!
+          </h6>
+
+          {/* Receipt Card */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl p-6 shadow-2xl font-mono text-sm text-slate-900 dark:text-slate-100">
+            {/* Header: ORDER by: [Name] [Total amount] */}
+            <div className="flex justify-between items-center font-bold text-base border-b pb-3 mb-4 border-slate-200 dark:border-slate-700">
+              <span className="truncate max-w-[65%]">ORDER by: {customerName}</span>
+              <span className="text-lemonade-dark dark:text-lemonade-yellow">₹{totalPrice.toFixed(2)}</span>
+            </div>
+
+            {/* Product List */}
+            <div className="space-y-2 mb-4">
+              {items.length > 0 ? (
+                items.map((item, idx) => (
+                  <div key={idx} className="flex justify-between items-center">
+                    <span className="truncate max-w-[70%]">
+                      {item.product.name} {item.quantity > 1 ? `x${item.quantity}` : ""}
+                    </span>
+                    <span>₹{(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
+                ))
+              ) : (
+                <div className="flex justify-between items-center">
+                  <span>Lemonade Selection</span>
+                  <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
-                <div>
-                  <h3 className="font-medium">Order Processing</h3>
-                  <p className="text-gray-600">
-                    We'll begin processing your order right away. You'll receive an email confirmation shortly.
-                  </p>
-                </div>
+              )}
+            </div>
+
+            {/* Divider line */}
+            <div className="border-t border-dashed border-slate-400 dark:border-slate-600 my-4" />
+
+            {/* Totals */}
+            <div className="space-y-1 mb-4 text-xs md:text-sm">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
-              
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0">
-                  <div className="w-10 h-10 bg-lemonade-yellow rounded-full flex items-center justify-center">
-                    <span className="font-bold text-black">2</span>
-                  </div>
+
+              {couponDiscount > 0 && (
+                <div className="flex justify-between text-green-600 dark:text-green-400 font-semibold">
+                  <span>Coupon Discount:</span>
+                  <span>-₹{couponDiscount.toFixed(2)}</span>
                 </div>
-                <div>
-                  <h3 className="font-medium">Preparation</h3>
-                  <p className="text-gray-600">
-                    Our team will carefully prepare and package your lemonade selection.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex">
-                <div className="mr-4 flex-shrink-0">
-                  <div className="w-10 h-10 bg-lemonade-yellow rounded-full flex items-center justify-center">
-                    <span className="font-bold text-black">3</span>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-medium">Shipping</h3>
-                  <p className="text-gray-600">
-                    Once shipped, you'll receive tracking information to monitor your delivery.
-                  </p>
-                </div>
+              )}
+
+              <div className="flex justify-between font-bold text-base pt-2 border-t border-slate-200 dark:border-slate-700 mt-2">
+                <span>Total:</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
             </div>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button asChild className="bg-lemonade-yellow hover:bg-lemonade-green text-black">
-              <Link to="/products">
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                Continue Shopping
-              </Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link to={`/orders/${orderId}`}>
-                <Truck className="mr-2 h-4 w-4" />
-                Track Your Order
-              </Link>
+
+            {/* Footer text */}
+            <p className="text-center font-sans font-semibold text-xs md:text-sm text-slate-700 dark:text-slate-300 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+              Thank you for ordering at Lemonade! Come again!
+            </p>
+
+            {/* Continue Button */}
+            <Button
+              asChild
+              className="w-full mt-6 bg-lemonade-yellow hover:bg-lemonade-green text-slate-950 font-bold py-6 text-base hover:scale-105 active:scale-95 transition-all duration-200 shadow-md font-sans"
+            >
+              <Link to="/products">Continue</Link>
             </Button>
           </div>
         </div>

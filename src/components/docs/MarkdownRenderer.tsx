@@ -66,11 +66,11 @@ const parseGfmTable = (lines: string[], key: string) => {
 
   return (
     <div key={key} className="overflow-x-auto my-3">
-      <table className="w-full text-xs sm:text-sm border-collapse border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+      <table className="w-full text-xs sm:text-sm border-collapse border border-gray-200 dark:border-slate-700 shadow-sm rounded-lg overflow-hidden">
         <thead>
-          <tr className="bg-lemonade-yellow/20 text-lemonade-dark border-b border-gray-200">
+          <tr className="bg-lemonade-yellow/30 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-b border-gray-200 dark:border-slate-700">
             {headers.map((h, i) => (
-              <th key={i} className="border-r border-gray-200 p-2 text-left font-semibold last:border-r-0">
+              <th key={i} className="border-r border-gray-200 dark:border-slate-700 p-2.5 text-left font-semibold text-slate-900 dark:text-slate-100 last:border-r-0">
                 {renderInline(h, `th${i}`)}
               </th>
             ))}
@@ -78,9 +78,9 @@ const parseGfmTable = (lines: string[], key: string) => {
         </thead>
         <tbody>
           {dataRows.map((row, i) => (
-            <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+            <tr key={i} className={i % 2 === 0 ? "bg-white dark:bg-slate-900" : "bg-gray-50/80 dark:bg-slate-800/60"}>
               {row.map((cell, j) => (
-                <td key={j} className="border-r border-b border-gray-200 p-2 text-gray-800 last:border-r-0">
+                <td key={j} className="border-r border-b border-gray-200 dark:border-slate-800 p-2.5 text-slate-800 dark:text-slate-200 last:border-r-0">
                   {renderInline(cell, `td${i}${j}`)}
                 </td>
               ))}
@@ -93,28 +93,24 @@ const parseGfmTable = (lines: string[], key: string) => {
 };
 
 const parseTable = (block: string, key: string) => {
-  // Expected format:
-  // TABLE: Header1 | Header2
-  //  RowA1: RowA2
-  //  RowB1: RowB2
   const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
   const first = lines[0].replace(/^TABLE:\s*/, "");
   const headers = first.split("|").map(s => s.trim());
   const rows = lines.slice(1).map(l => l.split(":").map(s => s.trim()));
   return (
-    <table key={key} className="w-full border-collapse border border-gray-300 my-4">
+    <table key={key} className="w-full border-collapse border border-gray-300 dark:border-slate-700 my-4 text-xs sm:text-sm">
       <thead>
-        <tr className="bg-gray-100">
+        <tr className="bg-gray-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100">
           {headers.map((h, i) => (
-            <th key={i} className="border border-gray-300 p-2 text-left">{h}</th>
+            <th key={i} className="border border-gray-300 dark:border-slate-700 p-2.5 text-left font-semibold text-slate-900 dark:text-slate-100">{h}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {rows.map((r, i) => (
-          <tr key={i}>
+          <tr key={i} className={i % 2 === 0 ? "bg-white dark:bg-slate-900" : "bg-gray-50/80 dark:bg-slate-800/60"}>
             {r.map((c, j) => (
-              <td key={j} className="border border-gray-300 p-2">{renderInline(c, `t${i}${j}`)}</td>
+              <td key={j} className="border border-gray-300 dark:border-slate-700 p-2.5 text-slate-800 dark:text-slate-200">{renderInline(c, `t${i}${j}`)}</td>
             ))}
           </tr>
         ))}

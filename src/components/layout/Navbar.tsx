@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft, EyeOff } from "lucide-react";
+import { ShoppingCart, Menu, Home, Package, Truck, Search, FileText, Keyboard, Users, ArrowLeft, EyeOff, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
@@ -8,6 +8,7 @@ import { useCart } from "@/context/CartContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { KeyboardShortcutsHelp } from "@/components/ui/keyboard-shortcuts-help";
 import AuthButton from "@/components/auth/AuthButton";
+import { useTheme } from "@/context/ThemeContext";
 interface NavbarProps {
   hasBanner?: boolean;
 }
@@ -16,6 +17,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
   const {
     totalItems
   } = useCart();
+  const { theme, toggleTheme } = useTheme();
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const isQuickMode = searchParams.get("quick") === "true";
@@ -57,9 +59,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
   // Normal mode navbar (full navigation)
   return <>
       {/* Desktop Navigation */}
-      <header className={`${isMobile ? 'hidden' : hasBanner ? 'fixed top-12 left-1/2 -translate-x-1/2' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl transition-all duration-300`}>
+      <header className={`${isMobile ? 'hidden' : hasBanner ? 'fixed top-12 left-1/2 -translate-x-1/2' : 'fixed top-4 left-1/2 -translate-x-1/2'} z-40 w-[95%] max-w-7xl rounded-full border border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 backdrop-blur-xl shadow-2xl transition-all duration-300`}>
         <div className="flex h-16 items-center justify-between px-6">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 hover:scale-105 active:scale-95 transition-transform duration-200">
             <span className="text-xl font-bold text-lemonade-yellow">Lemonade</span>
           </Link>
 
@@ -67,40 +69,40 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
             <NavigationMenu>
               <NavigationMenuList className="space-x-4">
                 <NavigationMenuItem>
-                  <Link to="/" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
+                  <Link to="/" className="font-medium hover:text-lemonade-yellow transition-all duration-200 hover:scale-105 inline-block px-2">
                     Home
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="hover:scale-105 active:scale-95 transition-transform duration-200">Products</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 w-[400px] md:w-[500px] grid-cols-2">
                       <li>
-                        <Link to="/products?category=classic" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products?category=classic" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">Classic</div>
                           <div className="text-sm text-muted-foreground">Our original recipes</div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/products?category=specialty" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products?category=specialty" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">Specialty</div>
                           <div className="text-sm text-muted-foreground">Unique flavor combinations</div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/products?category=premium" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products?category=premium" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">Golden Flavors</div>
                           <div className="text-sm text-muted-foreground">Our most exclusive blends</div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/monsoon-winter" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/monsoon-winter" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium text-blue-600">Monsoon / Winter</div>
                           <div className="text-sm text-muted-foreground">Warm & cozy seasonal blends</div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/products" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">All Products</div>
                           <div className="text-sm text-muted-foreground">Browse our entire collection</div>
                         </Link>
@@ -109,17 +111,17 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <NavigationMenuTrigger>Quick</NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="hover:scale-105 active:scale-95 transition-transform duration-200">Quick</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid gap-3 p-6 w-[300px]">
                       <li>
-                        <Link to="/products?category=specialty&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products?category=specialty&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">Specialty Quick</div>
                           <div className="text-sm text-muted-foreground">Quick access to specialty flavors</div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="/products?category=classic&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent">
+                        <Link to="/products?category=classic&quick=true" className="block select-none space-y-1 rounded-md p-3 hover:bg-accent hover:scale-[1.02] transition-all">
                           <div className="font-medium">Classic Quick</div>
                           <div className="text-sm text-muted-foreground">Quick access to classic recipes</div>
                         </Link>
@@ -128,20 +130,20 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/orders" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
+                  <Link to="/orders" className="font-medium hover:text-lemonade-yellow transition-all duration-200 hover:scale-105 inline-block px-2">
                     Track Order
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/docs" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
+                  <Link to="/docs" className="font-medium hover:text-lemonade-yellow transition-all duration-200 hover:scale-105 inline-block px-2">
                     Docs
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/social" className="font-medium hover:text-lemonade-yellow transition-colors px-2">Social</Link>
+                  <Link to="/social" className="font-medium hover:text-lemonade-yellow transition-all duration-200 hover:scale-105 inline-block px-2">Social</Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem className="mx-2">
-                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-colors px-2">
+                  <Link to="/vip" className="font-medium hover:text-lemonade-yellow transition-all duration-200 hover:scale-105 inline-block px-2">
                     VIP
                   </Link>
                 </NavigationMenuItem>
@@ -152,12 +154,20 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
           <div className="flex items-center gap-4">
             <AuthButton />
             <KeyboardShortcutsHelp />
-            <Link to="/search" className="relative" aria-label="Search">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 hover:scale-110 active:scale-90 hover:rotate-12 transition-all duration-200 flex items-center justify-center shadow-sm"
+              aria-label="Toggle Theme"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {theme === "dark" ? <Sun className="h-5 w-5 text-amber-400 fill-amber-400/20" /> : <Moon className="h-5 w-5 text-slate-700" />}
+            </button>
+            <Link to="/search" className="relative hover:scale-110 active:scale-95 transition-transform duration-200 text-foreground hover:text-lemonade-yellow" aria-label="Search">
               <Search className="h-6 w-6" />
             </Link>
-            <Link to="/cart" className="relative">
+            <Link to="/cart" className="relative hover:scale-110 active:scale-95 transition-transform duration-200 text-foreground hover:text-lemonade-yellow">
               <ShoppingCart className="h-6 w-6" />
-              {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {totalItems > 0 && <span className="absolute -top-2 -right-2 bg-lemonade-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-md animate-bounce">
                   {totalItems}
                 </span>}
             </Link>
@@ -218,7 +228,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
       </header>
       
       {/* Mobile Navigation (Floating bottom bar - 5 items max) */}
-      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/70 backdrop-blur-xl border border-white/40 z-50 grid grid-cols-5 items-center py-2 rounded-2xl shadow-2xl">
+      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 backdrop-blur-xl z-50 grid grid-cols-5 items-center py-2 rounded-2xl shadow-2xl transition-all duration-300">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
             <span className="text-[10px] mt-1">Home</span>
