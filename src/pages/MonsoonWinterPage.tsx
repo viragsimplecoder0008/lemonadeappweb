@@ -51,14 +51,35 @@ const MonsoonWinterPage: React.FC = () => {
     inStock: true,
   });
 
-  useEffect(() => {
+  const getCleanProducts = (): Product[] => {
     let currentProducts = monsoonWinterProducts;
     try {
       const stored = localStorage.getItem("monsoon_winter_products");
-      if (stored) currentProducts = JSON.parse(stored);
+      if (stored) {
+        const parsed: Product[] = JSON.parse(stored);
+        currentProducts = parsed.filter(p => !p.description.includes("Rich, velvety cocoa"));
+      }
     } catch {
       currentProducts = monsoonWinterProducts;
     }
+
+    const uniqueMap = new Map<string, Product>();
+    currentProducts.forEach(p => {
+      const key = p.name ? p.name.trim().toLowerCase() : p.id.toLowerCase();
+      if (!uniqueMap.has(key) || p.description.includes("Taste our irresistible") || p.price === 13.99) {
+        uniqueMap.set(key, p);
+      }
+    });
+
+    const cleaned = Array.from(uniqueMap.values());
+    try {
+      localStorage.setItem("monsoon_winter_products", JSON.stringify(cleaned));
+    } catch {}
+    return cleaned;
+  };
+
+  useEffect(() => {
+    const currentProducts = getCleanProducts();
 
     if (categoryParam) {
       setActiveCategory(categoryParam);
@@ -72,14 +93,7 @@ const MonsoonWinterPage: React.FC = () => {
 
   const handleFilterChange = (category: string) => {
     setActiveCategory(category);
-    let currentProducts = monsoonWinterProducts;
-    try {
-      const stored = localStorage.getItem("monsoon_winter_products");
-      if (stored) currentProducts = JSON.parse(stored);
-    } catch {
-      currentProducts = monsoonWinterProducts;
-    }
-
+    const currentProducts = getCleanProducts();
     if (category === "all") {
       setFilteredProducts(currentProducts);
     } else {
