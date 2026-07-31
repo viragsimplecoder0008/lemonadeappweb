@@ -98,7 +98,41 @@ try {
 export const products: Product[] = loadedProducts;
 
 export const getProductById = (id: string): Product | undefined => {
-  return products.find(product => product.id === id);
+  // Load standard products
+  let allProds: Product[] = [...products];
+  try {
+    const stored = localStorage.getItem("products");
+    if (stored) allProds = JSON.parse(stored);
+  } catch {
+    /* ignore */
+  }
+
+  // Load monsoon/winter products
+  try {
+    const storedMonsoon = localStorage.getItem("monsoon_winter_products");
+    if (storedMonsoon) {
+      const parsedMonsoon: Product[] = JSON.parse(storedMonsoon);
+      allProds = [...allProds, ...parsedMonsoon];
+    }
+  } catch {
+    /* ignore */
+  }
+
+  const cleanId = id.trim();
+  const cleanIdLower = cleanId.toLowerCase();
+
+  return allProds.find((p) => {
+    if (!p) return false;
+    const pId = p.id ? p.id.trim() : "";
+    const pNameHyphen = p.name ? p.name.trim().replace(/\s+/g, "-") : "";
+
+    return (
+      pId === cleanId ||
+      pId.toLowerCase() === cleanIdLower ||
+      pNameHyphen === cleanId ||
+      pNameHyphen.toLowerCase() === cleanIdLower
+    );
+  });
 };
 
 export const getProductsByCategory = (category: string): Product[] => {

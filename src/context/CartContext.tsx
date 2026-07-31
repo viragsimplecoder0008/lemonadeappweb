@@ -5,7 +5,9 @@ import { toast } from "@/components/ui/sonner";
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: Product) => void;
+  addQuantityToCart: (product: Product, quantity: number, isBulkOrder?: boolean) => void;
   removeFromCart: (productId: string) => void;
+  removeQuantityFromCart: (productId: string, amountToRemove: number) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
@@ -46,27 +48,51 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cartItems]);
 
   const addToCart = (product: Product) => {
+    addQuantityToCart(product, 1, false);
+  };
+
+  const addQuantityToCart = (product: Product, quantityToAdd: number, isBulkOrder: boolean = false) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.product.id === product.id);
-      
-      if (existingItem) {
-        if (existingItem.quantity >= 5) {
-          toast("Maximum quantity reached", {
-            description: "You can only add up to 5 of each product to your cart."
-          });
-          return prevItems;
-        }
+      const currentQty = existingItem ? existingItem.quantity : 0;
+      const targetQty = currentQty + quantityToAdd;
+
+      if (!isBulkOrder && targetQty > 5) {
+        toast("Maximum standard quantity reached", {
+          description: `Without a Bulk Order, you can only get up to 5 ${product.name}s.`
+        });
+        const allowedAdd = Math.max(0, 5 - currentQty);
+        if (allowedAdd <= 0) return prevItems;
         
-        return prevItems.map(item => 
+        toast("Item added to cart", {
+          description: `Added ${allowedAdd} ${product.name} to cart (capped at 5).`
+        });
+        return existingItem
+          ? prevItems.map(i => i.product.id === product.id ? { ...i, quantity: 5 } : i)
+          : [...prevItems, { product, quantity: 5 }];
+      }
+
+      if (isBulkOrder && targetQty > 50) {
+        toast("Maximum bulk quantity reached", {
+          description: "Bulk Orders are limited to any amount below 50 items."
+        });
+        return existingItem
+          ? prevItems.map(i => i.product.id === product.id ? { ...i, quantity: 50 } : i)
+          : [...prevItems, { product, quantity: 50 }];
+      }
+
+      toast("Item added to cart", {
+        description: `Added ${quantityToAdd} ${product.name} to your cart.${isBulkOrder ? " (Bulk Order)" : ""}`
+      });
+
+      if (existingItem) {
+        return prevItems.map(item =>
           item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantityToAdd }
             : item
         );
       } else {
-        toast("Item added to cart", {
-          description: `${product.name} has been added to your cart.`
-        });
-        return [...prevItems, { product, quantity: 1 }];
+        return [...prevItems, { product, quantity: quantityToAdd }];
       }
     });
   };
@@ -77,6 +103,30 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
     
     toast("Item removed from cart");
+  };
+
+  const removeQuantityFromCart = (productId: string, amountToRemove: number) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.product.id === productId);
+      if (!existingItem) return prevItems;
+
+      const newQty = existingItem.quantity - amountToRemove;
+      if (newQty <= 0) {
+        toast("Item removed from cart", {
+          description: `${existingItem.product.name} removed from your cart.`
+        });
+        return prevItems.filter(item => item.product.id !== productId);
+      }
+
+      toast("Cart updated", {
+        description: `Removed ${amountToRemove} ${existingItem.product.name}(s) from cart.`
+      });
+      return prevItems.map(item =>
+        item.product.id === productId
+          ? { ...item, quantity: newQty }
+          : item
+      );
+    });
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -118,7 +168,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{
         cartItems,
         addToCart,
+        addQuantityToCart,
         removeFromCart,
+        removeQuantityFromCart,
         updateQuantity,
         clearCart,
         totalItems,

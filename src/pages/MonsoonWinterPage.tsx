@@ -5,9 +5,31 @@ import ProductGrid from "@/components/products/ProductGrid";
 import { monsoonWinterProducts } from "@/data/monsoonWinterProducts";
 import { Button } from "@/components/ui/button";
 import CustomOrderDialog from "@/components/products/CustomOrderDialog";
-import { CloudRain, Snowflake } from "lucide-react";
+import { CloudRain, Snowflake, Plus } from "lucide-react";
+import { useAdmin } from "@/context/AdminContext";
+import { toast } from "sonner";
+
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Product } from "@/types";
 
 const MonsoonWinterPage: React.FC = () => {
+  const { isAdmin } = useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
   const quickModeParam = searchParams.get("quick");
@@ -15,23 +37,52 @@ const MonsoonWinterPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState(categoryParam || "all");
   const [isQuickMode, setIsQuickMode] = useState(quickModeParam === "true");
 
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [newProduct, setNewProduct] = useState<Partial<Product>>({
+    id: "",
+    name: "",
+    description: "",
+    price: 0,
+    imageUrl: "",
+    category: "classic",
+    inStock: true,
+  });
+
   useEffect(() => {
+    let currentProducts = monsoonWinterProducts;
+    try {
+      const stored = localStorage.getItem("monsoon_winter_products");
+      if (stored) currentProducts = JSON.parse(stored);
+    } catch {
+      currentProducts = monsoonWinterProducts;
+    }
+
     if (categoryParam) {
       setActiveCategory(categoryParam);
-      setFilteredProducts(monsoonWinterProducts.filter((product) => product.category === categoryParam));
+      setFilteredProducts(currentProducts.filter((product) => product.category === categoryParam));
     } else {
       setActiveCategory("all");
-      setFilteredProducts(monsoonWinterProducts);
+      setFilteredProducts(currentProducts);
     }
     setIsQuickMode(quickModeParam === "true");
   }, [categoryParam, quickModeParam]);
 
   const handleFilterChange = (category: string) => {
     setActiveCategory(category);
+    let currentProducts = monsoonWinterProducts;
+    try {
+      const stored = localStorage.getItem("monsoon_winter_products");
+      if (stored) currentProducts = JSON.parse(stored);
+    } catch {
+      currentProducts = monsoonWinterProducts;
+    }
+
     if (category === "all") {
-      setFilteredProducts(monsoonWinterProducts);
+      setFilteredProducts(currentProducts);
     } else {
-      setFilteredProducts(monsoonWinterProducts.filter((product) => product.category === category));
+      setFilteredProducts(currentProducts.filter((product) => product.category === category));
     }
   };
 
@@ -41,6 +92,62 @@ const MonsoonWinterPage: React.FC = () => {
       prev.delete("quick");
       return prev;
     });
+  };
+
+  const handleAddClick = () => {
+    if (isAdmin) {
+      setNewProduct({
+        id: "",
+        name: "",
+        description: "",
+        price: 0,
+        imageUrl: "",
+        category: "classic",
+        inStock: true,
+      });
+      setIsAddDialogOpen(true);
+    } else {
+      setIsPasswordDialogOpen(true);
+    }
+  };
+
+  const handlePasswordSubmit = () => {
+    setIsPasswordDialogOpen(false);
+    setPassword("");
+    toast.error("Admin access required. Please sign in with an admin account.");
+  };
+
+  const handleAddSubmit = () => {
+    if (!newProduct.name || !newProduct.price) {
+      toast.error("Product name and price are required!");
+      return;
+    }
+
+    const formattedId = newProduct.name.trim().replace(/\s+/g, "-");
+
+    const productToAdd: Product = {
+      id: formattedId,
+      name: newProduct.name.trim(),
+      description: newProduct.description || "",
+      price: Number(newProduct.price),
+      imageUrl: newProduct.imageUrl || "",
+      category: newProduct.category || "classic",
+      inStock: true,
+    };
+
+    try {
+      const stored: Product[] = JSON.parse(localStorage.getItem("monsoon_winter_products") || "[]");
+      const updated = [...stored, productToAdd];
+      localStorage.setItem("monsoon_winter_products", JSON.stringify(updated));
+      setFilteredProducts(updated);
+      toast.success(`${productToAdd.name} added to Monsoon / Winter collection!`);
+      setIsAddDialogOpen(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
+    } catch {
+      toast.error("Failed to save product.");
+    }
   };
 
   return (
@@ -102,22 +209,146 @@ const MonsoonWinterPage: React.FC = () => {
               Golden Flavors
             </Button>
           )}
-          <div className="ml-auto">
+          <div className="ml-auto flex gap-2">
+            <Button onClick={handleAddClick} variant="outline" className="border-lemonade-yellow text-lemonade-dark hover:bg-lemonade-light">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Button>
             <CustomOrderDialog />
           </div>
         </div>
 
-        {/* Products grid */}
-        {filteredProducts.length > 0 ? (
-          <ProductGrid products={filteredProducts} storageKey="monsoon_winter_products" />
-        ) : (
-          <div className="text-center py-16 bg-slate-50/50 rounded-2xl border border-dashed border-gray-300 my-4">
-            <p className="text-lg font-medium text-gray-700 mb-1">Monsoon / Winter Products</p>
-            <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
-              Right-click any product card to Edit, Mark Out of Stock, Delete, or Add New products to the Monsoon / Winter collection.
-            </p>
-          </div>
-        )}
+        {/* Products grid wrapped in ContextMenu for empty-state right-click support */}
+        <ContextMenu>
+          <ContextMenuTrigger>
+            {filteredProducts.length > 0 ? (
+              <ProductGrid products={filteredProducts} storageKey="monsoon_winter_products" />
+            ) : (
+              <div className="text-center py-20 bg-slate-50/70 rounded-2xl border-2 border-dashed border-gray-300 my-4 cursor-context-menu hover:bg-slate-100/50 transition-colors p-6">
+                <CloudRain className="h-12 w-12 text-blue-400 mx-auto mb-3" />
+                <p className="text-xl font-bold text-gray-800 mb-1">Monsoon & Winter Collection is Empty</p>
+                <p className="text-sm text-gray-500 max-w-md mx-auto mb-5">
+                  Right-click anywhere in this box (or click the button below) to open the menu and add your Monsoon / Winter products.
+                </p>
+                <Button onClick={handleAddClick} className="bg-lemonade-yellow hover:bg-lemonade-green text-black font-semibold">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Product
+                </Button>
+              </div>
+            )}
+          </ContextMenuTrigger>
+
+          <ContextMenuContent className="w-56">
+            <ContextMenuItem onClick={handleAddClick} className="flex items-center cursor-pointer text-green-600 font-medium">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Product
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+
+        {/* Password dialog for non-admins */}
+        <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Admin Authentication</DialogTitle>
+              <DialogDescription>Please enter the admin password to add a new Monsoon / Winter product.</DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handlePasswordSubmit();
+                }}
+              />
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handlePasswordSubmit}>Verify</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add Product Dialog */}
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add Monsoon / Winter Product</DialogTitle>
+              <DialogDescription>Enter the product details to add it to the Monsoon & Winter collection.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="name">Product Name *</Label>
+                <Input
+                  id="name"
+                  value={newProduct.name || ""}
+                  onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                  placeholder="e.g. Spiced Cinnamon Lemonade"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={newProduct.description || ""}
+                  onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                  placeholder="Warm honey and cinnamon infused drink for chilly weather..."
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="price">Price (₹) *</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  value={newProduct.price || ""}
+                  onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) || 0 })}
+                  placeholder="5.99"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Category</Label>
+                <select
+                  id="category"
+                  value={newProduct.category || "classic"}
+                  onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                  className="w-full mt-1 border rounded-md p-2 text-sm bg-background"
+                >
+                  <option value="classic">Classic</option>
+                  <option value="specialty">Specialty</option>
+                  <option value="premium">Golden Flavors</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="imageUrl">Image URL</Label>
+                <Input
+                  id="imageUrl"
+                  value={newProduct.imageUrl || ""}
+                  onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
+                  placeholder="https://example.com/image.jpg"
+                  className="mt-1"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddSubmit} className="bg-lemonade-yellow text-black hover:bg-lemonade-green">
+                Save Product
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
