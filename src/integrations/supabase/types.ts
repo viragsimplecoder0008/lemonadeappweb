@@ -124,6 +124,42 @@ export type Database = {
         }
         Relationships: []
       }
+      news_banner_items: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          link_title: string | null
+          link_url: string | null
+          lucide_icon: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          link_title?: string | null
+          link_url?: string | null
+          lucide_icon?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          link_title?: string | null
+          link_url?: string | null
+          lucide_icon?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string | null
