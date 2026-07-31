@@ -183,10 +183,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+const defaultCartContext: CartContextType = {
+  cartItems: [],
+  addToCart: () => {},
+  addQuantityToCart: () => {},
+  removeFromCart: () => {},
+  removeQuantityFromCart: () => {},
+  updateQuantity: () => {},
+  clearCart: () => {},
+  totalItems: 0,
+  subtotal: 0,
+  getTotalPrice: () => 0,
+};
+
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+  if (!context) {
+    console.warn("useCart was accessed outside CartProvider or during module hot-reload.");
+    return defaultCartContext;
   }
   return context;
 };
