@@ -66,9 +66,13 @@ const ProductsPage: React.FC = () => {
           {!isQuickMode && <Button variant={activeCategory === "premium" ? "default" : "outline"} onClick={() => handleFilterChange("premium")} className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}>
               Golden Flavors
             </Button>}
+          <Button asChild variant="outline" className="border-blue-300 text-slate-900 dark:text-slate-100 hover:bg-blue-50 dark:hover:bg-slate-800 hover:scale-105 active:scale-95 transition-all duration-200">
+            <Link to="/monsoon-winter">Monsoon / Winter</Link>
+          </Button>
           <div className="ml-auto">
             <CustomOrderDialog />
           </div>
+
         </div>
         
         {/* Products grid */}
