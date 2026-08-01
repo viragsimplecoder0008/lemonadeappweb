@@ -61,7 +61,10 @@ try {
       }
     });
 
-    loadedMonsoonWinterProducts = Array.from(uniqueMap.values());
+    loadedMonsoonWinterProducts = Array.from(uniqueMap.values()).map(p => ({
+      ...p,
+      category: normalizeMonsoonCategory(p.category),
+    }));
     localStorage.setItem("monsoon_winter_products", JSON.stringify(loadedMonsoonWinterProducts));
   } else {
     loadedMonsoonWinterProducts = initialMonsoonWinterProducts;
@@ -105,5 +108,6 @@ export const getMonsoonWinterProductsByCategory = (category: string): Product[] 
     /* ignore */
   }
   if (category === "all") return allProds;
-  return allProds.filter((p) => p.category === category);
+  const target = normalizeMonsoonCategory(category);
+  return allProds.filter((p) => normalizeMonsoonCategory(p.category) === target);
 };
