@@ -22,18 +22,9 @@ export const normalizeMonsoonCategory = (category?: string): string => {
   }
 };
 
-// Monsoon / Winter collection initial products
-export const initialMonsoonWinterProducts: Product[] = [
-  {
-    id: "Hot-Chocolate",
-    name: "Hot Chocolate",
-    description: "Taste our irresistible Hot Chocolate, infused with rich cocoa and a touch of warmth.",
-    price: 13.99,
-    imageUrl: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&auto=format&fit=crop&q=80",
-    category: MONSOON_CATEGORIES.specialty,
-    inStock: true
-  }
-];
+// Monsoon / Winter collection initial products (empty by default; managed via admin)
+export const initialMonsoonWinterProducts: Product[] = [];
+
 
 // Load products from localStorage or default dataset, purging any old duplicate Hot Chocolate
 let loadedMonsoonWinterProducts: Product[];
