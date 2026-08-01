@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductGrid from "@/components/products/ProductGrid";
-import { monsoonWinterProducts } from "@/data/monsoonWinterProducts";
+import { monsoonWinterProducts, MONSOON_CATEGORIES, normalizeMonsoonCategory } from "@/data/monsoonWinterProducts";
 import { saveProductToDatabase } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import CustomOrderDialog from "@/components/products/CustomOrderDialog";
@@ -47,7 +47,7 @@ const MonsoonWinterPage: React.FC = () => {
     description: "",
     price: 0,
     imageUrl: "",
-    category: "classic",
+    category: MONSOON_CATEGORIES.classic,
     inStock: true,
   });
 
@@ -82,8 +82,8 @@ const MonsoonWinterPage: React.FC = () => {
     const currentProducts = getCleanProducts();
 
     if (categoryParam) {
-      setActiveCategory(categoryParam);
-      setFilteredProducts(currentProducts.filter((product) => product.category === categoryParam));
+      setActiveCategory(normalizeMonsoonCategory(categoryParam));
+      setFilteredProducts(currentProducts.filter((product) => normalizeMonsoonCategory(product.category) === normalizeMonsoonCategory(categoryParam)));
     } else {
       setActiveCategory("all");
       setFilteredProducts(currentProducts);
@@ -97,7 +97,7 @@ const MonsoonWinterPage: React.FC = () => {
     if (category === "all") {
       setFilteredProducts(currentProducts);
     } else {
-      setFilteredProducts(currentProducts.filter((product) => product.category === category));
+      setFilteredProducts(currentProducts.filter((product) => normalizeMonsoonCategory(product.category) === normalizeMonsoonCategory(category)));
     }
   };
 
@@ -117,7 +117,7 @@ const MonsoonWinterPage: React.FC = () => {
         description: "",
         price: 0,
         imageUrl: "",
-        category: "classic",
+        category: MONSOON_CATEGORIES.classic,
         inStock: true,
       });
       setIsAddDialogOpen(true);
@@ -146,7 +146,7 @@ const MonsoonWinterPage: React.FC = () => {
       description: newProduct.description || "",
       price: Number(newProduct.price),
       imageUrl: newProduct.imageUrl || "",
-      category: newProduct.category || "classic",
+      category: normalizeMonsoonCategory(newProduct.category),
       inStock: true,
     };
 
@@ -206,24 +206,24 @@ const MonsoonWinterPage: React.FC = () => {
             </Button>
           )}
           <Button
-            variant={activeCategory === "classic" ? "default" : "outline"}
-            onClick={() => handleFilterChange("classic")}
-            className={activeCategory === "classic" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
+            variant={activeCategory === MONSOON_CATEGORIES.classic ? "default" : "outline"}
+            onClick={() => handleFilterChange(MONSOON_CATEGORIES.classic)}
+            className={activeCategory === MONSOON_CATEGORIES.classic ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
           >
             Classic
           </Button>
           <Button
-            variant={activeCategory === "specialty" ? "default" : "outline"}
-            onClick={() => handleFilterChange("specialty")}
-            className={activeCategory === "specialty" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
+            variant={activeCategory === MONSOON_CATEGORIES.specialty ? "default" : "outline"}
+            onClick={() => handleFilterChange(MONSOON_CATEGORIES.specialty)}
+            className={activeCategory === MONSOON_CATEGORIES.specialty ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
           >
             Specialty
           </Button>
           {!isQuickMode && (
             <Button
-              variant={activeCategory === "premium" ? "default" : "outline"}
-              onClick={() => handleFilterChange("premium")}
-              className={activeCategory === "premium" ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
+              variant={activeCategory === MONSOON_CATEGORIES.golden ? "default" : "outline"}
+              onClick={() => handleFilterChange(MONSOON_CATEGORIES.golden)}
+              className={activeCategory === MONSOON_CATEGORIES.golden ? "bg-lemonade-yellow text-black hover:bg-lemonade-green" : ""}
             >
               Golden Flavors
             </Button>
@@ -338,13 +338,13 @@ const MonsoonWinterPage: React.FC = () => {
                 <Label htmlFor="category">Category</Label>
                 <select
                   id="category"
-                  value={newProduct.category || "classic"}
+                  value={newProduct.category || MONSOON_CATEGORIES.classic}
                   onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
                   className="w-full mt-1 border rounded-md p-2 text-sm bg-background"
                 >
-                  <option value="classic">Classic</option>
-                  <option value="specialty">Specialty</option>
-                  <option value="premium">Golden Flavors</option>
+                  <option value={MONSOON_CATEGORIES.classic}>Classic</option>
+                  <option value={MONSOON_CATEGORIES.specialty}>Specialty</option>
+                  <option value={MONSOON_CATEGORIES.golden}>Golden Flavors</option>
                 </select>
               </div>
               <div>
