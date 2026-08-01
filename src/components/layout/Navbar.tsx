@@ -288,6 +288,9 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
                 <Link to="/products?category=premium" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Golden Flavors
                 </Link>
+                <Link to="/monsoon-winter" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
+                  Monsoon / Winter Edition
+                </Link>
                 <Link to="/products?category=specialty&quick=true" className="font-medium text-lg hover:text-lemonade-yellow transition-colors">
                   Quick - Specialty
                 </Link>
