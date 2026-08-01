@@ -228,7 +228,7 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
       </header>
       
       {/* Mobile Navigation (Floating bottom bar - 5 items max) */}
-      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 backdrop-blur-xl z-50 grid grid-cols-5 items-center py-2 rounded-2xl shadow-2xl transition-all duration-300">
+      {isMobile && !showOnlyMenuIcon && <nav className="fixed bottom-4 left-4 right-4 bg-white/90 dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 backdrop-blur-xl z-50 grid grid-cols-6 items-center py-2 rounded-2xl shadow-2xl transition-all duration-300">
           <Link to="/" className="flex flex-col items-center p-2">
             <Home className="h-5 w-5" />
             <span className="text-[10px] mt-1">Home</span>
@@ -248,6 +248,14 @@ const Navbar: React.FC<NavbarProps> = ({ hasBanner = false }) => {
             <Truck className="h-5 w-5" />
             <span className="text-[10px] mt-1">Orders</span>
           </Link>
+          <button
+            onClick={toggleTheme}
+            className="flex flex-col items-center p-2"
+            aria-label={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5" />}
+            <span className="text-[10px] mt-1">{theme === "dark" ? "Light" : "Dark"}</span>
+          </button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" className="p-2 flex flex-col items-center">
