@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "produc
   const { cartItems, addQuantityToCart, removeQuantityFromCart } = useCart();
   const { isAdmin } = useAdmin();
   const { profile } = useAuth();
-  const isGolden = product.category === "premium";
+  const isGolden = product.category === "premium" || product.category === "winter-monsoon-golden";
   const canBuyGolden = profile?.vip_status === "approved" || isAdmin;
 
   const inCartItem = cartItems.find((item) => item.product.id === product.id);
@@ -504,9 +504,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, storageKey = "produc
                     }
                   }}
                 >
-                  <option value="classic">Classic</option>
-                  <option value="specialty">Specialty</option>
-                  <option value="premium">Premium</option>
+                  {storageKey === "monsoon_winter_products" ? (
+                    <>
+                      <option value="winter-monsoon-classic">Classic (Monsoon/Winter)</option>
+                      <option value="winter-monsoon-specialty">Specialty (Monsoon/Winter)</option>
+                      <option value="winter-monsoon-golden">Golden Flavors (Monsoon/Winter)</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="classic">Classic</option>
+                      <option value="specialty">Specialty</option>
+                      <option value="premium">Golden Flavors</option>
+                    </>
+                  )}
                 </select>
               </div>
               <div className="grid grid-cols-4 items-start gap-4">
