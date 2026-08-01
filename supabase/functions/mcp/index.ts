@@ -2,7 +2,184 @@
 // To take ownership, delete this banner line; the plugin then leaves the file alone.
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
+// src/lib/mcp/index.ts
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.25.0";
+
+// src/lib/mcp/tools/list-my-orders.ts
+import { createClient } from "npm:@supabase/supabase-js@^2.107.0";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.25.0";
+import { z } from "npm:zod@^3.25.76";
+function supabaseForUser(ctx) {
+  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var list_my_orders_default = defineTool({
+  name: "list_my_orders",
+  title: "List my orders",
+  description: "List the signed-in user's Lemonade. orders, most recent first.",
+  inputSchema: {
+    limit: z.number().int().min(1).max(50).default(20).describe("Max orders to return.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ limit }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    }
+    const { data, error } = await supabaseForUser(ctx).from("orders").select("id, status, total, created_at, is_custom, custom_details").eq("user_id", ctx.getUserId()).order("created_at", { ascending: false }).limit(limit);
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { orders: data ?? [] }
+    };
+  }
+});
+
+// src/lib/mcp/tools/get-order.ts
+import { createClient as createClient2 } from "npm:@supabase/supabase-js@^2.107.0";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.25.0";
+import { z as z2 } from "npm:zod@^3.25.76";
+function supabaseForUser2(ctx) {
+  return createClient2(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var get_order_default = defineTool2({
+  name: "get_order",
+  title: "Get order details",
+  description: "Fetch a single order by id (including its items) for the signed-in user.",
+  inputSchema: {
+    order_id: z2.string().min(1).describe("The order id.")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ order_id }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    }
+    const supabase = supabaseForUser2(ctx);
+    const { data: order, error } = await supabase.from("orders").select("*, order_items(*)").eq("id", order_id).eq("user_id", ctx.getUserId()).maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    if (!order) return { content: [{ type: "text", text: "Order not found" }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(order, null, 2) }],
+      structuredContent: { order }
+    };
+  }
+});
+
+// src/lib/mcp/tools/list-products.ts
+import { createClient as createClient3 } from "npm:@supabase/supabase-js@^2.107.0";
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.25.0";
+import { z as z3 } from "npm:zod@^3.25.76";
+function supabaseForUser3(ctx) {
+  return createClient3(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var list_products_default = defineTool3({
+  name: "list_products",
+  title: "List Lemonade. products",
+  description: "Browse the Lemonade. product catalog. Optionally filter by category.",
+  inputSchema: {
+    category: z3.string().optional().describe("Optional category filter, e.g. 'classic', 'specialty', 'premium'."),
+    limit: z3.number().int().min(1).max(100).default(50)
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ category, limit }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    }
+    let query = supabaseForUser3(ctx).from("products").select("*").limit(limit);
+    if (category) query = query.eq("category", category);
+    const { data, error } = await query;
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { products: data ?? [] }
+    };
+  }
+});
+
+// src/lib/mcp/tools/get-my-profile.ts
+import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.107.0";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.25.0";
+function supabaseForUser4(ctx) {
+  return createClient4(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var get_my_profile_default = defineTool4({
+  name: "get_my_profile",
+  title: "Get my profile",
+  description: "Return the signed-in user's Lemonade. profile, including lemon balance and VIP status.",
+  inputSchema: {},
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async (_input, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    }
+    const { data, error } = await supabaseForUser4(ctx).from("profiles").select("id, username, name, email, vip_status, lemons, avatar_url").eq("id", ctx.getUserId()).maybeSingle();
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      structuredContent: { profile: data }
+    };
+  }
+});
+
+// src/lib/mcp/tools/redeem-lemons.ts
+import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.107.0";
+import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.25.0";
+import { z as z4 } from "npm:zod@^3.25.76";
+function supabaseForUser5(ctx) {
+  return createClient5(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var redeem_lemons_default = defineTool5({
+  name: "redeem_lemons",
+  title: "Redeem lemons",
+  description: "Redeem lemons from the signed-in user's balance. Returns the new balance.",
+  inputSchema: {
+    amount: z4.number().int().positive().describe("Number of lemons to redeem."),
+    reason: z4.string().min(1).describe("Short reason for the redemption.")
+  },
+  annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
+  handler: async ({ amount, reason }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    }
+    const { data, error } = await supabaseForUser5(ctx).rpc("redeem_lemons", {
+      _amount: amount,
+      _reason: reason
+    });
+    if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    return {
+      content: [{ type: "text", text: `New lemon balance: ${data}` }],
+      structuredContent: { new_balance: data }
+    };
+  }
+});
+
+// src/lib/mcp/index.ts
+var projectRef = "oyeecjsbyuodlwqqzqkm";
+var mcp_default = defineMcp({
+  name: "lemonade-mcp",
+  title: "Lemonade.",
+  version: "0.1.0",
+  instructions: "Tools for the Lemonade. app. Callers act as their signed-in Lemonade. user: browse products, read their own orders and profile, and redeem lemons.",
+  auth: auth.oauth.issuer({
+    issuer: `https://${projectRef}.supabase.co/auth/v1`,
+    acceptedAudiences: "authenticated"
+  }),
+  tools: [list_my_orders_default, get_order_default, list_products_default, get_my_profile_default, redeem_lemons_default]
+});
+
 // lovable-mcp-supabase-entry.ts
-import mcp from "npm:D:\\Desktop\\rndm programs\\websites\\lemonade-rich\\src\\lib\\mcp\\index.ts";
 import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.25.0/stacks/supabase";
-Deno.serve(createSupabaseHandler(mcp, { functionName: "mcp" }));
+Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));

@@ -48,8 +48,7 @@ const ChatPage: React.FC = () => {
           setGroups(DEFAULT_GROUPS);
           setActiveGroupId((prev) => prev ?? DEFAULT_GROUPS[0].id);
         }
-      })
-      .catch(() => {
+      }, () => {
         setGroups(DEFAULT_GROUPS);
         setActiveGroupId((prev) => prev ?? DEFAULT_GROUPS[0].id);
       });
@@ -86,8 +85,7 @@ const ChatPage: React.FC = () => {
         } else {
           setMessages(local);
         }
-      })
-      .catch(() => {
+      }, () => {
         setMessages(getLocalMessages());
       });
 

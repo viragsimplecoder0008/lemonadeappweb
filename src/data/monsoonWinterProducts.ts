@@ -1,5 +1,27 @@
 import { Product } from "@/types";
 
+// Monsoon / Winter categories are namespaced: winter-monsoon-<classic|specialty|golden>
+export const MONSOON_CATEGORIES = {
+  classic: "winter-monsoon-classic",
+  specialty: "winter-monsoon-specialty",
+  golden: "winter-monsoon-golden",
+} as const;
+
+// Map legacy/global categories onto the namespaced monsoon ones
+export const normalizeMonsoonCategory = (category?: string): string => {
+  switch (category) {
+    case "classic":
+      return MONSOON_CATEGORIES.classic;
+    case "specialty":
+      return MONSOON_CATEGORIES.specialty;
+    case "premium":
+    case "golden":
+      return MONSOON_CATEGORIES.golden;
+    default:
+      return category || MONSOON_CATEGORIES.classic;
+  }
+};
+
 // Monsoon / Winter collection initial products
 export const initialMonsoonWinterProducts: Product[] = [
   {
@@ -8,7 +30,7 @@ export const initialMonsoonWinterProducts: Product[] = [
     description: "Taste our irresistible Hot Chocolate, infused with rich cocoa and a touch of warmth.",
     price: 13.99,
     imageUrl: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&auto=format&fit=crop&q=80",
-    category: "specialty",
+    category: MONSOON_CATEGORIES.specialty,
     inStock: true
   }
 ];
@@ -39,7 +61,10 @@ try {
       }
     });
 
-    loadedMonsoonWinterProducts = Array.from(uniqueMap.values());
+    loadedMonsoonWinterProducts = Array.from(uniqueMap.values()).map(p => ({
+      ...p,
+      category: normalizeMonsoonCategory(p.category),
+    }));
     localStorage.setItem("monsoon_winter_products", JSON.stringify(loadedMonsoonWinterProducts));
   } else {
     loadedMonsoonWinterProducts = initialMonsoonWinterProducts;
@@ -83,5 +108,6 @@ export const getMonsoonWinterProductsByCategory = (category: string): Product[] 
     /* ignore */
   }
   if (category === "all") return allProds;
-  return allProds.filter((p) => p.category === category);
+  const target = normalizeMonsoonCategory(category);
+  return allProds.filter((p) => normalizeMonsoonCategory(p.category) === target);
 };
